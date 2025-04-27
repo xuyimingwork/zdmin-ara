@@ -1,12 +1,15 @@
 {
-  "name": "napi",
-  "version": "0.0.0",
+  "name": "zdmin",
+  "version": "0.0.1",
   "description": "Improve DX of client API integration to next level",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
   },
-  "keywords": [],
-  "author": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xuyimingwork/napi.git"
+  },
+  "author": "Xu Yiming",
   "license": "MIT"
 }
