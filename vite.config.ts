@@ -7,7 +7,12 @@ import vueJsx from '@vitejs/plugin-vue-jsx'
 // https://vite.dev/config/
 export default defineConfig({
   build: {
-    sourcemap: true, // Source map generation must be turned on
+    rollupOptions: {
+      input: {
+        main: fileURLToPath(new URL('./pages/devtools/openapi-codegen-main.html', import.meta.url)),
+        panel: fileURLToPath(new URL('./pages/devtools/openapi-codegen-panel.html', import.meta.url))
+      }
+    }
   },
   plugins: [vue(), vueJsx()],
   resolve: {

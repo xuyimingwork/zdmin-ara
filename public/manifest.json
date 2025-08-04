@@ -9,8 +9,5 @@
     "48": "icons/48.png",
     "128": "icons/128.png"
   },
-  "devtools_page": "pages/devtools-page.html",
-  "action": {
-    "default_popup": "pages/action-popup.html"
-  }
+  "devtools_page": "pages/devtools/openapi-codegen-main.html"
 }
