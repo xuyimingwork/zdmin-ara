@@ -25,6 +25,9 @@ devDependencies:
   '@vue/eslint-config-typescript':
     specifier: ^14.6.0
     version: 14.6.0(eslint-plugin-vue@10.4.0)(eslint@9.32.0)(typescript@5.8.3)
+  '@vue/tsconfig':
+    specifier: ^0.7.0
+    version: 0.7.0(typescript@5.8.3)(vue@3.5.18)
   eslint:
     specifier: ^9.32.0
     version: 9.32.0(jiti@2.5.1)
@@ -1302,6 +1305,21 @@ packages:
 
   /@vue/shared@3.5.18:
     resolution: {integrity: sha512-cZy8Dq+uuIXbxCZpuLd2GJdeSO/lIzIspC2WtkqIpje5QyFbvLaI5wZtdUjLHjGZrlVX6GilejatWwVYYRc8tA==}
+
+  /@vue/tsconfig@0.7.0(typescript@5.8.3)(vue@3.5.18):
+    resolution: {integrity: sha512-ku2uNz5MaZ9IerPPUyOHzyjhXoX2kVJaVf7hL315DC17vS6IiZRmmCPfggNbU16QTvM80+uYYy3eYJB59WCtvg==}
+    peerDependencies:
+      typescript: 5.x
+      vue: ^3.4.0
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+      vue:
+        optional: true
+    dependencies:
+      typescript: 5.8.3
+      vue: 3.5.18(typescript@5.8.3)
+    dev: true
 
   /acorn-jsx@5.3.2(acorn@8.15.0):
     resolution: {integrity: sha512-rq9s+JNhf0IChjtDXxllJ7g41oZk5SlXtp0LHwyA5cejwn7vKmKp4pPri6YEePv2PU65sAsegbXtIinmDFDXgQ==}
