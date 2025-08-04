@@ -28,6 +28,9 @@ devDependencies:
   '@vue/tsconfig':
     specifier: ^0.7.0
     version: 0.7.0(typescript@5.8.3)(vue@3.5.18)
+  chrome-types:
+    specifier: ^0.1.367
+    version: 0.1.367
   eslint:
     specifier: ^9.32.0
     version: 9.32.0(jiti@2.5.1)
@@ -1418,6 +1421,10 @@ packages:
     dependencies:
       ansi-styles: 4.3.0
       supports-color: 7.2.0
+    dev: true
+
+  /chrome-types@0.1.367:
+    resolution: {integrity: sha512-7bd8/WLmeOpOQwQfqckPKczW8KNSJo4xGBknyozWezPKYa8016Nf1sk1L4qq+FxJzUgqw4gYHZbbc7Jo8SGkmw==}
     dev: true
 
   /color-convert@2.0.1:
