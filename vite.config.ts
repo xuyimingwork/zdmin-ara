@@ -21,11 +21,17 @@ export default defineConfig({
     vue(), 
     vueJsx(),
     AutoImport({
-      resolvers: [ElementPlusResolver()],
+      imports: ['vue', 'vue-router'],
+      resolvers: [
+        ElementPlusResolver()
+      ],
     }),
     Components({
-      resolvers: [ElementPlusResolver()],
-    }),
+      resolvers: [
+        ElementPlusResolver(),
+        (name) =>  name === 'Icon' ? { name: 'Icon', from: '@iconify/vue' } : undefined,
+      ],
+    })
   ],
   resolve: {
     alias: {

@@ -10,7 +10,8 @@ export default createRouter({
   routes: [
     {
       path: '/',
-      component: () => import('@/views/HomeView.vue'),
+      redirect: '/network',
+      // component: () => import('@/views/HomeView.vue'),
     },
     {
       path: '/network',

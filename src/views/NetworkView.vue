@@ -1,6 +1,4 @@
 <script setup lang="ts">
-  import { ref, onBeforeUnmount } from 'vue';
-
   const requests = ref<chrome.devtools.network.Request[]>([]);
 
   function add(request: chrome.devtools.network.Request) {
@@ -16,10 +14,16 @@
 </script>
 
 <template>
-  Network View
-  <ul>
-    <li v-for="(request, index) in requests" :key="index">
-      {{ request }}
-    </li>
-  </ul>
+  <div class="network-view">
+    <div>
+      <Icon icon="mdi:refresh" />
+    </div>
+    <div>
+      <ul>
+        <li v-for="(request, index) in requests" :key="index">
+          {{ request }}
+        </li>
+      </ul>
+    </div>
+  </div>
 </template>
