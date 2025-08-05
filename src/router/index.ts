@@ -1,7 +1,12 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
 
 export default createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  /**
+   * chrome extension 默认地址是 src/devtools/main.ts 加载的页面路径
+   * 即：pages/devtools/openapi-codegen-panel.html
+   * 因此此处用 hash 模式（或者可以用 memory 模式？）
+   */
+  history: createWebHashHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',

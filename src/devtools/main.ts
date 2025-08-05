@@ -1,5 +1,3 @@
-console.log('Hello Zdmin Ara!');
-
 chrome.devtools.panels.create(
   'OpenAPI CodeGen', 
   '/icons/128.png', 
