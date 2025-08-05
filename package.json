@@ -4,7 +4,7 @@
   "description": "Ara is a tool to improve DX of client API integration",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite build --watch",
     "build": "run-p type-check \"build-only {@}\" --",
     "build-only": "vite build",
     "type-check": "vue-tsc --build",
@@ -24,7 +24,8 @@
   "license": "MIT",
   "dependencies": {
     "normalize.css": "^8.0.1",
-    "vue": "^3.5.18"
+    "vue": "^3.5.18",
+    "vue-router": "^4.5.1"
   },
   "devDependencies": {
     "@tsconfig/node22": "^22.0.2",

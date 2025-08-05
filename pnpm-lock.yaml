@@ -14,6 +14,9 @@ dependencies:
   vue:
     specifier: ^3.5.18
     version: 3.5.18(typescript@5.8.3)
+  vue-router:
+    specifier: ^4.5.1
+    version: 4.5.1(vue@3.5.18)
 
 devDependencies:
   '@tsconfig/node22':
@@ -1013,6 +1016,10 @@ packages:
       de-indent: 1.0.2
       he: 1.2.0
     dev: true
+
+  /@vue/devtools-api@6.6.4:
+    resolution: {integrity: sha512-sGhTPMuXqZ1rVOk32RylztWkfXTRhuS7vgAKv0zjqk8gbsHkJ7xfFf+jbySxt7tWObEJwyKaHMikV/WGDiQm8g==}
+    dev: false
 
   /@vue/eslint-config-typescript@14.6.0(eslint-plugin-vue@10.4.0)(eslint@9.32.0)(typescript@5.8.3):
     resolution: {integrity: sha512-UpiRY/7go4Yps4mYCjkvlIbVWmn9YvPGQDxTAlcKLphyaD77LjIu3plH4Y9zNT0GB4f3K5tMmhhtRhPOgrQ/bQ==}
@@ -2442,6 +2449,15 @@ packages:
     transitivePeerDependencies:
       - supports-color
     dev: true
+
+  /vue-router@4.5.1(vue@3.5.18):
+    resolution: {integrity: sha512-ogAF3P97NPm8fJsE4by9dwSYtDwXIY1nFY9T6DyQnGHd1E2Da94w9JIolpe42LJGIl0DwOHBi8TcRPlPGwbTtw==}
+    peerDependencies:
+      vue: ^3.2.0
+    dependencies:
+      '@vue/devtools-api': 6.6.4
+      vue: 3.5.18(typescript@5.8.3)
+    dev: false
 
   /vue-tsc@3.0.5(typescript@5.8.3):
     resolution: {integrity: sha512-PsTFN9lo1HJCrZw9NoqjYcAbYDXY0cOKyuW2E7naX5jcaVyWpqEsZOHN9Dws5890E8e5SDAD4L4Zam3dxG3/Cw==}
