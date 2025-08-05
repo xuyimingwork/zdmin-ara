@@ -19,4 +19,9 @@ export default defineConfigWithVueTs(
   pluginVue.configs['flat/essential'],
   vueTsConfigs.recommended,
   ...pluginOxlint.configs['flat/recommended'],
+  {
+    rules: {
+      "@typescript-eslint/no-explicit-any": "error"
+    }
+  }
 )
