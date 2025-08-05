@@ -11,12 +11,18 @@
   onBeforeUnmount(() => {
     chrome.devtools.network.onRequestFinished.removeListener(add)
   })
+
+  function reload() {
+    chrome.tabs.reload();
+  }
 </script>
 
 <template>
   <div class="network-view">
-    <div>
-      <Icon icon="mdi:refresh" />
+    <div class="network-view-toolbar">
+      <ElButton circle @click="reload()">
+        <template #icon><Icon icon="mdi:refresh" /></template>
+      </ElButton>
     </div>
     <div>
       <ul>
@@ -27,3 +33,11 @@
     </div>
   </div>
 </template>
+
+<style lang="scss" scoped>
+  .network-view {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+</style>

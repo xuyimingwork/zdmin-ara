@@ -9,5 +9,8 @@
     "48": "icons/48.png",
     "128": "icons/128.png"
   },
+  "permissions": [
+    "tabs"
+  ],
   "devtools_page": "pages/devtools/openapi-codegen-main.html"
 }
