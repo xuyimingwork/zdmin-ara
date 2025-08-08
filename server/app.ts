@@ -60,7 +60,7 @@ export function transform({ openapi }) {
 
   return [{
     file: 'api.ts',
-    content
+    content: `// 本文件由 OpenAPI CodeGen 自动生成\n\n${content}`
   }]
 }
 
