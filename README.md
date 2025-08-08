@@ -2,6 +2,12 @@
 
 This project is aim to provide a set of tools to generate client api code from OpenAPI specification.
 
+## todo
+
+- [] change repo to monorepo
+- [] redesign backend api
+- [] change frontend ui to project base
+
 ## architecture
 
 ### frontend

@@ -14,6 +14,9 @@ dependencies:
   element-plus:
     specifier: ^2.10.5
     version: 2.10.5(vue@3.5.18)
+  es-toolkit:
+    specifier: ^1.39.8
+    version: 1.39.8
   normalize.css:
     specifier: ^8.0.1
     version: 8.0.1
@@ -1759,6 +1762,10 @@ packages:
       has-tostringtag: 1.0.2
       hasown: 2.0.2
     dev: true
+
+  /es-toolkit@1.39.8:
+    resolution: {integrity: sha512-A8QO9TfF+rltS8BXpdu8OS+rpGgEdnRhqIVxO/ZmNvnXBYgOdSsxukT55ELyP94gZIntWJ+Li9QRrT2u1Kitpg==}
+    dev: false
 
   /escalade@3.2.0:
     resolution: {integrity: sha512-WUj2qlxaQtO4g6Pq5c29GTcWGDyd8itL8zTlipgECz3JesAiiOKotd8JU6otB3PACgG6xkJUyVhboMS+bje/jA==}

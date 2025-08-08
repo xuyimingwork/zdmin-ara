@@ -49,6 +49,22 @@
       console.log('OpenAPI Codegen Response:', res);
     })
   }
+
+  const active = ref<chrome.devtools.network.Request>()
+  function upload() {
+    if (!active.value || !content.value.get(active.value)?.content?.openapi) return ElMessage.warning('请选择合适的请求')
+    fetch('http://localhost:9125/openapi-codegen/openapi', {
+      method: 'POST',
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        data: content.value.get(active.value)?.content
+      })
+    }).then(() => {
+      ElMessage.success('上传成功')
+    })
+  }
 </script>
 
 <template>
@@ -57,16 +73,14 @@
       <ElButton circle @click="reload()">
         <template #icon><Icon icon="mdi:refresh" /></template>
       </ElButton>
-      <ElButton circle @click="console.log(requests)">
-        <template #icon><Icon icon="mdi:printer" /></template>
-      </ElButton>
-      <ElButton circle @click="query">
-        <template #icon><Icon icon="mdi:connection" /></template>
+      <ElButton circle @click="upload">
+        <template #icon><Icon icon="mdi:upload" /></template>
       </ElButton>
     </div>
     <div class="network-view-body">
       <ul>
-        <li v-for="(request, index) in requests" :key="index">
+        <li v-for="(request, index) in requests" :key="index" @click="active = request"
+          :class="{ active: active === request }">
           {{ request.request.url }}
           <div v-if="content.has(request) && content.get(request)?.content?.openapi">{{ content.get(request)?.content }}</div>
         </li>
@@ -84,6 +98,10 @@
     &-body {
       flex: auto;
       overflow-y: auto;
+    }
+
+    .active {
+      outline: 1px solid lightblue;
     }
   }
 </style>
