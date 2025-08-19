@@ -1,6 +1,7 @@
 import ts from 'typescript'
 import { camelCase, groupBy } from 'es-toolkit/compat'
 import { kebabCase } from 'es-toolkit'
+import { commentMultiLine } from '@/utils'
 const factory = ts.factory
 
 function resolve({ path, data }): { file, function, data }[] {
@@ -46,7 +47,7 @@ export function transform({ openapi }) {
 
       return {
         file,
-        content: `// 本文件由 OpenAPI CodeGen 自动生成\n\n${content}`
+        content: `${commentMultiLine('@file 接口文件（由 OpenAPI CodeGen 自动生成）')}\n\n${content}`
       }
     }),
     count
@@ -58,7 +59,10 @@ function transformOnePath({ function: name, path, data }) {
     ? ts.addSyntheticLeadingComment(
         node,
         ts.SyntaxKind.MultiLineCommentTrivia,
-        `*\n * @summary ${data.summary || ''} \n * @description ${data.description || ''} \n `, 
+        `*\n${commentMultiLine([
+          `@summary ${data.summary || ''}`,
+          `@description ${data.description || ''}`,
+        ], { onlyMiddle: true })}\n `, 
         true
       ) 
     : node
