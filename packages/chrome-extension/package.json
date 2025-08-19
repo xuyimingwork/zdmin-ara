@@ -1,0 +1,37 @@
+{
+  "name": "@zdmin/ara-chrome-extension",
+  "type": "module",
+  "license": "MIT",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xuyimingwork/zdmin-ara.git"
+  },
+  "author": "Xu Yiming",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "vite build --watch",
+    "build": "run-p type-check \"build-only {@}\" --",
+    "build-only": "vite build",
+    "type-check": "vue-tsc --build",
+    "lint:oxlint": "oxlint . --fix -D correctness --ignore-path .gitignore",
+    "lint:eslint": "eslint . --fix",
+    "lint": "run-s lint:*"
+  },
+  "dependencies": {
+    "vue": "^3.5.18",
+    "@iconify/vue": "^5.0.0",
+    "element-plus": "^2.10.5",
+    "normalize.css": "^8.0.1",
+    "vue-router": "^4.5.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^6.0.1",
+    "@vitejs/plugin-vue-jsx": "^5.0.1",
+    "sass-embedded": "^1.89.2"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "name": "@zdmin/ara-local-server",
+  "type": "module",
+  "license": "MIT",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xuyimingwork/zdmin-ara.git"
+  },
+  "author": "Xu Yiming",
+  "files": [
+    "dist"
+  ],
+  "scripts": {},
+  "dependencies": {
+    "body-parser": "^2.2.0",
+    "connect": "^3.7.0",
+    "connect-rest": "^3.0.33",
+    "cors": "^2.8.5"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19"
+  }
+}
