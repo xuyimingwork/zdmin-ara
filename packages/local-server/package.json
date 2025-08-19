@@ -13,12 +13,16 @@
   "files": [
     "dist"
   ],
-  "scripts": {},
+  "scripts": {
+    "dev": "vite build --watch",
+    "build": "vite build"
+  },
   "dependencies": {
     "body-parser": "^2.2.0",
     "connect": "^3.7.0",
     "connect-rest": "^3.0.33",
-    "cors": "^2.8.5"
+    "cors": "^2.8.5",
+    "mkdirp": "^3.0.1"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19"

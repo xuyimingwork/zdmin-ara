@@ -32,27 +32,12 @@
     })
   })
 
-  const query = () => {
-    fetch('http://localhost:9125/openapi-codegen/files', {
-      method: 'POST',
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(
-        requests.value
-          .filter(req => content.value.get(req)?.content?.openapi)
-          .map(req => ({
-            content: JSON.stringify(content.value.get(req)?.content)
-          }))
-      )
-    }).then(res => {
-      console.log('OpenAPI Codegen Response:', res);
-    })
-  }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const isOpenAPI = (data: any) => data && (data.openapi || data.swagger)
 
   const active = ref<chrome.devtools.network.Request>()
   function upload() {
-    if (!active.value || !content.value.get(active.value)?.content?.openapi) return ElMessage.warning('请选择合适的请求')
+    if (!active.value || !isOpenAPI(content.value.get(active.value)?.content)) return ElMessage.warning('请选择合适的请求')
     fetch('http://localhost:9125/openapi-codegen/openapi', {
       method: 'POST',
       headers: {
@@ -61,9 +46,12 @@
       body: JSON.stringify({
         data: content.value.get(active.value)?.content
       })
-    }).then(() => {
-      ElMessage.success('上传成功')
     })
+      .then((res) => res.json())
+      .then(data => {
+        if (!data.ok) return ElMessage.error(data.message || '上传失败')
+        ElMessage.success('上传成功')
+      })
   }
 </script>
 
@@ -82,7 +70,7 @@
         <li v-for="(request, index) in requests" :key="index" @click="active = request"
           :class="{ active: active === request }">
           {{ request.request.url }}
-          <div v-if="content.has(request) && content.get(request)?.content?.openapi">{{ content.get(request)?.content }}</div>
+          <div v-if="content.has(request) && isOpenAPI(content.get(request)?.content)">{{ content.get(request)?.content }}</div>
         </li>
       </ul>
     </div>
