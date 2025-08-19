@@ -50,7 +50,7 @@
       .then((res) => res.json())
       .then(data => {
         if (!data.ok) return ElMessage.error(data.message || '上传失败')
-        ElMessage.success('上传成功')
+        ElMessage.success(`上传成功：共 ${data.data.files?.length} 个文件、${data.data.count} 个 API`)
       })
   }
 </script>

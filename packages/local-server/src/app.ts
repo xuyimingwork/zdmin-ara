@@ -22,15 +22,19 @@ function createRest({ root = process.cwd() } = {}) {
   rest.post('/openapi', (request, content) => {
     console.log('request to openapi')
     if (!content?.data) return Promise.reject(new Error('Invalid content'));
-    return rmdir(root, { recursive: true }).then(() => Promise.all([
-      ...transform({ openapi: content.data }), 
-      { file: 'openapi.json', content: JSON.stringify(content.data, undefined, 2) }
-    ].map(({ file, content }) => {
-      const path = resolve(root, file.startsWith('/') ? file.slice(1) : file);
-      const dir = path.slice(0, path.lastIndexOf('/'))
-      return mkdirp(dir).then(() => writeFile(path, content, 'utf8'))
-    })))
-      .then(res => ({ ok: true }))
+    return rmdir(root, { recursive: true }).then(() => {
+      const { files, count } = transform({ openapi: content.data });
+      return Promise.all([
+        ...files, 
+        { file: 'openapi.json', content: JSON.stringify(content.data, undefined, 2) }
+      ].map(({ file, content }) => {
+        const path = resolve(root, file.startsWith('/') ? file.slice(1) : file);
+        const dir = path.slice(0, path.lastIndexOf('/'))
+        return mkdirp(dir).then(() => writeFile(path, content, 'utf8'))
+      }))
+      .then(() => ({ count, files }))
+    })
+      .then(({ count, files }) => ({ ok: true, data: { count, files } }))
       .catch(err => ({ ok: false, message: err.message }));
   })
 

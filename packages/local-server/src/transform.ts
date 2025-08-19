@@ -33,22 +33,37 @@ export function transform({ openapi }) {
     return resolve({ path, data }).map(item => ({ ...item, path }))
   }).flat(), item => item.file)
 
-  return Object.keys(files).map(file => {
-    const functions = files[file].map(item => {
-      return transformOnePath({ function: item.function, path: item.path, data: item.data })
-    }).flat()
-    
-    const content = output(factory.createNodeArray(functions))
+  let count = 0
 
-    return {
-      file,
-      content: `// 本文件由 OpenAPI CodeGen 自动生成\n\n${content}`
-    }
-  })
+  return {
+    files: Object.keys(files).map(file => {
+      const functions = files[file].map(item => {
+        return transformOnePath({ function: item.function, path: item.path, data: item.data })
+      }).flat().map(node => [node, factory.createIdentifier('\n')]).flat()
+      
+      count += functions.length
+      const content = output(factory.createNodeArray(functions))
+
+      return {
+        file,
+        content: `// 本文件由 OpenAPI CodeGen 自动生成\n\n${content}`
+      }
+    }),
+    count
+  } 
 }
 
 function transformOnePath({ function: name, path, data }) {
-  return factory.createFunctionDeclaration(
+  const withAutoComment = node => (data.summary || data.description) 
+    ? ts.addSyntheticLeadingComment(
+        node,
+        ts.SyntaxKind.MultiLineCommentTrivia,
+        `*\n * @summary ${data.summary || ''} \n * @description ${data.description || ''} \n `, 
+        true
+      ) 
+    : node
+  
+  return withAutoComment(factory.createFunctionDeclaration(
     [factory.createToken(ts.SyntaxKind.ExportKeyword)],
     undefined,
     factory.createIdentifier(name),
@@ -72,5 +87,5 @@ function transformOnePath({ function: name, path, data }) {
       ))],
       true
     )
-  )
+  ))
 }
