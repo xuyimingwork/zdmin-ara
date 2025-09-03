@@ -4,7 +4,7 @@ import cors from 'cors'
 import bodyParser from 'body-parser'
 import ConnectRest from 'connect-rest';
 import { rmdir, writeFile } from 'fs/promises';
-import { transform } from '@/transform';
+import { transform } from '@/transform/transform';
 import { mkdirp } from 'mkdirp';
 import { resolve } from 'path';
 
@@ -60,7 +60,7 @@ function createConnect({ root = process.cwd() } = {}) {
   return app;
 }
 
-createServer(createConnect({ root: resolve(process.cwd(), 'temp') })).listen({ port: 9125 }, () => {
+createServer(createConnect({ root: resolve(process.cwd(), 'temp/v2') })).listen({ port: 9125 }, () => {
   console.log('Local server is running on http://localhost:9125/openapi-codegen');
 })
 
