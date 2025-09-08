@@ -22,8 +22,8 @@ function createRest({ root = process.cwd() } = {}) {
   rest.post('/openapi', (request, content) => {
     console.log('request to openapi')
     if (!content?.data) return Promise.reject(new Error('Invalid content'));
-    return rmdir(root, { recursive: true }).then(() => {
-      const { files, count } = transform({ openapi: content.data });
+    return rmdir(root, { recursive: true }).then(async () => {
+      const { files, count } = await transform({ openapi: content.data });
       return Promise.all([
         ...files, 
         { file: 'openapi.json', content: JSON.stringify(content.data, undefined, 2) }

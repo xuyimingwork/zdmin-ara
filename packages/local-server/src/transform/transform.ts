@@ -4,7 +4,10 @@ import { kebabCase } from 'es-toolkit'
 import { createFunctionDeclaration } from '@/transform/function'
 import { output } from '@/transform/printer'
 import { getCommentMultiLine } from '@/transform/comment'
-import { createDefinitionsInterfaceDeclaration } from '@/transform/type'
+// import { createDefinitionsInterfaceDeclaration } from '@/transform/type'
+import v3OpenAPITS, { astToString as v3AstToString } from "openapi-typescript7";
+import v2OpenAPITS from "openapi-typescript5";
+
 const factory = ts.factory
 
 function resolve({ path, data }): { file, function, data }[] {
@@ -58,21 +61,27 @@ function genRequests({ openapi }) {
   return { files: outputFiles, statistic }
 }
 
-function genTypes({ openapi }) {
-  const definitions = createDefinitionsInterfaceDeclaration({ openapi })
-  const content = output(factory.createNodeArray([definitions].filter(item => !!item)))
-  return {
+async function genTypes({ openapi }) {
+  // const definitions = createDefinitionsInterfaceDeclaration({ openapi })
+  // const content = output(factory.createNodeArray([definitions].filter(item => !!item)))
+  if (openapi.swagger) return {
     files: [{
       file: 'types.d.ts',
-      content
+      content: await v2OpenAPITS(openapi, { commentHeader: patchBanner('') })
+    }]
+  }
+  if (openapi.openapi) return {
+    files: [{
+      file: 'types.d.ts',
+      content: patchBanner(v3AstToString(await v3OpenAPITS(openapi)))
     }]
   }
 }
 
-export function transform({ openapi }) {
+export async function transform({ openapi }) {
   const {
-    files: fileOfTypes,  
-  } = genTypes({ openapi })
+    files: fileOfTypes = [],  
+  } = await genTypes({ openapi }) || {}
 
   const { 
     files: fileOfRequests, 
