@@ -16,12 +16,14 @@ export default defineConfigWithVueTs(
 
   globalIgnores(['**/dist/**', '**/dist-ssr/**', '**/coverage/**']),
 
-  pluginVue.configs['flat/essential'],
+  pluginVue.configs['flat/recommended'],
   vueTsConfigs.recommended,
+  
   ...pluginOxlint.configs['flat/recommended'],
   {
     rules: {
-      "@typescript-eslint/no-explicit-any": "error"
+      '@typescript-eslint/no-explicit-any': 'warn',
+      'vue/component-name-in-template-casing': ["error", "PascalCase", { registeredComponentsOnly: false }]
     }
   }
 )

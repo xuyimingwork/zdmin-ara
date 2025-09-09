@@ -10,12 +10,16 @@ export default createRouter({
   routes: [
     {
       path: '/',
-      redirect: '/network',
+      redirect: '/project',
       // component: () => import('@/views/HomeView.vue'),
     },
     {
       path: '/network',
       component: () => import('@/views/NetworkView.vue'),
+    },
+    {
+      path: '/project',
+      component: () => import('@/views/project/ProjectView.vue')
     }
   ]
 })

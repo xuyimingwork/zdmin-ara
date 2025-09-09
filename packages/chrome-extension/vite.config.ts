@@ -6,6 +6,7 @@ import vueJsx from '@vitejs/plugin-vue-jsx'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
+import tailwindcss from '@tailwindcss/vite'
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -20,6 +21,7 @@ export default defineConfig({
   plugins: [
     vue(), 
     vueJsx(),
+    tailwindcss(),
     AutoImport({
       imports: ['vue', 'vue-router'],
       resolvers: [
