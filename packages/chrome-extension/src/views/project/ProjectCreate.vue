@@ -9,7 +9,7 @@
 
   const {
     servers
-  } = useAsyncData('servers', () => query([9125, 9155]), { initialData: [], immediate: true })
+  } = useAsyncData('servers', () => query([9125, 9125 + 99]), { initialData: [], immediate: true })
 
   // 自动发现
   function query(range = [1, 65535]): Promise<any[]> {

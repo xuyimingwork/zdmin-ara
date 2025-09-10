@@ -60,7 +60,9 @@ export function useStorage<N extends string = any, T = any>(key: N, initialValue
   })
   
   function onChange(changes: object, areaName: string) {
-    console.log('onChange', changes, areaName)
+    if (areaName !== 'local') return
+    if (!changes || !(key in changes)) return
+    queryData()
   }
 
   chrome.storage?.onChanged.addListener(onChange)

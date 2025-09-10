@@ -8,8 +8,9 @@ import { isObjectLike } from 'es-toolkit/compat';
 
 
 const {
-  projects, queryProjectsLoading,
-  updateProjects, updateProjectsLoading
+  projects,
+  updateProjects,
+  removeProjects
 } = useStorage('projects', [] as {
   path: string
   server: string
@@ -64,6 +65,14 @@ function remove(v: any) {
               />
             </template>
           </BaseDrawer>
+          <ElButton
+            v-if="projects && projects.length"
+            plain
+            type="danger"
+            @click="removeProjects"
+          >
+            清空项目
+          </ElButton>
         </template>
       </CrabFlex>
     </template>
