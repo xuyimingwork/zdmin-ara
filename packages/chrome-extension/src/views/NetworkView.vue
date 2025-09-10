@@ -58,19 +58,35 @@
 <template>
   <div class="network-view">
     <div class="network-view-toolbar">
-      <ElButton circle @click="reload()">
-        <template #icon><Icon icon="mdi:refresh" /></template>
+      <ElButton
+        circle
+        @click="reload()"
+      >
+        <template #icon>
+          <Icon icon="mdi:refresh" />
+        </template>
       </ElButton>
-      <ElButton circle @click="upload">
-        <template #icon><Icon icon="mdi:upload" /></template>
+      <ElButton
+        circle
+        @click="upload"
+      >
+        <template #icon>
+          <Icon icon="mdi:upload" />
+        </template>
       </ElButton>
     </div>
     <div class="network-view-body">
       <ul>
-        <li v-for="(request, index) in requests" :key="index" @click="active = request"
-          :class="{ active: active === request }">
+        <li
+          v-for="(request, index) in requests"
+          :key="index"
+          :class="{ active: active === request }"
+          @click="active = request"
+        >
           {{ request.request.url }}
-          <div v-if="content.has(request) && isOpenAPI(content.get(request)?.content)">{{ content.get(request)?.content }}</div>
+          <div v-if="content.has(request) && isOpenAPI(content.get(request)?.content)">
+            {{ content.get(request)?.content }}
+          </div>
         </li>
       </ul>
     </div>

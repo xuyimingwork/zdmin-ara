@@ -2,6 +2,29 @@ import { tryOnUnmounted } from "@vueuse/core";
 import { upperFirst } from "es-toolkit";
 import { useAsync, useAsyncData } from "vue-asyncx";
 
+const storage = chrome.storage 
+  ? { 
+    get: (key: string) => chrome.storage.local.get(key).then(result => result[key]),
+    set: (key: string, value: any) => chrome.storage.local.set({ [key]: value }),
+    remove: (key: string) => chrome.storage.local.remove(key)
+  }
+  : { 
+    get: (key: string) => new Promise((resolve) => {
+      const value = localStorage.getItem(key)
+      if (!value) return resolve(undefined)
+      return resolve(JSON.parse(value))
+    }),
+    set: (key: string, value: any) => new Promise((resolve) => {
+      const item = JSON.stringify(value)
+      localStorage.setItem(key, item)
+      resolve(value)
+    }),
+    remove: (key: string) => new Promise((resolve) => {
+      localStorage.removeItem(key)
+      resolve(undefined)
+    })
+  }
+
 /**
  * 
  * @param key 
@@ -22,47 +45,26 @@ export function useStorage<N extends string = any, T = any>(key: N, initialValue
   [K in `remove${Capitalize<N>}Loading`]: Ref<boolean>
 } {
   const { data, queryData, queryDataLoading } = useAsyncData(() => {
-    return new Promise((resolve) => {
-      chrome.storage.local.get(key).then((result) => {
-        console.log("storage get", key, result);
-        resolve(result[key])
-      });
-    })
+    return storage.get(key).then(data => Array.isArray(data) ? data : initialValue)
   }, { 
     initialData: initialValue, 
     immediate: true 
   })
 
   const { update, updateLoading } = useAsync('update', function update(value: T) {
-    return new Promise((resolve) => {
-      chrome.storage.local.set({ [key]: value })
-        .then((...args) => {
-          console.log("storage set", key, value, ...args);
-          return queryData()
-        })
-        .then(resolve);
-    })
+    return storage.set(key, value)
   })
 
-  const { remove, removeLoading } = useAsync('remove', function remove(value: T) {
-    return new Promise((resolve) => {
-      chrome.storage.local.remove(key)
-        .then((...args) => {
-          console.log("storage remove", key, value, ...args);
-          return queryData()
-        })
-        .then(resolve);
-    })
+  const { remove, removeLoading } = useAsync('remove', function remove() {
+    return storage.remove(key)
   })
   
   function onChange(changes: object, areaName: string) {
     console.log('onChange', changes, areaName)
   }
 
-  chrome.storage.onChanged.addListener(onChange)
-
-  tryOnUnmounted(() => chrome.storage.onChanged.removeListener(onChange))
-  
+  chrome.storage?.onChanged.addListener(onChange)
+  tryOnUnmounted(() => chrome.storage?.onChanged.removeListener(onChange))
 
   return {
     [key]: data,

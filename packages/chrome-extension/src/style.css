@@ -1,2 +1,16 @@
 @import "@zdmin/crab/dist/index.css";
 @import "tailwindcss";
+
+@theme {
+  /* Supplementary text	12px Extra Small	Build with Element
+  Body (small)	13px Small	Build with Element
+  Body	14px Base	Build with Element
+  Small Title	16px Medium	Build with Element
+  Title	18px Large	Build with Element
+  Main Title	20px Extra Large	Build with Element */
+
+  --text-sm: 13px;
+  --text-base: 14px;
+  --text-lg: 16px;
+  --text-xl: 18px;
+}

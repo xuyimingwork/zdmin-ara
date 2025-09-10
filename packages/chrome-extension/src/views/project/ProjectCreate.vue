@@ -9,10 +9,10 @@
 
   const {
     servers
-  } = useAsyncData('servers', () => query([9125, 9155]) as Promise<any[]>, { initialData: [], immediate: true })
+  } = useAsyncData('servers', () => query([9125, 9155]), { initialData: [], immediate: true })
 
   // 自动发现
-  function query(range = [1, 65535]) {
+  function query(range = [1, 65535]): Promise<any[]> {
     return new Promise((resolve) => {
       const query = (port: number) => {
         const server = `http://localhost:${port}`
@@ -44,7 +44,7 @@
   }
 
   const server = ref()
-  const { project } = useAsyncData('project', () => {
+  const { project, queryProjectLoading } = useAsyncData('project', () => {
     if (!server.value) return
     const _server = server.value
     return request({ 
@@ -63,35 +63,53 @@
 </script>
 
 <template>
-  <ElForm>
+  <ElForm label-width="100px">
     <ElFormItem label="服务器">
       <ElInput v-model="server">
-        <template #prefix>
-          <ElPopover>
-            <div>
-              <div
-                v-for="(item, i) in servers"
-                :key="i"
-                @click="server = item.server"
-              >
-                <div>{{ item.server }}</div>
-                <div>{{ item.path }}</div>
-              </div>
-            </div>
-            <template #reference>
-              <ElIcon>
-                <MagicStick />
-              </ElIcon>
+        <template
+          v-if="servers && servers.length"
+          #prefix
+        >
+          <ElDropdown>
+            <ElIcon class="cursor-pointer">
+              <MagicStick />
+            </ElIcon>
+            <template #dropdown>
+              <ElDropdownMenu>
+                <ElDropdownItem
+                  v-for="(item, i) in servers"
+                  :key="i"
+                  @click="server = item.server"
+                >
+                  <div>
+                    <div class="text-base">
+                      {{ item.server }}
+                    </div>
+                    <div
+                      class="text-sm text-(--el-text-color-secondary)"
+                    >
+                      {{ item.path }}
+                    </div>
+                  </div>
+                </ElDropdownItem>
+              </ElDropdownMenu>
             </template>
-          </ElPopover>
+          </ElDropdown>
         </template>
       </ElInput>
     </ElFormItem>
-    <ElFormItem label="路径">
+    <ElFormItem
+      v-loading="queryProjectLoading"
+      label="路径"
+    >
       {{ project?.path }}
     </ElFormItem>
     <ElFormItem>
-      <ElButton @click="project && $emit('create', project)">
+      <ElButton
+        type="primary"
+        :disabled="!project"
+        @click="project && $emit('create', project)"
+      >
         保存
       </ElButton>
     </ElFormItem>

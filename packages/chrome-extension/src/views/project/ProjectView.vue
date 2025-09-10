@@ -40,11 +40,12 @@ function remove(v: any) {
   <CrabFlex
     direction="column"
     class="p-3 gap-2"
+    :main="{ class: 'flex flex-wrap' }"
   >
     <template #start>
       <CrabFlex>
         <template #end>
-          <BaseDialog>
+          <BaseDrawer size="80%">
             <template #trigger="{ open }">
               <ElButton
                 :icon="Plus"
@@ -62,7 +63,7 @@ function remove(v: any) {
                 }"
               />
             </template>
-          </BaseDialog>
+          </BaseDrawer>
         </template>
       </CrabFlex>
     </template>
@@ -70,6 +71,8 @@ function remove(v: any) {
       <ElCard
         v-for="(project, i) in projects"
         :key="i"
+        class="h-80 w-80"
+        shadow="hover"
       >
         <template #header>
           <CrabFlex>
@@ -79,6 +82,7 @@ function remove(v: any) {
             <template #end>
               <ElButton
                 type="danger"
+                plain
                 round
                 :icon="Delete"
                 @click="remove(project)"
