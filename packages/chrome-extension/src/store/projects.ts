@@ -9,7 +9,11 @@ export function useProjects() {
   } = useStorage('projects', [] as {
     path: string
     server: string
-    docs: { name?: string; path: string }[]
+    output: string
+    docs: { 
+      name?: string; 
+      path: string 
+    }[]
   }[])
   const projects = computed(() => Array.isArray(_projects.value) ? _projects.value : [])
 

@@ -66,13 +66,13 @@ async function genTypes({ openapi }) {
   // const content = output(factory.createNodeArray([definitions].filter(item => !!item)))
   if (openapi.swagger) return {
     files: [{
-      file: 'types.d.ts',
+      file: 'openapi.d.ts',
       content: await v2OpenAPITS(openapi, { commentHeader: patchBanner('') })
     }]
   }
   if (openapi.openapi) return {
     files: [{
-      file: 'types.d.ts',
+      file: 'openapi.d.ts',
       content: patchBanner(v3AstToString(await v3OpenAPITS(openapi)))
     }]
   }

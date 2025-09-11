@@ -5,12 +5,6 @@ import { Delete, Plus } from '@element-plus/icons-vue';
 import { CrabFlex } from '@zdmin/crab';
 
 const { projects, create, remove, clear } = useProjects()
-const router = useRouter()
-
-function toDetail(project: any) {
-  console.log('to', project)
-  router.push({ path: '/project-detail', query: { path: project.path } })
-}
 </script>
 
 <template>
@@ -58,7 +52,7 @@ function toDetail(project: any) {
         :key="i"
         class="h-80 w-80 m-1"
         shadow="hover"
-        @click="toDetail(project)"
+        @click="$router.push({ path: '/project-detail', query: { path: project.path } })"
       >
         <template #header>
           <CrabFlex>

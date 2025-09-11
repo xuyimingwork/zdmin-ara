@@ -57,19 +57,29 @@ function createRest(options: Options) {
 
   rest.post('/openapi', (request, content) => {
     console.log('request to openapi')
-    if (!content?.data) return Promise.reject(new Error('Invalid content'));
-    return rmdir(root, { recursive: true }).then(async () => {
-      const { files, count } = await transform({ openapi: content.data });
-      return Promise.all([
-        ...files, 
-        { file: 'openapi.json', content: JSON.stringify(content.data, undefined, 2) }
-      ].map(({ file, content }) => {
-        const path = resolve(root, file.startsWith('/') ? file.slice(1) : file);
-        const dir = path.slice(0, path.lastIndexOf('/'))
-        return mkdirp(dir).then(() => writeFile(path, content, 'utf8'))
-      }))
-      .then(() => ({ count, files }))
-    })
+    if (!content?.data) return Promise.resolve({ ok: false, message: 'No OpenAPI Doc Content' });
+    if (!content?.name) return Promise.resolve({ ok: false, message: 'No OpenAPI Doc Name' });
+    const doc = (options.docs as NormalDocs).find(item => item.name === content.name)
+    if (!doc) return Promise.resolve({ ok: false, message: 'OpenAPI Doc Not Config' });
+    return transform({ openapi: content.data })
+      .then(({ files, count }) => {
+        files = [...files, { file: 'openapi.json', content: JSON.stringify(content.data, undefined, 2) }]
+        files = doc.name ? files.map(item => {
+          if (!['openapi.json', 'openapi.d.ts'].includes(item.file)) return item
+          return { file: `${doc.name}.${item.file}`, content: item.content }
+        }) : files
+        files = files.map(({ file, content }) => {
+          const path = resolve(doc.output, file.startsWith('/') ? file.slice(1) : file);
+          return { file: path, content }
+        })
+        return { files, count }
+      })
+      .then(({ files, count }) => {
+        return Promise.all(files.map(item => {
+          const dir = item.file.slice(0, item.file.lastIndexOf('/'))
+          return mkdirp(dir).then(() => writeFile(item.file, item.content, 'utf8'))
+        })).then(() => ({ files, count }))
+      })
       .then(({ count, files }) => ({ ok: true, data: { count, files } }))
       .catch(err => ({ ok: false, message: err.message }));
   })
@@ -157,6 +167,8 @@ main({
   }
 })
 
+// options.doc.transform > options.transform
+// with default transform
 
 
 
