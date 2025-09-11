@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { request } from '@/utils/request';
-  import { MagicStick } from '@element-plus/icons-vue';
+  import { MagicStick, Loading } from '@element-plus/icons-vue';
   import { useAsyncData } from 'vue-asyncx';
 
   defineEmits<{
@@ -8,7 +8,8 @@
   }>()
 
   const {
-    servers
+    servers,
+    queryServersLoading
   } = useAsyncData('servers', () => query([9125, 9125 + 99]), { initialData: [], immediate: true })
 
   // 自动发现
@@ -67,12 +68,16 @@
     <ElFormItem label="服务器">
       <ElInput v-model="server">
         <template
-          v-if="servers && servers.length"
+          v-if="(servers && servers.length) || queryServersLoading"
           #prefix
         >
-          <ElDropdown>
-            <ElIcon class="cursor-pointer">
-              <MagicStick />
+          <ElDropdown :disabled="!servers || !servers.length">
+            <ElIcon
+              class="cursor-pointer"
+              :class="{ 'is-loading': queryServersLoading }"
+            >
+              <Loading v-if="queryServersLoading" />
+              <MagicStick v-else />
             </ElIcon>
             <template #dropdown>
               <ElDropdownMenu>
@@ -98,20 +103,45 @@
         </template>
       </ElInput>
     </ElFormItem>
-    <ElFormItem
-      v-loading="queryProjectLoading"
-      label="路径"
-    >
-      {{ project?.path }}
-    </ElFormItem>
-    <ElFormItem>
-      <ElButton
-        type="primary"
-        :disabled="!project"
-        @click="project && $emit('create', project)"
+    <template v-if="project">
+      <ElFormItem
+        v-loading="queryProjectLoading"
+        label="路径"
       >
-        保存
-      </ElButton>
-    </ElFormItem>
+        {{ project?.path }}
+      </ElFormItem>
+      <ElFormItem
+        v-loading="queryProjectLoading"
+        label="输出"
+      >
+        {{ project?.output }}
+      </ElFormItem>
+      <ElFormItem
+        v-loading="queryProjectLoading"
+        label="文档"
+      >
+        <ul class="w-full">
+          <li
+            v-for="doc of project?.docs"
+            :key="doc.path"
+            class="text-nowrap truncate"
+          >
+            <span v-if="doc.name">{{ doc.name }}：</span>{{ doc.path }}
+          </li>
+        </ul>
+      </ElFormItem>
+      <ElFormItem>
+        <ElButton
+          type="primary"
+          :disabled="!project"
+          @click="project && $emit('create', project)"
+        >
+          保存
+        </ElButton>
+      </ElFormItem>
+    </template>
+    <template v-else>
+      <ElEmpty description="请填写项目相关服务器" />
+    </template>
   </ElForm>
 </template>

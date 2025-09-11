@@ -1,4 +1,4 @@
-import { createRouter, createWebHashHistory } from 'vue-router'
+import { createMemoryHistory, createRouter, createWebHashHistory } from 'vue-router'
 
 export default createRouter({
   /**
@@ -20,6 +20,14 @@ export default createRouter({
     {
       path: '/project',
       component: () => import('@/views/project/ProjectView.vue')
+    },
+    {
+      path: '/project-detail',
+      props: (to) => ({ 
+        ...to.params, 
+        ...to.query 
+      }),
+      component: () => import('@/views/project/ProjectDetail.vue')
     }
   ]
 })

@@ -45,7 +45,7 @@ export function useStorage<N extends string = any, T = any>(key: N, initialValue
   [K in `remove${Capitalize<N>}Loading`]: Ref<boolean>
 } {
   const { data, queryData, queryDataLoading } = useAsyncData(() => {
-    return storage.get(key).then(data => Array.isArray(data) ? data : initialValue)
+    return storage.get(key)
   }, { 
     initialData: initialValue, 
     immediate: true 

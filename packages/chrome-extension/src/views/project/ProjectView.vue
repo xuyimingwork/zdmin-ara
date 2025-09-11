@@ -1,39 +1,15 @@
 <script setup lang="ts">
-import { useStorage } from '@/hooks/storage';
+import { useProjects } from '@/store/projects';
 import ProjectCreate from '@/views/project/ProjectCreate.vue';
 import { Delete, Plus } from '@element-plus/icons-vue';
 import { CrabFlex } from '@zdmin/crab';
-import { isObjectLike } from 'es-toolkit/compat';
 
+const { projects, create, remove, clear } = useProjects()
+const router = useRouter()
 
-
-const {
-  projects,
-  updateProjects,
-  removeProjects
-} = useStorage('projects', [] as {
-  path: string
-  server: string
-}[])
-
-function update(projects: any[]) {
-  return updateProjects(Array.isArray(projects) ? projects.filter(item => isObjectLike(item)) : [])
-}
-
-function create(v: any) {
-  if (projects.value.find(item => item.path === v.path)) return update(projects.value.map(item => {
-    if (item.path === v.path) return { ...item, ...v, updateTime: (new Date()).toISOString() }
-    return item
-  }))
-  return update([{
-    ...v,
-    createTime: (new Date()).toISOString(),
-    updateTime: (new Date()).toISOString(),
-  }, ...projects.value])
-}
-
-function remove(v: any) {
-  return update(projects.value.filter(item => item !== v))
+function toDetail(project: any) {
+  console.log('to', project)
+  router.push({ path: '/project-detail', query: { path: project.path } })
 }
 </script>
 
@@ -69,7 +45,7 @@ function remove(v: any) {
             v-if="projects && projects.length"
             plain
             type="danger"
-            @click="removeProjects"
+            @click="clear"
           >
             清空项目
           </ElButton>
@@ -80,8 +56,9 @@ function remove(v: any) {
       <ElCard
         v-for="(project, i) in projects"
         :key="i"
-        class="h-80 w-80"
+        class="h-80 w-80 m-1"
         shadow="hover"
+        @click="toDetail(project)"
       >
         <template #header>
           <CrabFlex>
@@ -99,6 +76,17 @@ function remove(v: any) {
             </template>
           </CrabFlex>
         </template>
+        <div>文档</div>
+        <ul class="w-full">
+          <li
+            v-for="doc of project?.docs"
+            :key="doc.path"
+            class="text-nowrap truncate"
+            :title="doc.path"
+          >
+            <span v-if="doc.name">{{ doc.name }}：</span>{{ doc.path }}
+          </li>
+        </ul>
       </ElCard>
     </template>
   </CrabFlex>

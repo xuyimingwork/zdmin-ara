@@ -1,8 +1,10 @@
+const PANEL_TITLE = 'OpenAPI CodeGen'
+
 chrome.devtools.panels.create(
-  'OpenAPI CodeGen', 
+  PANEL_TITLE, 
   '/icons/128.png', 
   '/pages/devtools/openapi-codegen-panel.html', 
   panel => {
-    console.log('DevTools panel created:', panel);
+    console.log(`${PANEL_TITLE} panel created:`, panel);
   }
 )
