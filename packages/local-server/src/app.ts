@@ -13,18 +13,28 @@ import { isObjectLike, mapValues, values } from 'es-toolkit/compat';
 const BASE_PORT = 9125
 const BASE_URL = '/openapi-codegen'
 
+// output => 该服务所有内容输出位置
+// doc.output => 这份文档的所有内容输出位置（涵盖该文档生成文件）
+//   => 出现重合怎么办？
+//   => 与 transform 有冲突？doc 级需要有 transform 动作吗？
+//   => 
+// output 默认为 ${options.cwd}/openapi-codegen，可以另行指定
+// doc.output 默认为 ${options.cwd}/${doc.name}
+// doc 文件名 => ${doc.name}.openapi.d.ts and ${doc.name}.openapi.json
+// 
+type WithRequired<T, K extends keyof T> = T & { [P in K]-?: T[P] }
 type Doc = string | { 
   name?: string,
   path: string,
-  // default is ${options.output}/openapi-codegen/${doc.name}
+  // 默认为：${options.output}/${doc.name}
   output?: string
 }
 type NormalDoc = Required<Extract<Doc, { [key: string]: any }>>
-type Docs = string | Array<Doc> | { [name: string]: Doc }
+type Docs = string | Array<WithRequired<Extract<Doc, { [key: string]: any }>, 'name'>> | { [name: string]: Doc }
 type NormalDocs = Array<NormalDoc>
 interface Options {
   cwd: string
-  // 输出根文件夹
+  // 输出根文件夹 => default is ${options.output}/openapi-codegen
   output: string
   // OpenAPI 文档地址
   docs: Docs,
@@ -70,7 +80,8 @@ function createRest(options: Options) {
       message: 'OpenAPI CodeGen Local Server is running',
       data: {
         path: options.cwd,
-        
+        output: options.output,
+        docs: options.docs
       }
     });
   })
@@ -91,20 +102,23 @@ function createConnect(options: Options) {
  * 外部项目需要配置些什么东西？
  * 需要配置 root 吗？如果都不配置可以用吗？
  * 0 config
- * 
+ * cwd 表示当前项目位置，主要用于区分不同项目
  */
 function main({ 
-  output = process.cwd(),
+  // 项目地址
+  cwd = process.cwd(),
+  // 文件输出地址
+  output = `${cwd}/openapi-codegen`,
   docs = undefined,
   transform = undefined
-}: Partial<Omit<Options, 'cwd'>> = {}) {
+}: Partial<Options> = {}) {
   return getPort({ port: portNumbers(BASE_PORT, BASE_PORT + 99) })
     .then(port => {
       return new Promise((_resolve) => {
         createServer(createConnect({ 
-          cwd: process.cwd(),
+          cwd,
           output, 
-          docs: normalizeDocs(docs),
+          docs: normalizeDocs(docs, output),
           transform,
         })).listen({ port }, () => _resolve({ port }))
       })
@@ -114,26 +128,20 @@ function main({
     })
 }
 
-function normalizeDocs(docs?: Docs): NormalDocs {
+function normalizeDocs(docs?: Docs, output?: string): NormalDocs {
   if (!docs) return []
-  if (typeof docs === 'string') docs = [docs]
+  // 单个状态时一定为 name 一定为 doc-0
+  if (typeof docs === 'string') docs = [{ name: '', path: docs }]
+  // object 状态时是一定有 name 的
   if (!Array.isArray(docs) && isObjectLike(docs)) docs = values(mapValues(docs, (item, name) => {
     if (typeof item === 'string') return { name, path: item }
     return { name, ...item }
   }))
-  return (docs as Doc[]).map((item, i) => {
-    const name = `doc-${i}`
-    const output = name => `openapi-codegen/${name}`
-    if (typeof item === 'string') {
-      return { 
-        path: item, 
-        name, 
-        output: output(name)
-      }
-    }
+  // 数组状态顺序来自事先指定
+  return (docs as Extract<Docs, Array<any>>).map((item) => {
+    const _output = name => resolve(output || '', `${name}`) 
     return {
-      name,
-      output: output(item.name || name),
+      output: _output(item.name),
       ...item,
     }
   })
