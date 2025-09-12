@@ -87,6 +87,7 @@
     if (!connected.value) return ElMessage.warning('服务未连接')
     if (!isOpenAPIDoc(content)) return ElMessage.warning('非 OpenAPI 文档')
     return request({
+      method: 'post',
       url: `${project.value?.server}/openapi-codegen/openapi`,
       data: {
         data: content,
@@ -94,8 +95,7 @@
       } 
     })
       .then((data: any) => {
-        if (!data.ok) return ElMessage.error(data.message || '上传失败')
-        ElMessage.success(`上传成功：共 ${data.data.files?.length} 个文件、${data.data.count} 个 API`)
+        ElMessage.success(`上传成功：共 ${data.files?.length} 个文件、${data.count} 个 API`)
       })
   }
 </script>
