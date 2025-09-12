@@ -1,17 +1,19 @@
 <script setup lang="ts">
 import { useProjects } from '@/store/projects';
 import ProjectCreate from '@/views/project/ProjectCreate.vue';
+import ProjectDetail from '@/views/project/ProjectDetail.vue';
+import ProjectListItem from '@/views/project/ProjectListItem.vue';
 import { Delete, Plus } from '@element-plus/icons-vue';
 import { CrabFlex } from '@zdmin/crab';
 
-const { projects, create, remove, clear } = useProjects()
+const { projects, create, clear } = useProjects()
+const active = ref<typeof projects.value[0]>()
 </script>
 
 <template>
   <CrabFlex
     direction="column"
     class="project-list"
-    :main="{ class: 'flex flex-wrap' }"
   >
     <template #start>
       <CrabFlex class="project-list__toolbar px-1">
@@ -44,6 +46,7 @@ const { projects, create, remove, clear } = useProjects()
             title="清空项目"
             size="large"
             text
+            disabled
             type="danger"
             @click="clear"
           />
@@ -51,41 +54,35 @@ const { projects, create, remove, clear } = useProjects()
       </CrabFlex>
     </template>
     <template #main>
-      <ElCard
-        v-for="(project, i) in projects"
-        :key="i"
-        class="h-80 w-80 m-1"
-        shadow="hover"
-        @click="$router.push({ path: '/project-detail', query: { path: project.path } })"
+      <BaseDrawer
+        size="80%"
+        :with-header="false"
+        body-class="p-0"
+        style="--el-drawer-padding-primary: 0"
       >
-        <template #header>
-          <CrabFlex>
-            <template #default>
-              {{ project.path }}
-            </template>
-            <template #end>
-              <ElButton
-                type="danger"
-                plain
-                round
-                :icon="Delete"
-                @click="remove(project)"
-              />
-            </template>
-          </CrabFlex>
+        <template #trigger="{ open }">
+          <ProjectListItem
+            v-for="(project, i) in projects"
+            :key="i"
+            :path="project.path"
+            :class="{ 
+              active: active === project,
+              'bg-(--el-color-primary-light-9)!': active === project 
+            }"
+            @click="() => {
+              active = project
+              open()
+            }"
+          />
         </template>
-        <div>文档</div>
-        <ul class="w-full">
-          <li
-            v-for="doc of project?.docs"
-            :key="doc.path"
-            class="text-nowrap truncate"
-            :title="doc.path"
-          >
-            <span v-if="doc.name">{{ doc.name }}：</span>{{ doc.path }}
-          </li>
-        </ul>
-      </ElCard>
+        <template #default="{ close }">
+          <ProjectDetail
+            v-if="active"
+            :path="active?.path"
+            @close="close"
+          />
+        </template>
+      </BaseDrawer>
     </template>
   </CrabFlex>
 </template>

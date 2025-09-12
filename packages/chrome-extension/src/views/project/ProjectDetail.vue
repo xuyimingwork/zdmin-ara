@@ -1,12 +1,17 @@
 <script setup lang="ts">
   import { useProjects } from '@/store/projects';
   import { request } from '@/utils/request';
+  import { Close } from '@element-plus/icons-vue';
   import { useIntervalFn } from '@vueuse/core';
-import { CrabFlex } from '@zdmin/crab';
+  import { CrabFlex } from '@zdmin/crab';
   import { useAsync, useAsyncData } from 'vue-asyncx';
 
   const props = defineProps<{
     path: string
+  }>()
+
+  defineEmits<{
+    close: []
   }>()
 
   const { query } = useProjects()
@@ -96,7 +101,22 @@ import { CrabFlex } from '@zdmin/crab';
 </script>
 
 <template>
-  <div>
+  <CrabFlex
+    class="project-detail"
+    direction="column"
+  >
+    <template #start>
+      <div class="project-detail__toolbar">
+        <ElButton
+          :icon="Close"
+          circle
+          title="关闭项目"
+          size="large"
+          text
+          @click="$emit('close')"
+        />
+      </div>
+    </template>
     <div>项目：{{ project?.path }}</div>
     <div>
       服务：{{ project?.server }}<ElTag
@@ -149,10 +169,16 @@ import { CrabFlex } from '@zdmin/crab';
         {{ docs.content }}
       </ElCollapseItem>
     </ElCollapse>
-  </div>
+  </CrabFlex>
 </template>
 
 <style lang="scss" scoped>
+  .project-detail {
+    &__toolbar {
+      border-bottom: 1px solid var(--color-divider);
+    }
+  }
+    
   .el-collapse-item {
     :deep(.el-collapse-item__title) {
       overflow: hidden;
