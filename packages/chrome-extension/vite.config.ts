@@ -18,6 +18,13 @@ export default defineConfig({
       }
     }
   },
+  css: {
+    preprocessorOptions: {
+      scss: {
+        additionalData: `@use "@/styles/scss/additional/global.scss" as *;`,
+      },
+    },
+  },
   plugins: [
     vue(), 
     vueJsx(),
@@ -25,12 +32,12 @@ export default defineConfig({
     AutoImport({
       imports: ['vue', 'vue-router'],
       resolvers: [
-        ElementPlusResolver()
+        ElementPlusResolver({ importStyle: 'sass' })
       ],
     }),
     Components({
       resolvers: [
-        ElementPlusResolver(),
+        ElementPlusResolver({ importStyle: 'sass' }),
         (name) =>  name === 'Icon' ? { name: 'Icon', from: '@iconify/vue' } : undefined,
       ],
     })

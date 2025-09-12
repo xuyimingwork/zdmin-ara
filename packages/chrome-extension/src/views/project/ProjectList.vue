@@ -10,21 +10,23 @@ const { projects, create, remove, clear } = useProjects()
 <template>
   <CrabFlex
     direction="column"
-    class="p-3 gap-2"
+    class="project-list"
     :main="{ class: 'flex flex-wrap' }"
   >
     <template #start>
-      <CrabFlex>
-        <template #end>
+      <CrabFlex class="project-list__toolbar px-1">
+        <template #start>
           <BaseDrawer size="80%">
             <template #trigger="{ open }">
               <ElButton
                 :icon="Plus"
+                circle
+                title="添加项目"
+                size="large"
+                text
                 type="primary"
                 @click="open"
-              >
-                添加项目
-              </ElButton>
+              />
             </template>
             <template #default="{ close }">
               <ProjectCreate
@@ -37,12 +39,14 @@ const { projects, create, remove, clear } = useProjects()
           </BaseDrawer>
           <ElButton
             v-if="projects && projects.length"
-            plain
+            :icon="Delete"
+            circle
+            title="清空项目"
+            size="large"
+            text
             type="danger"
             @click="clear"
-          >
-            清空项目
-          </ElButton>
+          />
         </template>
       </CrabFlex>
     </template>
@@ -87,5 +91,9 @@ const { projects, create, remove, clear } = useProjects()
 </template>
 
 <style lang="scss" scoped>
-
+  .project-list {
+    &__toolbar {
+      border-bottom: 1px solid var(--color-divider);
+    }
+  }
 </style>

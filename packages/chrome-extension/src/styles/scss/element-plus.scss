@@ -1,0 +1,11 @@
+:root {
+  .el-button + .el-button {
+    margin-left: 4px;
+  }
+  .el-button.is-text + .el-button {
+    margin-left: 2px;
+  }
+  .el-button + .el-button.is-text {
+    margin-left: 2px;
+  }
+}

@@ -19,7 +19,7 @@ export default createRouter({
     },
     {
       path: '/project',
-      component: () => import('@/views/project/ProjectView.vue')
+      component: () => import('@/views/project/ProjectList.vue')
     },
     {
       path: '/project-detail',
