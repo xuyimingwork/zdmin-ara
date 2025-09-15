@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { useProjects } from '@/store/projects';
   import { request } from '@/utils/request';
-  import { Close } from '@element-plus/icons-vue';
+  import { Close, Delete } from '@element-plus/icons-vue';
   import { useIntervalFn } from '@vueuse/core';
   import { CrabFlex } from '@zdmin/crab';
   import { useAsync, useAsyncData } from 'vue-asyncx';
@@ -12,6 +12,7 @@
 
   defineEmits<{
     close: []
+    remove: []
   }>()
 
   const { query } = useProjects()
@@ -107,14 +108,29 @@
   >
     <template #start>
       <div class="project-detail__toolbar">
-        <ElButton
-          :icon="Close"
-          circle
-          title="关闭项目"
-          size="large"
-          text
-          @click="$emit('close')"
-        />
+        <CrabFlex>
+          <template #start>
+            <ElButton
+              :icon="Close"
+              circle
+              title="关闭"
+              size="large"
+              text
+              @click="$emit('close')"
+            />
+          </template>
+          <template #end>
+            <ElButton
+              :icon="Delete"
+              circle
+              title="删除项目"
+              size="large"
+              type="danger"
+              text
+              @click="$emit('remove')"
+            />
+          </template>
+        </CrabFlex>
       </div>
     </template>
     <div>项目：{{ project?.path }}</div>

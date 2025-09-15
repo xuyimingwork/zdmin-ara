@@ -6,7 +6,7 @@ import ProjectListItem from '@/views/project/ProjectListItem.vue';
 import { Delete, Plus } from '@element-plus/icons-vue';
 import { CrabFlex } from '@zdmin/crab';
 
-const { projects, create, clear } = useProjects()
+const { projects, create, clear, remove } = useProjects()
 const active = ref<typeof projects.value[0]>()
 </script>
 
@@ -39,11 +39,13 @@ const active = ref<typeof projects.value[0]>()
               />
             </template>
           </BaseDrawer>
+        </template>
+        <template #end>
           <ElButton
             v-if="projects && projects.length"
             :icon="Delete"
             circle
-            title="清空项目"
+            title="删除全部项目"
             size="large"
             text
             disabled
@@ -80,6 +82,11 @@ const active = ref<typeof projects.value[0]>()
             v-if="active"
             :path="active?.path"
             @close="close"
+            @remove="() => {
+              remove(active)
+              active = undefined
+              close()
+            }"
           />
         </template>
       </BaseDrawer>

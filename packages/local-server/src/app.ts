@@ -158,6 +158,10 @@ function normalizeDocs(docs?: Docs, output?: string): NormalDocs {
 }
 
 
+/**
+ * 下列内容为项目自定义配置部分，现在为临时模拟
+ * TODO: 模拟入口独立构建
+ */
 main({ 
   // 输出文件不会在该目录之外
   output: resolve(process.cwd(), 'temp'),
@@ -167,8 +171,6 @@ main({
   }
 })
 
-// options.doc.transform > options.transform
-// with default transform
 
 
 
