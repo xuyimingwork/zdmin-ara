@@ -1,13 +1,15 @@
 <script setup lang="ts">
 import { useProjects } from '@/store/projects';
+import { useLocalServers } from '@/views/project/hooks/servers';
 import ProjectCreate from '@/views/project/ProjectCreate.vue';
 import ProjectDetail from '@/views/project/ProjectDetail.vue';
-import ProjectListItem from '@/views/project/ProjectListItem.vue';
+import ProjectListPure from '@/views/project/ProjectListPure.vue';
 import { Delete, Plus } from '@element-plus/icons-vue';
 import { CrabFlex } from '@zdmin/crab';
 
 const { projects, create, clear, remove } = useProjects()
 const active = ref<typeof projects.value[0]>()
+const { free: freeProjects } = useLocalServers()
 </script>
 
 <template>
@@ -63,15 +65,24 @@ const active = ref<typeof projects.value[0]>()
         style="--el-drawer-padding-primary: 0"
       >
         <template #trigger="{ open }">
-          <ProjectListItem
-            v-for="(project, i) in projects"
-            :key="i"
-            :path="project.path"
-            :class="{ 
-              active: active === project,
-              'bg-(--el-color-primary-light-9)!': active === project 
+          <ProjectListPure 
+            key="used"
+            :active="active"
+            :projects="projects"
+            @click-item="project => {
+              active = project
+              open()
             }"
-            @click="() => {
+          />
+          <ElDivider
+            v-if="projects && projects.length && freeProjects && freeProjects.length"
+          />
+          <ProjectListPure 
+            key="free"
+            :active="active"
+            :projects="freeProjects" 
+            @click-item="project => {
+              create(project)
               active = project
               open()
             }"
@@ -80,12 +91,12 @@ const active = ref<typeof projects.value[0]>()
         <template #default="{ close }">
           <ProjectDetail
             v-if="active"
-            :path="active?.path"
+            :path="active.path"
             @close="close"
             @remove="() => {
               remove(active)
-              active = undefined
               close()
+              active = undefined
             }"
           />
         </template>

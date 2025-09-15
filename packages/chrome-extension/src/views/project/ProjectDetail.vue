@@ -1,10 +1,10 @@
 <script setup lang="ts">
-  import { useProjects } from '@/store/projects';
+  import { useServerConnected } from '@/views/project/hooks/servers';
   import { request } from '@/utils/request';
   import { Close, Delete } from '@element-plus/icons-vue';
-  import { useIntervalFn } from '@vueuse/core';
   import { CrabFlex } from '@zdmin/crab';
-  import { useAsync, useAsyncData } from 'vue-asyncx';
+  import { useAsync } from 'vue-asyncx';
+  import { useProject } from '@/views/project/hooks/project';
 
   const props = defineProps<{
     path: string
@@ -15,25 +15,9 @@
     remove: []
   }>()
 
-  const { query } = useProjects()
-  const project = computed(() => query(props.path))
+  const { project } = useProject(() => props.path)
 
-  const { connected, queryConnected } = useAsyncData('connected', () => {
-    const server = project.value?.server
-    const path = project.value?.path
-    if (!server) return
-    return request({ 
-      url: `${server}/openapi-codegen/project`, 
-      method: 'get',
-      ara: { silent: true }
-    })
-      .then((data: any) => data.path === path)
-      .catch(() => false)
-  }, { 
-    immediate: true, 
-    watch: () => project.value, initialData: false 
-  })
-  useIntervalFn(queryConnected, 2 * 1000)
+  const connected = useServerConnected(() => project.value?.server)
 
   const active = ref()
   const requests = ref<chrome.devtools.network.Request[]>([]);
@@ -74,7 +58,6 @@
   const isOpenAPIDoc = (data: any) => data && (data.openapi || data.swagger)
 
   const openApiDocs = computed(() => {
-    console.log('requests', requests.value)
     return requests.value.filter(request => {
       const data = content.value.get(request)
       return data && isOpenAPIDoc(data.content)

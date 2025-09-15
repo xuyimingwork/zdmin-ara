@@ -3,10 +3,12 @@
   
   const inited = ref(false)
   const visible = ref(false)
+
   function open() {
     if (!inited.value) inited.value = true
     visible.value = true
   }
+
   function close() {
     visible.value = false
   }

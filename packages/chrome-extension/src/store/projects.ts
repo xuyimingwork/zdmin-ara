@@ -1,6 +1,9 @@
 import { useStorage } from "@/hooks/storage";
 import { isObjectLike } from "es-toolkit/compat";
 
+/**
+ * 浏览器插件本地缓存的项目信息
+ */
 export function useProjects() {
   const {
     projects: _projects,
@@ -33,15 +36,20 @@ export function useProjects() {
     }, ...projects.value])
   }
 
+  function query(path: string) {
+    return projects.value.find(item => item.path === path)
+  }
+
   function remove(v: any) {
-    return update(projects.value.filter(item => item !== v))
+    if (!v || !query(v.path)) return
+    return update(projects.value.filter(item => item.path !== v.path))
   }
 
   return {
     create, 
     remove,
     clear: removeProjects,
-    query: (path: string) => projects.value.find(item => item.path === path),
+    query,
     projects
   }
 }

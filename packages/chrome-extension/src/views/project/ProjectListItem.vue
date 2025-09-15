@@ -1,8 +1,6 @@
 <script setup lang="ts">
-  import { useProjects } from '@/store/projects';
-  import { request } from '@/utils/request';
-  import { useIntervalFn } from '@vueuse/core';
-  import { useAsyncData } from 'vue-asyncx';
+  import { useProject } from '@/views/project/hooks/project';
+  import { useServerConnected } from '@/views/project/hooks/servers';
 
   const props = defineProps<{
     path: string
@@ -10,26 +8,9 @@
 
   const parent = computed(() => props.path.substring(0, props.path.lastIndexOf('/')))
   const name = computed(() => props.path.substring(props.path.lastIndexOf('/') + 1))
+  const { project } = useProject(() => props.path)
 
-  const { query } = useProjects()
-  const project = computed(() => query(props.path))
-
-  const { connected, queryConnected } = useAsyncData('connected', () => {
-    const server = project.value?.server
-    const path = project.value?.path
-    if (!server) return
-    return request({ 
-      url: `${server}/openapi-codegen/project`, 
-      method: 'get',
-      ara: { silent: true }
-    })
-      .then((data: any) => data.path === path)
-      .catch(() => false)
-  }, { 
-    immediate: true, 
-    watch: () => project.value, initialData: false 
-  })
-  useIntervalFn(queryConnected, 2 * 1000)
+  const connected = useServerConnected(() => project.value?.server)
 </script>
 
 <template>
