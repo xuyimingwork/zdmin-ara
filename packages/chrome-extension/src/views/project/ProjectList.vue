@@ -4,12 +4,12 @@ import { useLocalServers } from '@/views/project/hooks/servers';
 import ProjectCreate from '@/views/project/ProjectCreate.vue';
 import ProjectDetail from '@/views/project/ProjectDetail.vue';
 import ProjectListPure from '@/views/project/ProjectListPure.vue';
-import { Delete, Plus } from '@element-plus/icons-vue';
+import { Delete, Plus, Refresh } from '@element-plus/icons-vue';
 import { CrabFlex } from '@zdmin/crab';
 
 const { projects, create, clear, remove } = useProjects()
 const active = ref<typeof projects.value[0]>()
-const { free: freeProjects } = useLocalServers()
+const { free: freeProjects, refresh, refreshLoading } = useLocalServers()
 </script>
 
 <template>
@@ -41,6 +41,15 @@ const { free: freeProjects } = useLocalServers()
               />
             </template>
           </BaseDrawer>
+          <ElButton
+            :icon="Refresh"
+            circle
+            title="刷新"
+            size="large"
+            :loading="refreshLoading"
+            text
+            @click="refresh"
+          />
         </template>
         <template #end>
           <ElButton
@@ -86,6 +95,10 @@ const { free: freeProjects } = useLocalServers()
               active = project
               open()
             }"
+          />
+          <ElEmpty
+            v-if="(!projects || !projects.length) && (!freeProjects || !freeProjects.length)"
+            description="未发现项目"
           />
         </template>
         <template #default="{ close }">

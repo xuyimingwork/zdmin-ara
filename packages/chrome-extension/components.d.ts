@@ -11,7 +11,6 @@ declare module 'vue' {
     BaseDialog: typeof import('./src/components/BaseDialog.vue')['default']
     BaseDrawer: typeof import('./src/components/BaseDrawer.vue')['default']
     ElButton: typeof import('element-plus/es')['ElButton']
-    ElCard: typeof import('element-plus/es')['ElCard']
     ElCollapse: typeof import('element-plus/es')['ElCollapse']
     ElCollapseItem: typeof import('element-plus/es')['ElCollapseItem']
     ElConfigProvider: typeof import('element-plus/es')['ElConfigProvider']

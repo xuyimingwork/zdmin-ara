@@ -13,6 +13,7 @@ const update = (project: any) => {
 const PORT = 9125
 const TIMEOUT = 1 * 1000
 
+// map server <=> data
 const data = new Map<string, { 
   promise: Promise<any>
   timestamp: number 
@@ -78,19 +79,35 @@ function query(range = [PORT, PORT + 99]): Promise<any[]> {
 }
 
 export function useLocalServers() {
+  // 两个操作：1. 发现新的服务 2. 更新已发现服务的状态
+
   const { projects } = useProjects()
   const {
-    projects: localServerProjects
+    projects: localServerProjects,
+    queryProjects,
+    queryProjectsLoading
   } = useAsyncData('projects', () => query(), { initialData: [], immediate: true })
   const free = computed(() => differenceWith(localServerProjects.value, projects.value, (a, b) => a.path === b.path))
   const used = computed(() => intersectionWith(localServerProjects.value, projects.value, (a, b) => a.path === b.path))
+  const { pause, resume, isActive } = useIntervalFn(queryProjects, 5 * 1000, { 
+    immediate: false, 
+    immediateCallback: true 
+  })
+  watch(localServerProjects, (projects) => {
+    if (Array.isArray(projects) && projects.length) return isActive.value && pause()
+    if (!isActive.value) resume()
+  })
+
   return {
     // 游离项目
     free, 
     // 记录项目
     used,
-    // 
-    servers: computed(() => uniq(localServerProjects.value.map(item => item.server)))
+    // 可用服务
+    servers: computed(() => uniq(localServerProjects.value.map(item => item.server))),
+    // 刷新列表
+    refresh: queryProjects,
+    refreshLoading: queryProjectsLoading
   }
 }
 
