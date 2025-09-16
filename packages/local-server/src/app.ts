@@ -114,7 +114,7 @@ function createConnect(options: Options) {
  * 0 config
  * cwd 表示当前项目位置，主要用于区分不同项目
  */
-function main({ 
+export function main({ 
   // 项目地址
   cwd = process.cwd(),
   // 文件输出地址
@@ -156,23 +156,3 @@ function normalizeDocs(docs?: Docs, output?: string): NormalDocs {
     }
   })
 }
-
-
-/**
- * 下列内容为项目自定义配置部分，现在为临时模拟
- * TODO: 模拟入口独立构建
- */
-main({ 
-  // 输出文件不会在该目录之外
-  output: resolve(process.cwd(), 'temp'),
-  docs: {
-    v2: 'https://192.168.8.186/gateway/gpx-document/doc.html#/home',
-    v3: 'http://192.168.8.186:8080/gpx-ruoyi-flex/swagger-ui/index.html?urls.primaryName=6.%E8%84%9A%E6%9C%AC%E7%94%9F%E6%88%90%E6%A8%A1%E5%9D%97#/'
-  }
-})
-
-
-
-
-
-

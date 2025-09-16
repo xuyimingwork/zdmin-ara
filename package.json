@@ -7,7 +7,7 @@
   "scripts": {
     "dev:chrome-extension": "pnpm --filter @zdmin/ara-chrome-extension dev",
     "dev:local-server": "pnpm --filter @zdmin/ara-local-server dev",
-    "dev:local-server:start": "nodemon ./packages/local-server/dist/app.js",
+    "dev:local-server:start": "nodemon ./packages/local-server/dist/dev.js",
     "dev": "run-p dev:**"
   },
   "main": "index.js",
