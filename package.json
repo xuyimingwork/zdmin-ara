@@ -8,6 +8,7 @@
     "dev:chrome-extension": "pnpm --filter @zdmin/ara-chrome-extension dev",
     "dev:local-server": "pnpm --filter @zdmin/ara-local-server dev",
     "dev:local-server:start": "nodemon ./packages/local-server/dist-dev/run.js",
+    "dev:unplugin": "pnpm --filter @zdmin/ara-unplugin dev",
     "dev": "run-p dev:**"
   },
   "license": "MIT",
