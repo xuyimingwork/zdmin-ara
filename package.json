@@ -7,10 +7,9 @@
   "scripts": {
     "dev:chrome-extension": "pnpm --filter @zdmin/ara-chrome-extension dev",
     "dev:local-server": "pnpm --filter @zdmin/ara-local-server dev",
-    "dev:local-server:start": "nodemon ./packages/local-server/dist/dev.js",
+    "dev:local-server:start": "nodemon ./packages/local-server/dist-dev/run.js",
     "dev": "run-p dev:**"
   },
-  "main": "index.js",
   "license": "MIT",
   "dependencies": {
     "es-toolkit": "^1.39.8"

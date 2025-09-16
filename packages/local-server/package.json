@@ -14,7 +14,9 @@
     "dist"
   ],
   "scripts": {
-    "dev": "vite build -c ./vite.config.dev.ts --watch",
+    "dev:run": "vite build -c ./vite.config.dev.ts --watch",
+    "dev:lib": "vite build --watch",
+    "dev": "run-p dev:*",
     "build": "vite build"
   },
   "dependencies": {

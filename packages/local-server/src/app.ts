@@ -3,7 +3,7 @@ import { createServer } from 'http';
 import cors from 'cors'
 import bodyParser from 'body-parser'
 import ConnectRest from 'connect-rest';
-import { rmdir, writeFile } from 'fs/promises';
+import { writeFile } from 'fs/promises';
 import { transform } from '@/transform/transform';
 import { mkdirp } from 'mkdirp';
 import { resolve } from 'path';

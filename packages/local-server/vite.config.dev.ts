@@ -4,8 +4,9 @@ import { fileURLToPath } from "node:url";
 
 export default mergeConfig(viteConfig, { 
   build: {
+    outDir: 'dist-dev',
     lib: {
-      entry: fileURLToPath(new URL('./src/dev.ts', import.meta.url)),
+      entry: fileURLToPath(new URL('./src/run.ts', import.meta.url)),
     },
   },
 })
