@@ -47,6 +47,7 @@
   const { reload, reloadArgumentFirst, reloadLoading } = useAsync('reload', function reload(doc?: any) {
     chrome.tabs.query({ active: true, lastFocusedWindow: true, currentWindow: true })
       .then(([tab]) => {
+        console.log('tabs query', tab)
         active.value = doc
         requests.value = [];
         const { path: url } = doc
@@ -168,6 +169,11 @@
         {{ docs.content }}
       </ElCollapseItem>
     </ElCollapse>
+    <template #end>
+      <CrabFlex class="&__statusbar">
+        <span v-if="project?.docs?.length">{{ project?.docs?.length }}份文档</span>
+      </CrabFlex>
+    </template>
   </CrabFlex>
 </template>
 
@@ -175,6 +181,9 @@
   .project-detail {
     &__toolbar {
       border-bottom: 1px solid var(--color-divider);
+    }
+    &__statusbar {
+      border-top: 1px solid var(--color-divider);
     }
   }
     
