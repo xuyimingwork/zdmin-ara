@@ -6,6 +6,7 @@
     statusTitle?: string
     statusPulse?: boolean
     noHover?: boolean
+    tip?: string
   }>()
 </script>
 
@@ -16,6 +17,7 @@
       'cursor-pointer': !!$attrs.onClick,
       'base-item--hover': !noHover
     }"
+    :title="tip"
   >
     <span
       v-if="status"

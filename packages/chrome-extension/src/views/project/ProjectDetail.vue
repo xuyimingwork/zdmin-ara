@@ -6,6 +6,10 @@
   import { useAsync } from 'vue-asyncx';
   import { useProject } from '@/views/project/hooks/project';
   import ProjectListItem from '@/views/project/ProjectListItem.vue';
+  import BaseItem from '@/views/project/components/BaseItem.vue';
+  import { useNetwork } from '@/store/network';
+  import { uniqWith } from 'es-toolkit';
+  import { reverse } from 'es-toolkit/compat';
 
   const props = defineProps<{
     path: string
@@ -17,72 +21,40 @@
   }>()
 
   const { project } = useProject(() => props.path)
-
   const connected = useServerConnected(() => project.value?.server)
 
-  const active = ref()
-  const requests = ref<chrome.devtools.network.Request[]>([]);
+  const { openapis: _openapis } = useNetwork()
+  const openapis = computed(() => reverse(uniqWith(reverse(_openapis.value), (a, b) => a.request.request.url === b.request.request.url)))
 
-  function add(request: chrome.devtools.network.Request) {
-    requests.value.push(request);
-  }
-
-  chrome.devtools.network.onRequestFinished.addListener(add);
-  onBeforeUnmount(() => chrome.devtools.network.onRequestFinished.removeListener(add))
-
-  const content = ref(new WeakMap<chrome.devtools.network.Request, { content: any, encoding: string } | undefined>())
-  watch(() => requests.value.length, () => {
-    requests.value.forEach(request => {
-      if (request.response.content.mimeType !== 'application/json') return
-      if (content.value.has(request)) return
-      content.value.set(request, undefined);
-      request.getContent((body, encoding) => {
-        content.value.set(request, { 
-          content: body ? JSON.parse(body) : undefined, 
-          encoding: encoding,
-        });  
-      })
-    })
-  })
-
-  const { reload, reloadArgumentFirst, reloadLoading } = useAsync('reload', function reload(doc?: any) {
+  const { reload } = useAsync('reload', function reload(doc?: any) {
     chrome.tabs.query({ active: true, lastFocusedWindow: true, currentWindow: true })
       .then(([tab]) => {
-        console.log('tabs query', tab)
-        active.value = doc
-        requests.value = [];
         const { path: url } = doc
         if ((tab?.url === url)) return chrome.tabs.reload().then(() => tab)
         return chrome.tabs.update(undefined, { url });
       })
   })
 
-  const isOpenAPIDoc = (data: any) => data && (data.openapi || data.swagger)
-
-  const openApiDocs = computed(() => {
-    return requests.value.filter(request => {
-      const data = content.value.get(request)
-      return data && isOpenAPIDoc(data.content)
-    }).map(request => ({ 
-      ...request, 
-      content: content.value.get(request)?.content 
-    }))
-  })
-
-  function upload(content: any) {
+  function upload(content: any, name?: string) {
     if (!connected.value) return ElMessage.warning('服务未连接')
-    if (!isOpenAPIDoc(content)) return ElMessage.warning('非 OpenAPI 文档')
     return request({
       method: 'post',
       url: `${project.value?.server}/openapi-codegen/openapi`,
       data: {
         data: content,
-        name: active.value.name
+        name: name || ''
       } 
     })
       .then((data: any) => {
         ElMessage.success(`上传成功：共 ${data.files?.length} 个文件、${data.count} 个 API`)
       })
+  }
+
+  function getDocOf(url?: string) {
+    if (!url || !project.value) return
+    const docs = project.value.docs
+    if (!Array.isArray(docs) || !docs) return
+    return docs.find(item => typeof item.path === 'string' && item.path.startsWith(url))
   }
 </script>
 
@@ -126,30 +98,17 @@
         </template>
       </CrabFlex>
     </template>
-    <div>输出：{{ project?.output }}</div>
-    <div>文档</div>
-    <ul class="w-full">
-      <li
-        v-for="doc of project?.docs"
-        :key="doc.path"
-        class="text-nowrap truncate"
-        :title="doc.path"
-      >
-        <ElButton
-          circle
-          :loading="reloadLoading && reloadArgumentFirst === doc.path"
-          @click="reload(doc)"
-        >
-          <template #icon>
-            <Icon icon="mdi:refresh" />
-          </template>
-        </ElButton>
-        <span v-if="doc.name">{{ doc.name }}：</span>{{ doc.path }}
-      </li>
-    </ul>
+    <BaseItem
+      v-for="doc of project?.docs"
+      :key="doc.name"
+      :title="doc.name"
+      :subtitle="doc.path"
+      tip="点击访问"
+      @click="reload(doc)"
+    />
     <ElCollapse>
       <ElCollapseItem
-        v-for="(docs, i) in openApiDocs"
+        v-for="(record, i) in openapis"
         :key="i"
       >
         <template #title>
@@ -157,17 +116,25 @@
             <template #start>
               <ElButton
                 circle
-                @click.stop="upload(docs.content)"
+                @click.stop="upload(record.content, getDocOf(record.url)?.name)"
               >
                 <template #icon>
                   <Icon icon="mdi:upload" />
                 </template>
               </ElButton>
+              <ElTag
+                v-if="getDocOf(record.url)"
+                type="success"
+                class="mx-2"
+              >
+                {{ getDocOf(record.url)?.name }}
+              </ElTag>
             </template>
-            {{ docs.request.url }}
+            {{ record.url }}
           </CrabFlex>
         </template>
-        {{ docs.content }}
+        <div>{{ record.request.request.url }}</div>
+        {{ record.content }}
       </ElCollapseItem>
     </ElCollapse>
     <template
