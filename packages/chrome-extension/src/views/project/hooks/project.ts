@@ -8,7 +8,9 @@ export function useProject(path: MaybeRefOrGetter<string | undefined>) {
   const { free: freeProjects } = useLocalServers()
   const freeProject = computed(() => freeProjects.value.find(item => item.path === toValue(path)))
 
-  const project = computed(() => usedProject.value || freeProject.value)
+  const project = computed(() => {
+    return usedProject.value || freeProject.value
+  })
 
   return { 
     project, 

@@ -5,6 +5,7 @@
   import { CrabFlex } from '@zdmin/crab';
   import { useAsync } from 'vue-asyncx';
   import { useProject } from '@/views/project/hooks/project';
+  import ProjectListItem from '@/views/project/ProjectListItem.vue';
 
   const props = defineProps<{
     path: string
@@ -91,40 +92,40 @@
     direction="column"
   >
     <template #start>
-      <div class="project-detail__toolbar">
-        <CrabFlex>
-          <template #start>
-            <ElButton
-              :icon="Close"
-              circle
-              title="关闭"
-              size="large"
-              text
-              @click="$emit('close')"
-            />
-          </template>
-          <template #end>
-            <ElButton
-              :icon="Delete"
-              circle
-              title="删除项目"
-              size="large"
-              type="danger"
-              text
-              @click="$emit('remove')"
-            />
-          </template>
-        </CrabFlex>
-      </div>
+      <CrabFlex class="project-detail__toolbar items-center">
+        <template #start>
+          <ElButton
+            :icon="Close"
+            circle
+            title="关闭"
+            size="large"
+            text
+            @click="$emit('close')"
+          />
+          <ElDivider
+            direction="vertical"
+            class="ml-0!"
+          />
+        </template>
+        <template #default>
+          <ProjectListItem
+            :path="path"
+            no-hover
+          />
+        </template>
+        <template #end>
+          <ElButton
+            :icon="Delete"
+            circle
+            title="删除项目"
+            size="large"
+            type="danger"
+            text
+            @click="$emit('remove')"
+          />
+        </template>
+      </CrabFlex>
     </template>
-    <div>项目：{{ project?.path }}</div>
-    <div>
-      服务：{{ project?.server }}<ElTag
-        :type="connected ? 'success' : 'info'"
-      >
-        {{ connected ? '已连接' : '未连接' }} 
-      </ElTag>
-    </div>
     <div>输出：{{ project?.output }}</div>
     <div>文档</div>
     <ul class="w-full">
@@ -169,8 +170,11 @@
         {{ docs.content }}
       </ElCollapseItem>
     </ElCollapse>
-    <template #end>
-      <CrabFlex class="&__statusbar">
+    <template
+      v-if="project?.docs"
+      #end
+    >
+      <CrabFlex class="project-detail__statusbar items-center">
         <span v-if="project?.docs?.length">{{ project?.docs?.length }}份文档</span>
       </CrabFlex>
     </template>
@@ -181,9 +185,11 @@
   .project-detail {
     &__toolbar {
       border-bottom: 1px solid var(--color-divider);
+      min-height: 26px;
     }
     &__statusbar {
       border-top: 1px solid var(--color-divider);
+      min-height: 26px;
     }
   }
     

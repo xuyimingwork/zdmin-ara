@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import BaseItem from '@/views/project/components/BaseItem.vue';
   import { useProject } from '@/views/project/hooks/project';
   import { useServerConnected } from '@/views/project/hooks/servers';
 
@@ -14,25 +15,12 @@
 </script>
 
 <template>
-  <div class="project-list-item p-1 cursor-pointer">
-    <span
-      class="size-[9px] rounded-full inline-block mr-1"
-      :class="{
-        'animate-pulse': connected,
-        'bg-(--el-color-success)': connected,
-        'bg-(--el-color-info)': !connected
-      }"
-      :title="connected ? `已连接：${project?.server}` : '未连接'"
-    />
-    <span class="text-(--el-text-color-primary) font-medium">{{ name }}</span>
-    <span class="ml-1 text-(--el-text-color-regular)">{{ parent }}</span>
-  </div>
+  <BaseItem
+    class="project-list-item"
+    :status-pulse="connected"
+    :status="connected ? 'success' : 'info'"
+    :status-title="connected ? `已连接：${project?.server}` : '未连接'"
+    :title="name"
+    :subtitle="parent"
+  />
 </template>
-
-<style lang="scss" scoped>
-  .project-list-item {
-    &:hover {
-      background-color: color-mix(in srgb, #1f1f1fff 6%, transparent);
-    }
-  }
-</style>

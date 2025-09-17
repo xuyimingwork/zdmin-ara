@@ -83,9 +83,14 @@ const { free: freeProjects, refresh, refreshLoading } = useLocalServers()
               open()
             }"
           />
-          <ElDivider
+          <!-- 是否要对已添加/未添加项目做区分 -->
+          <!-- <ElDivider
             v-if="projects && projects.length && freeProjects && freeProjects.length"
-          />
+            class="m-2!"
+            content-position="left"
+          >
+            更多项目
+          </ElDivider> -->
           <ProjectListPure 
             key="free"
             :active="active"
