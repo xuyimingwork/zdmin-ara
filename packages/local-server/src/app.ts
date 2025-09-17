@@ -48,13 +48,20 @@ function createRest(options: Options) {
     logger: { level: 'error' }
   })
 
+  // 接收 openapi 对象，生成相关文档
   rest.post('/openapi', (request, content) => {
     console.log('request to openapi')
     if (!content?.data) return Promise.resolve({ ok: false, message: 'No OpenAPI Doc Content' });
     if (!content?.name) return Promise.resolve({ ok: false, message: 'No OpenAPI Doc Name' });
     const doc = (options.docs as NormalDocs).find(item => item.name === content.name)
     if (!doc) return Promise.resolve({ ok: false, message: 'OpenAPI Doc Not Config' });
-    return transform({ openapi: content.data })
+    return transform({ 
+      openapi: content.data,
+      transform: (options) => options.transform({ 
+        ...options,
+        doc: content.name, 
+      })
+    })
       .then(({ files, count }) => {
         files = [...files, { file: 'openapi.json', content: JSON.stringify(content.data, undefined, 2) }]
         files = doc.name ? files.map(item => {
@@ -132,7 +139,29 @@ export function main({
   // 文件输出地址
   output = `${cwd}/openapi-codegen`,
   docs = undefined,
-  transform = undefined
+  transform = ({ 
+    doc, 
+    method, 
+    path
+  }) => {
+    return {
+      output: 'v3/pet.ts', // 函数输出
+      name: 'getUser', // 函数名
+      arguments: ['data', 'options'], // 函数入参
+      request: 'request',  // 函数请求方法
+      imports: [
+        {
+          from: '@/request/request',
+          imports: {
+            'request': true,
+            'name': 'alias'
+          },
+          type: true,
+        },
+      ], // 函数导入方法
+      // request 入参传递？
+    }
+  } 
 }: Partial<Options> = {}) {
   return getPort({ port: portNumbers(BASE_PORT, BASE_PORT + 99) })
     .then(port => {

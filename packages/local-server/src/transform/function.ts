@@ -11,7 +11,9 @@ function patchLeadingComment(node: Node, context: any) {
 }
 
 export function createFunctionDeclaration({
-  name, path, method,
+  name, 
+  path, 
+  method,
   context
 }): Node {
   return patchLeadingComment(

@@ -30,7 +30,7 @@ function patchBanner(content: string) {
   ])}\n\n${content}`
 }
 
-function genRequests({ openapi }) {
+function genRequests({ openapi, transform }) {
   // TODO: 剔除代码分文件逻辑
   const files = groupBy(Object.keys(openapi.paths).map(path => {
     const data = openapi.paths[path]
@@ -61,9 +61,8 @@ function genRequests({ openapi }) {
   return { files: outputFiles, statistic }
 }
 
+// 生成类型
 async function genTypes({ openapi }) {
-  // const definitions = createDefinitionsInterfaceDeclaration({ openapi })
-  // const content = output(factory.createNodeArray([definitions].filter(item => !!item)))
   if (openapi.swagger) return {
     files: [{
       file: 'openapi.d.ts',
@@ -78,7 +77,7 @@ async function genTypes({ openapi }) {
   }
 }
 
-export async function transform({ openapi }) {
+export async function transform({ openapi, transform }) {
   const {
     files: fileOfTypes = [],  
   } = await genTypes({ openapi }) || {}
@@ -86,7 +85,7 @@ export async function transform({ openapi }) {
   const { 
     files: fileOfRequests, 
     statistic: { functions: countOfFunctions } 
-  } = genRequests({ openapi })
+  } = genRequests({ openapi, transform })
   
   return {
     files: [
