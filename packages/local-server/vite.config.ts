@@ -1,5 +1,5 @@
 import { fileURLToPath, URL } from 'node:url'
-
+import dts from 'vite-plugin-dts'
 import { defineConfig } from 'vite'
 
 // https://vite.dev/config/
@@ -11,7 +11,7 @@ export default defineConfig({
       formats: ['es']
     },
   },
-  plugins: [],
+  plugins: [dts({ rollupTypes: true })],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))

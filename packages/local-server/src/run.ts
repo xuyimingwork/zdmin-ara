@@ -9,3 +9,6 @@ main({
     v3: 'http://192.168.8.186:8080/gpx-ruoyi-flex/swagger-ui/index.html?urls.primaryName=6.%E8%84%9A%E6%9C%AC%E7%94%9F%E6%88%90%E6%A8%A1%E5%9D%97#/'
   }
 })
+  .then(({ port }: any) => {
+    console.log(`Local server is running on http://localhost:${port}`);
+  })

@@ -13,6 +13,13 @@
   "files": [
     "dist"
   ],
+  "main": "./dist/app.js",
+  "module": "./dist/app.js",
+  "types": "./dist/app.d.ts",
+  "exports": {
+    ".": "./dist/app.js",
+    "./package.json": "./package.json"
+  },
   "scripts": {
     "dev:run": "vite build -c ./vite.config.dev.ts --watch",
     "dev:lib": "vite build --watch",
@@ -30,6 +37,7 @@
     "openapi-typescript7": "npm:openapi-typescript@7"
   },
   "devDependencies": {
-    "@types/cors": "^2.8.19"
+    "@types/cors": "^2.8.19",
+    "vite-plugin-dts": "^4.5.4"
   }
 }

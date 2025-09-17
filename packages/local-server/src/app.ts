@@ -43,17 +43,10 @@ interface Options {
 }
 
 function createRest(options: Options) {
-  const { output: root } = options
-
   const rest = ConnectRest.create({
     context: BASE_URL,
+    logger: { level: 'error' }
   })
-
-  /**
-   * 后端服务接口需要仔细设计
-   * - 1 个服务可以对应 n 个项目（项目可以用本地路径区分）
-   * - 1 个项目可以对应 n 个 OpenAPI 文档（使用文档路径？）
-   */
 
   rest.post('/openapi', (request, content) => {
     console.log('request to openapi')
@@ -84,7 +77,7 @@ function createRest(options: Options) {
       .catch(err => ({ ok: false, message: err.message }));
   })
 
-  rest.get('/project', (request, content) => {
+  rest.get('/project', () => {
     return Promise.resolve({ 
       ok: true, 
       message: 'OpenAPI CodeGen Local Server is running',
@@ -106,6 +99,25 @@ function createConnect(options: Options) {
   app.use(cors())
   app.use(createRest(options).processRequest());
   return app;
+}
+
+function normalizeDocs(docs?: Docs, output?: string): NormalDocs {
+  if (!docs) return []
+  // 单个状态时一定为 name 一定为 doc-0
+  if (typeof docs === 'string') docs = [{ name: '', path: docs }]
+  // object 状态时是一定有 name 的
+  if (!Array.isArray(docs) && isObjectLike(docs)) docs = values(mapValues(docs, (item, name) => {
+    if (typeof item === 'string') return { name, path: item }
+    return { name, ...item }
+  }))
+  // 数组状态顺序来自事先指定
+  return (docs as Extract<Docs, Array<any>>).map((item) => {
+    const _output = name => resolve(output || '', `${name}`) 
+    return {
+      output: _output(item.name),
+      ...item,
+    }
+  })
 }
 
 /**
@@ -133,26 +145,4 @@ export function main({
         })).listen({ port }, () => _resolve({ port }))
       })
     })
-    .then(({ port }: any) => {
-      console.log(`Local server is running on http://localhost:${port}${BASE_URL}`);
-    })
-}
-
-function normalizeDocs(docs?: Docs, output?: string): NormalDocs {
-  if (!docs) return []
-  // 单个状态时一定为 name 一定为 doc-0
-  if (typeof docs === 'string') docs = [{ name: '', path: docs }]
-  // object 状态时是一定有 name 的
-  if (!Array.isArray(docs) && isObjectLike(docs)) docs = values(mapValues(docs, (item, name) => {
-    if (typeof item === 'string') return { name, path: item }
-    return { name, ...item }
-  }))
-  // 数组状态顺序来自事先指定
-  return (docs as Extract<Docs, Array<any>>).map((item) => {
-    const _output = name => resolve(output || '', `${name}`) 
-    return {
-      output: _output(item.name),
-      ...item,
-    }
-  })
 }
