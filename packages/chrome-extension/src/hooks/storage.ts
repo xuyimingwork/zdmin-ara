@@ -1,11 +1,17 @@
 import { tryOnUnmounted } from "@vueuse/core";
-import { upperFirst } from "es-toolkit";
+import { isJSON, upperFirst } from "es-toolkit";
 import { useAsync, useAsyncData } from "vue-asyncx";
 
 const storage = chrome.storage 
   ? { 
-    get: (key: string) => chrome.storage.local.get(key).then(result => result[key]),
-    set: (key: string, value: any) => chrome.storage.local.set({ [key]: value }),
+    get: (key: string) => {
+      // chrome.storage.local 无法正确存储数组，使用 json 转换 
+      return chrome.storage.local.get(key).then(result => isJSON(result[key]) ? JSON.parse(result[key]) : undefined)
+    },
+    set: (key: string, value: any) => {
+      // chrome.storage.local 无法正确存储数组，使用 json 转换
+      return chrome.storage.local.set({ [key]: JSON.stringify(value) })
+    },
     remove: (key: string) => chrome.storage.local.remove(key)
   }
   : { 
