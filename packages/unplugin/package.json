@@ -27,10 +27,8 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "@zdmin/ara-local-server": "workspace:*",
     "unplugin": "^2.3.10"
-  },
-  "resolutions": {
-    "rolldown": "nightly"
   },
   "typesVersions": {
     "*": {
