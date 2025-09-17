@@ -8,4 +8,8 @@
   .el-button + .el-button.is-text {
     margin-left: 2px;
   }
+  .el-divider__text {
+    font-size: var(--text-base);
+    padding: 0 calc(var(--spacing) * 2);
+  }
 }
