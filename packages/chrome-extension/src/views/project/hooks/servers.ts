@@ -1,7 +1,7 @@
 import { useProjects } from "@/store/projects"
 import { request } from "@/utils/request"
 import { useIntervalFn } from "@vueuse/core"
-import { differenceWith, intersectionWith, uniq } from "es-toolkit"
+import { differenceWith, intersectionWith, uniq, uniqWith } from "es-toolkit"
 import { useAsyncData } from "vue-asyncx"
 
 const { projects, create } = useProjects()
@@ -83,10 +83,11 @@ export function useLocalServers() {
 
   const { projects } = useProjects()
   const {
-    projects: localServerProjects,
+    projects: _localServerProjects,
     queryProjects,
     queryProjectsLoading
   } = useAsyncData('projects', () => query(), { initialData: [], immediate: true })
+  const localServerProjects = computed(() => uniqWith(_localServerProjects.value, (a, b) => a.path === b.path))
   const free = computed(() => differenceWith(localServerProjects.value, projects.value, (a, b) => a.path === b.path))
   const used = computed(() => intersectionWith(localServerProjects.value, projects.value, (a, b) => a.path === b.path))
   const { pause, resume, isActive } = useIntervalFn(queryProjects, 5 * 1000, { 
