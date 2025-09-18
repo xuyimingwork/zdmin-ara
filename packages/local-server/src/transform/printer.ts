@@ -1,6 +1,6 @@
 import ts, { NewLineKind, Node, NodeArray, ScriptTarget,  } from "typescript";
 
-export function output(list: NodeArray<Node>)  {
+export function output(list: NodeArray<Node>): string  {
     const printer = ts.createPrinter({ newLine: NewLineKind.LineFeed });
     const content = printer.printList(
       ts.ListFormat.MultiLine, 

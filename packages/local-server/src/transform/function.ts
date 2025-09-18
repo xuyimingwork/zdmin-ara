@@ -1,5 +1,6 @@
 import { createJSDocFunctionLeadingComment } from "@/transform/comment";
-import { Node, factory, SyntaxKind } from "typescript";
+import { OpenAPIPathOperationObject } from "@/types";
+import { Node, factory, SyntaxKind, createSourceFile, ScriptTarget } from "typescript";
 
 function patchLeadingComment(node: Node, context: any) {
   return (context.summary || context.description) 
@@ -10,38 +11,39 @@ function patchLeadingComment(node: Node, context: any) {
     : node
 }
 
+// factory.createParameterDeclaration()
+
 export function createFunctionDeclaration({
   name, 
-  path, 
-  method,
-  context
+  code,
+  arguments: parameters,
+  openapi
+}: { 
+  name: string
+  code: string,
+  arguments: string[]
+  openapi: OpenAPIPathOperationObject 
 }): Node {
+  const block = createSourceFile('temp.ts', code, ScriptTarget.ESNext, false)
   return patchLeadingComment(
     factory.createFunctionDeclaration(
       [factory.createToken(SyntaxKind.ExportKeyword)],
       undefined,
       factory.createIdentifier(name),
       undefined,
-      [],
-      undefined,
-      factory.createBlock(
-        [factory.createReturnStatement(factory.createCallExpression(
-          factory.createIdentifier("fetch"),
+      Array.isArray(parameters) 
+        ? parameters.map(key => factory.createParameterDeclaration(
           undefined,
-          [
-            factory.createStringLiteral(path),
-            factory.createObjectLiteralExpression(
-              [factory.createPropertyAssignment(
-                factory.createIdentifier("method"),
-                factory.createStringLiteral(method)
-              )],
-              true
-            )
-          ]
-        ))],
-        true
-      )
+          undefined,
+          factory.createIdentifier(key),
+          undefined,
+          undefined,
+          undefined
+        ))
+        : [],
+      undefined,
+      factory.createBlock(block.statements, true)
     ),
-    context
+    openapi
   )
 }

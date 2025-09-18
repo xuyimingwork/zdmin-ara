@@ -1,8 +1,9 @@
 import type { UnpluginFactory, UnpluginInstance } from 'unplugin'
 import { createUnplugin } from 'unplugin'
 import { main } from '@zdmin/ara-local-server'
+import type { Options as AraLocalServerOptions } from '@zdmin/ara-local-server'
 
-export interface Options {
+export interface Options extends AraLocalServerOptions {
   // define your plugin options here
 }
 

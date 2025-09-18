@@ -4,11 +4,12 @@ import cors from 'cors'
 import bodyParser from 'body-parser'
 import ConnectRest from 'connect-rest';
 import { writeFile } from 'fs/promises';
-import { transform } from '@/transform/transform';
+import { gen } from '@/transform/gen';
 import { mkdirp } from 'mkdirp';
 import { resolve } from 'path';
 import getPort, { portNumbers } from 'get-port';
 import { isObjectLike, mapValues, values } from 'es-toolkit/compat';
+import { GenRequestTransformer, GenRequestTransformerReturn, OpenAPI } from '@/types';
 
 const BASE_PORT = 9125
 const BASE_URL = '/openapi-codegen'
@@ -32,14 +33,17 @@ type Doc = string | {
 type NormalDoc = Required<Extract<Doc, { [key: string]: any }>>
 type Docs = string | Array<WithRequired<Extract<Doc, { [key: string]: any }>, 'name'>> | { [name: string]: Doc }
 type NormalDocs = Array<NormalDoc>
-interface Options {
+
+export interface Options {
   cwd: string
   // 输出根文件夹 => default is ${options.output}/openapi-codegen
   output: string
   // OpenAPI 文档地址
   docs: Docs,
   // API 转换函数
-  transform: any
+  transform?: (options: {
+    doc: NormalDoc & { openapi: OpenAPI }
+  } & Parameters<GenRequestTransformer>['0']) => Partial<GenRequestTransformerReturn>
 }
 
 function createRest(options: Options) {
@@ -55,29 +59,29 @@ function createRest(options: Options) {
     if (!content?.name) return Promise.resolve({ ok: false, message: 'No OpenAPI Doc Name' });
     const doc = (options.docs as NormalDocs).find(item => item.name === content.name)
     if (!doc) return Promise.resolve({ ok: false, message: 'OpenAPI Doc Not Config' });
-    return transform({ 
+    return gen({ 
       openapi: content.data,
-      transform: (options) => options.transform({ 
-        ...options,
-        doc: content.name, 
-      })
+      transform: (opts) => typeof options.transform === 'function' ? options.transform({ 
+        ...opts,
+        doc: { ...doc, openapi: content.data }, 
+      }) : {}
     })
-      .then(({ files, count }) => {
-        files = [...files, { file: 'openapi.json', content: JSON.stringify(content.data, undefined, 2) }]
+      .then(({ files, statistic: { functions: count } }) => {
+        files = [...files, { output: 'openapi.json', content: JSON.stringify(content.data, undefined, 2) }]
         files = doc.name ? files.map(item => {
-          if (!['openapi.json', 'openapi.d.ts'].includes(item.file)) return item
-          return { file: `${doc.name}.${item.file}`, content: item.content }
+          if (!['openapi.json', 'openapi.d.ts'].includes(item.output)) return item
+          return { output: `${doc.name}.${item.output}`, content: item.content }
         }) : files
-        files = files.map(({ file, content }) => {
-          const path = resolve(doc.output, file.startsWith('/') ? file.slice(1) : file);
-          return { file: path, content }
+        files = files.map(({ output, content }) => {
+          const path = resolve(doc.output, output.startsWith('/') ? output.slice(1) : output);
+          return { output: path, content }
         })
         return { files, count }
       })
       .then(({ files, count }) => {
         return Promise.all(files.map(item => {
-          const dir = item.file.slice(0, item.file.lastIndexOf('/'))
-          return mkdirp(dir).then(() => writeFile(item.file, item.content, 'utf8'))
+          const dir = item.output.slice(0, item.output.lastIndexOf('/'))
+          return mkdirp(dir).then(() => writeFile(item.output, item.content, 'utf8'))
         })).then(() => ({ files, count }))
       })
       .then(({ count, files }) => ({ ok: true, data: { count, files } }))
@@ -139,29 +143,7 @@ export function main({
   // 文件输出地址
   output = `${cwd}/openapi-codegen`,
   docs = undefined,
-  transform = ({ 
-    doc, 
-    method, 
-    path
-  }) => {
-    return {
-      output: 'v3/pet.ts', // 函数输出
-      name: 'getUser', // 函数名
-      arguments: ['data', 'options'], // 函数入参
-      request: 'request',  // 函数请求方法
-      imports: [
-        {
-          from: '@/request/request',
-          imports: {
-            'request': true,
-            'name': 'alias'
-          },
-          type: true,
-        },
-      ], // 函数导入方法
-      // request 入参传递？
-    }
-  } 
+  transform
 }: Partial<Options> = {}) {
   return getPort({ port: portNumbers(BASE_PORT, BASE_PORT + 99) })
     .then(port => {

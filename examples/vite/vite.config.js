@@ -12,30 +12,25 @@ export default defineConfig({
     vueDevTools(),
     OpenAPI({
       docs: {
-        v2: 'https://petstore.swagger.io/',
-        v3: 'https://petstore3.swagger.io/'
+        ['pet-v2']: 'https://petstore.swagger.io/',
+        ['pet-v3']: 'https://petstore3.swagger.io/',
+        ['gpx']: 'https://192.168.8.186/gateway/gpx-document/doc.html#/home',
+        ['ruoyi']: 'http://192.168.8.186:8080/gpx-ruoyi-flex/swagger-ui/index.html?urls.primaryName=6.%E8%84%9A%E6%9C%AC%E7%94%9F%E6%88%90%E6%A8%A1%E5%9D%97#/'
       },
-      /**
-       * 自定义单个 API 输出
-       * 通过预设统一提供
-       */
-      transform({ doc, method, path, api }) {
+      transform: ({
+        method, path
+      }) => {
         return {
-          output: 'v3/pet.ts', // 函数输出
-          name: 'getUser', // 函数名
-          arguments: ['data', 'options'], // 函数入参
-          request: 'request',  // 函数请求方法
-          imports: [
-            {
-              from: '@/request/request',
-              imports: {
-                'request': true,
-                'name': 'alias'
-              },
-              type: true,
-            },
-          ], // 函数导入方法
-          // request 入参如何传递
+          imports: [{ from: 'axios', import: 'axios' }],
+          arguments: ['data', 'options'],
+          code: `
+            return axios({
+              method: "${method}",
+              url: "${path}",
+              data,
+              ...options
+            })
+          `
         }
       }
     })
