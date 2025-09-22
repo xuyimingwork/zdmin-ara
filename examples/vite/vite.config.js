@@ -4,6 +4,7 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import vueDevTools from 'vite-plugin-vue-devtools'
 import OpenAPI from '@zdmin/ara-unplugin/vite'
+import { basename } from 'node:path'
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -14,20 +15,24 @@ export default defineConfig({
       docs: {
         ['pet-v2']: 'https://petstore.swagger.io/',
         ['pet-v3']: 'https://petstore3.swagger.io/',
-        ['gpx']: 'https://192.168.8.186/gateway/gpx-document/doc.html#/home',
+        ['gpx-document']: 'https://192.168.8.186/gateway/gpx-document/doc.html#/home',
         ['ruoyi']: 'http://192.168.8.186:8080/gpx-ruoyi-flex/swagger-ui/index.html?urls.primaryName=6.%E8%84%9A%E6%9C%AC%E7%94%9F%E6%88%90%E6%A8%A1%E5%9D%97#/'
       },
       transform: ({
-        method, path
+        method, path, doc,
       }) => {
         return {
           imports: [{ from: 'axios', import: 'axios' }],
-          arguments: ['data', 'options'],
+          ...doc.name.startsWith('gpx-') ? { name: basename(path) } : {},
+          arguments: [
+            method === 'get' ? 'params' : 'data', 
+            'options'
+          ],
           code: `
             return axios({
               method: "${method}",
               url: "${path}",
-              data,
+              ${method === 'get' ? 'params' : 'data'},
               ...options
             })
           `

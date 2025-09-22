@@ -10,6 +10,8 @@ import ts from 'typescript'
 
 const factory = ts.factory
 
+// factory.createJSDocAllType
+
 type ForEachRequestCallback = (request: Parameters<GenRequestTransformer>[0]) => void
 
 function forEachRequest(openapi: OpenAPI, cb: ForEachRequestCallback) {
