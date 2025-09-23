@@ -9,6 +9,33 @@ import type {
   OperationObject as OpenAPIOperationObject3,
 } from "openapi-typescript7";
 
+export type DocRaw = {
+  url: string
+  name?: string
+  outDir?: string
+}
+
+export type UserApiTransformer = (options: 
+  { doc: Required<DocRaw> & { openapi: OpenAPI } } 
+  & Parameters<GenRequestTransformer>['0']
+) => Partial<GenRequestTransformerReturn>
+
+export type DocNormalized = Required<DocRaw>
+export interface UserOptions {
+  // 项目文件夹
+  cwd?: string
+  // 输出根文件夹 => default is ${options.cwd}/openapi-codegen
+  outDir?: string
+  /** OpenAPI 文档访问地址，单文档下必须指定 name */
+  doc?: DocRaw['url'] /* 不允许单个对象形式，与对象形式冲突 */
+    | Array<WithRequired<DocRaw, 'name'>> 
+    | { [name: string]: DocRaw['url'] | DocRaw },
+  // API 转换函数
+  transform?: UserApiTransformer
+}
+
+export type UserOptionsNormalized = Required<Omit<UserOptions, 'doc'>> & { doc: Array<DocNormalized> }
+
 export type GenFile = {
   output: string
   content: string
@@ -32,11 +59,16 @@ export type {
 }
 
 export type GenRequestTransformerReturn = {
-  imports?: AstInputImport[]
+  /* 输出文件 */
   output: string
+  /* 函数名 */
   name: string
+  /* 函数体 */
   code: string
+  /* 函数入参 */
   arguments?: string[]
+  /* 函数依赖 */
+  imports?: AstInputImport[]
 }
 
 export interface GenRequestTransformer {
@@ -114,3 +146,13 @@ export type AstInputImportNormalized = AstInputImportNormalizedSimple
 | AstInputImportNormalizedStar 
 | AstInputImportNormalizedType 
 | AstInputImportNormalizedCommon
+
+type Get<T, K> = K extends keyof T
+  ? T[K]
+  : K extends `${infer First}.${infer Rest}`
+    ? Get<Get<T, First>, Rest>
+    : never
+
+export type GetResponse<paths, path extends string, method extends string> = Get<Get<paths, `${path}.${method}.responses`>['200'], 'schema'>
+
+export type WithRequired<T, K extends keyof T> = T & { [P in K]-?: T[P] }
