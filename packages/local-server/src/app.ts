@@ -21,7 +21,6 @@ function createRest(options: UserOptionsNormalized) {
 
   // 接收 openapi 对象，生成相关文档
   rest.post('/openapi', (request, content) => {
-    console.log('request to openapi')
     if (!content?.data) return createError('No OpenAPI Doc Content');
     // TODO: 允许无配置输出
     if (!content?.name) return createError('No OpenAPI Doc Name');
@@ -59,3 +58,10 @@ export function main(options: UserOptions = {}) {
       })
     })
 }
+
+export type { 
+  GetResponse, 
+  GetRequestQuery,
+  GetRequestBody,
+  UserOptions 
+} from '@/types'

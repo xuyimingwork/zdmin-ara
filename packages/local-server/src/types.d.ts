@@ -89,6 +89,8 @@ export type GenRequestTransformerReturn = ReturnType<GenRequestTransformer>
 
 export type AstInputRequest = GenRequestTransformerReturn & {
   openapi: OpenAPIPathOperationObject
+  path: string,
+  method: string
 }
 
 export type AstInputFile = {
@@ -159,5 +161,7 @@ type Get<T, K> = K extends keyof T
     : never
 
 export type GetResponse<paths, path extends string, method extends string> = Get<Get<paths, `${path}.${method}.responses`>['200'], 'schema'>
+export type GetRequestQuery<paths, path extends string, method extends string> = Get<paths, `${path}.${method}.parameters.query`>
+export type GetRequestBody<paths, path extends string, method extends string> = Get<paths, `${path}.${method}.parameters.body.body`>
 
 export type WithRequired<T, K extends keyof T> = T & { [P in K]-?: T[P] }

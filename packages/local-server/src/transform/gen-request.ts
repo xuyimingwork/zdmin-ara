@@ -2,15 +2,13 @@ import { patchBanner } from "@/transform/banner"
 import { createFunctionDeclaration } from "@/transform/function"
 import { genImports, normalizeImports } from "@/transform/gen-imports"
 import { output } from "@/transform/printer"
-import { AstInputFile, AstInputImportNormalized, AstInputRequest, GenFile, GenRequestTransformer, GenRequestTransformerOptions, GenRequestTransformerReturn, GenResult, OpenAPI, OpenAPIPathOperationObject } from "@/types"
-import { camelCase, groupBy, kebabCase } from "es-toolkit"
+import { AstInputFile, AstInputImportNormalized, AstInputRequest, GenRequestTransformer, GenRequestTransformerOptions, GenRequestTransformerReturn, GenResult, OpenAPI, OpenAPIPathOperationObject, GenFile } from "@/types"
+import { camelCase, groupBy, kebabCase, upperFirst } from "es-toolkit"
 import { each } from "es-toolkit/compat"
-import { basename, dirname, normalize } from "path"
+import { basename, dirname, normalize, relative } from "path"
 import ts from 'typescript'
 
 const factory = ts.factory
-
-// factory.createJSDocAllType
 
 type ForEachRequestCallback = (request: Omit<GenRequestTransformerOptions, 'base'>) => void
 
@@ -38,8 +36,8 @@ type PresetApiTransformer = (options: Omit<GenRequestTransformerOptions, 'base'>
 
 const baseTransformer: PresetApiTransformer = ({ path, method }) => {
   const base = basename(path)
-  const dir = dirname(path).startsWith('/') 
-    ? dirname(path).substring(1) 
+  const dir = dirname(path).startsWith('/')
+    ? dirname(path).substring(1)
     : dirname(path)
   const output = normalize(dir || 'index').split('/').map(item => kebabCase(item)).join('/') + '.ts'
   return {
@@ -51,12 +49,96 @@ const baseTransformer: PresetApiTransformer = ({ path, method }) => {
   }
 }
 
-export function genRequest({ openapi, transform, relocate }: {
-  openapi: OpenAPI, 
+function genFileOfRequestTypes({ rootTypes, pairOutput, requests }: {
+  rootTypes?: string
+  pairOutput: string
+  requests?: AstInputFile['requests']
+}): GenFile | void {
+  if (!rootTypes) return
+  const relativeToRootTypes = relative(dirname(pairOutput), rootTypes) === basename(rootTypes)
+    ? `./${relative(dirname(pairOutput), rootTypes)}`
+    : relative(dirname(pairOutput), rootTypes)
+  return {
+    output: pairOutput.replace(/\.ts$/, '.d.ts'),
+    content: patchBanner(output(factory.createNodeArray([
+      ...genImports([
+        {
+          mode: 'type',
+          from: '@zdmin/ara-unplugin',
+          imports: [
+            { name: 'GetResponse' },
+            { name: 'GetRequestQuery' },
+            { name: 'GetRequestBody' }
+          ]
+        },
+        {
+          mode: 'type',
+          from: relativeToRootTypes,
+          imports: [{ name: 'paths' }]
+        }
+      ]),
+      factory.createIdentifier('\n'),
+      ...Array.isArray(requests) ? requests.map(request => {
+        return [
+          factory.createTypeAliasDeclaration(
+            [factory.createToken(ts.SyntaxKind.ExportKeyword)],
+            factory.createIdentifier(upperFirst(`${request.name}Response`)),
+            undefined,
+            factory.createTypeReferenceNode(
+              factory.createIdentifier("GetResponse"),
+              [
+                factory.createTypeReferenceNode(factory.createIdentifier("paths"), undefined),
+                factory.createLiteralTypeNode(factory.createStringLiteral(request.path)),
+                factory.createLiteralTypeNode(factory.createStringLiteral(request.method))
+              ]
+            )
+          ),
+          factory.createTypeAliasDeclaration(
+            [factory.createToken(ts.SyntaxKind.ExportKeyword)],
+            factory.createIdentifier(upperFirst(`${request.name}RequestQuery`)),
+            undefined,
+            factory.createTypeReferenceNode(
+              factory.createIdentifier("GetRequestQuery"),
+              [
+                factory.createTypeReferenceNode(factory.createIdentifier("paths"), undefined),
+                factory.createLiteralTypeNode(factory.createStringLiteral(request.path)),
+                factory.createLiteralTypeNode(factory.createStringLiteral(request.method))
+              ]
+            )
+          ),
+          factory.createTypeAliasDeclaration(
+            [factory.createToken(ts.SyntaxKind.ExportKeyword)],
+            factory.createIdentifier(upperFirst(`${request.name}RequestBody`)),
+            undefined,
+            factory.createTypeReferenceNode(
+              factory.createIdentifier("GetRequestBody"),
+              [
+                factory.createTypeReferenceNode(factory.createIdentifier("paths"), undefined),
+                factory.createLiteralTypeNode(factory.createStringLiteral(request.path)),
+                factory.createLiteralTypeNode(factory.createStringLiteral(request.method))
+              ]
+            )
+          ),
+          factory.createIdentifier('\n')
+        ]
+      }).flat() : []
+    ])))
+  }
+}
+
+function genFileOfRequests() {
+
+
+}
+
+export function genRequest({ openapi, transform, relocate, rootTypes }: {
+  openapi: OpenAPI,
   transform: (...args: Parameters<GenRequestTransformer>) => Partial<GenRequestTransformerReturn>
   relocate?: (output: string) => string
   rootTypes?: string
 }): GenResult<{ functions: number }> {
+
+  // 先生成类型文件，request 的 import 需要依赖类型文件
 
   // 所有请求
   const requests = mapEachRequest<AstInputRequest>(openapi, ({ method, path, openapi }) => {
@@ -66,21 +148,25 @@ export function genRequest({ openapi, transform, relocate }: {
     return {
       ...result,
       output: typeof relocate === 'function' ? relocate(result.output) : result.output
-    } 
-  })
-
-  // 所有请求构成的文件
-  const rawFiles: AstInputFile[] = Object.keys(groupBy(requests, item => item.output)).map(output => {
-    const fileRequests = requests.filter(item => item.output === output)
-    const imports = normalizeImports(fileRequests.map(item => Array.isArray(item.imports) ? item.imports : []).flat())
-    return {
-      output,
-      imports,
-      requests: fileRequests.map(({ imports: _, ...item }) => item)
     }
   })
 
+  // 所有请求构成的文件
+  const rawFiles: AstInputFile[] = Object.keys(groupBy(requests, item => item.output))
+    .map(output => {
+      const fileRequests = requests.filter(item => item.output === output)
+      const imports = normalizeImports(fileRequests.map(item => Array.isArray(item.imports) ? item.imports : []).flat())
+      return {
+        output,
+        imports,
+        requests: fileRequests.map(({ imports: _, ...item }) => item)
+      }
+    })
+
+
   const files = rawFiles.map(item => {
+    const file = genFileOfRequestTypes({ rootTypes, pairOutput: item.output, requests: item.requests })
+
     const imports = genImports(item.imports as AstInputImportNormalized[])
     const functions = Array.isArray(item.requests) ? item.requests.map(request => {
       return [
@@ -94,15 +180,21 @@ export function genRequest({ openapi, transform, relocate }: {
       ]
     }).flat() : []
     const content = output(factory.createNodeArray([
-      ...imports, 
+      ...imports,
       ...(imports.length ? [factory.createIdentifier('\n')] : []),
       ...functions
     ]))
-    return {
-      output: item.output,
-      content: patchBanner(content)
-    }
-  })
+    return file ? [
+      file, {
+        output: item.output,
+        content: patchBanner(content)
+      }] : [
+      {
+        output: item.output,
+        content: patchBanner(content)
+      }
+    ]
+  }).flat()
 
   return { files, statistic: { functions: requests.length } }
 }
