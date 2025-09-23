@@ -29,7 +29,7 @@
   const { reload } = useAsync('reload', function reload(doc?: any) {
     chrome.tabs.query({ active: true, lastFocusedWindow: true, currentWindow: true })
       .then(([tab]) => {
-        const { path: url } = doc
+        const { url } = doc
         if ((tab?.url === url)) return chrome.tabs.reload().then(() => tab)
         return chrome.tabs.update(undefined, { url });
       })
@@ -46,7 +46,7 @@
       } 
     })
       .then((data: any) => {
-        ElMessage.success(`上传成功：共 ${data.files?.length} 个文件、${data.count} 个 API`)
+        ElMessage.success(`上传成功：共 ${data.files?.length} 个文件、${data.statistic?.functions} 个 API`)
       })
   }
 
@@ -54,7 +54,7 @@
     if (!url || !project.value) return
     const docs = project.value.docs
     if (!Array.isArray(docs) || !docs) return
-    return docs.find(item => typeof item.path === 'string' && item.path.startsWith(url))
+    return docs.find(item => typeof item.url === 'string' && item.url.startsWith(url))
   }
 </script>
 

@@ -12,7 +12,7 @@ export default defineConfig({
     vue(),
     vueDevTools(),
     OpenAPI({
-      docs: {
+      doc: {
         ['pet-v2']: 'https://petstore.swagger.io/',
         ['pet-v3']: 'https://petstore3.swagger.io/',
         ['gpx-document']: 'https://192.168.8.186/gateway/gpx-document/doc.html#/home',
