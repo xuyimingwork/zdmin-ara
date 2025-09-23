@@ -2,7 +2,7 @@ import { patchBanner } from "@/transform/banner"
 import { createFunctionDeclaration } from "@/transform/function"
 import { genImports, normalizeImports } from "@/transform/gen-imports"
 import { output } from "@/transform/printer"
-import { AstInputFile, AstInputImportNormalized, AstInputRequest, GenRequestTransformer, GenRequestTransformerReturn, GenResult, OpenAPI, OpenAPIPathOperationObject } from "@/types"
+import { AstInputFile, AstInputImportNormalized, AstInputRequest, GenFile, GenRequestTransformer, GenRequestTransformerOptions, GenRequestTransformerReturn, GenResult, OpenAPI, OpenAPIPathOperationObject } from "@/types"
 import { camelCase, groupBy, kebabCase } from "es-toolkit"
 import { each } from "es-toolkit/compat"
 import { basename, dirname, normalize } from "path"
@@ -12,7 +12,7 @@ const factory = ts.factory
 
 // factory.createJSDocAllType
 
-type ForEachRequestCallback = (request: Parameters<GenRequestTransformer>[0]) => void
+type ForEachRequestCallback = (request: Omit<GenRequestTransformerOptions, 'base'>) => void
 
 function forEachRequest(openapi: OpenAPI, cb: ForEachRequestCallback) {
   each(Object.keys(openapi.paths || {}).map(path => {
@@ -34,27 +34,39 @@ function mapEachRequest<T = void>(openapi: OpenAPI, cb: MapEachRequestCallback<T
   return result
 }
 
-const baseTransformer: GenRequestTransformer = ({ path, method, openapi }) => {
+type PresetApiTransformer = (options: Omit<GenRequestTransformerOptions, 'base'>) => Required<GenRequestTransformerReturn>
+
+const baseTransformer: PresetApiTransformer = ({ path, method }) => {
   const base = basename(path)
   const dir = dirname(path).startsWith('/') 
     ? dirname(path).substring(1) 
     : dirname(path)
+  const output = normalize(dir || 'index').split('/').map(item => kebabCase(item)).join('/') + '.ts'
   return {
-    output: normalize(dir || 'index').split('/').map(item => kebabCase(item)).join('/') + '.ts',
+    output: output.startsWith('/') ? output.substring(1) : output,
     name: camelCase(`${method}+${base}`),
-    code: ''
+    code: '',
+    arguments: [],
+    imports: []
   }
 }
 
-export function genRequest({ openapi, transform }: {
-  openapi: OpenAPI, transform: (...args: Parameters<GenRequestTransformer>) => Partial<GenRequestTransformerReturn>
+export function genRequest({ openapi, transform, relocate }: {
+  openapi: OpenAPI, 
+  transform: (...args: Parameters<GenRequestTransformer>) => Partial<GenRequestTransformerReturn>
+  relocate?: (output: string) => string
+  rootTypes?: string
 }): GenResult<{ functions: number }> {
 
   // 所有请求
   const requests = mapEachRequest<AstInputRequest>(openapi, ({ method, path, openapi }) => {
     const baseConfig = baseTransformer({ method, path, openapi })
-    const config = transform({ method, path, openapi })
-    return Object.assign({ openapi, method, path }, baseConfig, config)
+    const config = transform({ method, path, openapi, base: baseConfig })
+    const result = Object.assign({ openapi, method, path }, baseConfig, config)
+    return {
+      ...result,
+      output: typeof relocate === 'function' ? relocate(result.output) : result.output
+    } 
   })
 
   // 所有请求构成的文件

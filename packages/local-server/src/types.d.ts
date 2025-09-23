@@ -16,8 +16,10 @@ export type DocRaw = {
 }
 
 export type UserApiTransformer = (options: 
-  { doc: Required<DocRaw> & { openapi: OpenAPI } } 
-  & Parameters<GenRequestTransformer>['0']
+  { 
+    doc: Required<DocRaw> & { openapi: OpenAPI } 
+    base: Required<GenRequestTransformerReturn>
+  } & Parameters<GenRequestTransformer>['0']
 ) => Partial<GenRequestTransformerReturn>
 
 export type DocNormalized = Required<DocRaw>
@@ -58,19 +60,6 @@ export type {
   OpenAPI3,
 }
 
-export type GenRequestTransformerReturn = {
-  /* 输出文件 */
-  output: string
-  /* 函数名 */
-  name: string
-  /* 函数体 */
-  code: string
-  /* 函数入参 */
-  arguments?: string[]
-  /* 函数依赖 */
-  imports?: AstInputImport[]
-}
-
 export interface GenRequestTransformer {
   (options: {
     // http 方法
@@ -78,9 +67,25 @@ export interface GenRequestTransformer {
     // http 路径
     path: string, 
     // openapi 数据（函数层级）
-    openapi: OpenAPIPathOperationObject
-  }): GenRequestTransformerReturn
+    openapi: OpenAPIPathOperationObject,
+    // base transformer 产生值
+    base: Required<GenRequestTransformerReturn>
+  }): {
+    /* 输出文件 */
+    output: string
+    /* 函数名 */
+    name: string
+    /* 函数体 */
+    code: string
+    /* 函数入参 */
+    arguments?: string[]
+    /* 函数依赖 */
+    imports?: AstInputImport[]
+  }
 }
+
+export type GenRequestTransformerOptions = Parameters<GenRequestTransformer>['0']
+export type GenRequestTransformerReturn = ReturnType<GenRequestTransformer>
 
 export type AstInputRequest = GenRequestTransformerReturn & {
   openapi: OpenAPIPathOperationObject
