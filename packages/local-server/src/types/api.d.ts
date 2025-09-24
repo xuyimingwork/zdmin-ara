@@ -14,6 +14,8 @@ export interface ApiTransformer {
     // 默认值
     base: ReturnType<ApiTransformer>
   }): {
+    /* 忽略该函数 */
+    ignore?: boolean
     /* 函数输出文件路径 */
     output?: string
     /* 函数名 */

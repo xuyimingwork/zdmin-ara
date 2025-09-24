@@ -56,6 +56,7 @@ const baseTransformer: PresetApiTransformer = ({ path, method }) => {
     output: output.startsWith('/') ? output.substring(1) : output,
     name: camelCase(`${method}+${base}`),
     code: '',
+    ignore: false,
     arguments: [],
     imports: [],
     types: {}
@@ -166,7 +167,7 @@ export function genRequest({ openapi, transform, relocate, rootTypes }: {
       ...result,
       output: typeof relocate === 'function' ? relocate(result.output) : result.output
     }
-  })
+  }).filter(item => !item.ignore)
 
   // 所有请求构成的文件
   const rawFiles: AstFileData[] = Object.keys(groupBy(requests, item => item.output))
