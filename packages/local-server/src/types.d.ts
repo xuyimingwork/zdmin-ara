@@ -81,6 +81,10 @@ export interface GenRequestTransformer {
     arguments?: string[]
     /* 函数依赖 */
     imports?: AstInputImport[]
+    /* 类型声明 */
+    types?: { 
+      return?: string 
+    }
   }
 }
 

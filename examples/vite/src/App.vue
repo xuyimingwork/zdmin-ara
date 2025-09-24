@@ -1,6 +1,11 @@
-<script setup>
+<script setup lang="ts">
+import { checkUploadLog } from '../openapi-codegen/gpx-document/gpx-document/api/innernet/file';
 import HelloWorld from './components/HelloWorld.vue'
 import TheWelcome from './components/TheWelcome.vue'
+
+checkUploadLog({}, {}).then(res => {
+  res.data.data.
+})
 </script>
 
 <template>

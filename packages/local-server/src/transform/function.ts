@@ -1,6 +1,7 @@
+import { getAstStatements, getAstTypeNode } from "@/transform/code";
 import { createJSDocFunctionLeadingComment } from "@/transform/comment";
 import { OpenAPIPathOperationObject } from "@/types";
-import { Node, factory, SyntaxKind, createSourceFile, ScriptTarget } from "typescript";
+import { Node, factory, SyntaxKind } from "typescript";
 
 function patchLeadingComment(node: Node, context: any) {
   return (context.summary || context.description) 
@@ -11,20 +12,19 @@ function patchLeadingComment(node: Node, context: any) {
     : node
 }
 
-// factory.createParameterDeclaration()
-
 export function createFunctionDeclaration({
   name, 
   code,
   arguments: parameters,
-  openapi
+  openapi,
+  types
 }: { 
   name: string
   code: string,
   arguments: string[]
   openapi: OpenAPIPathOperationObject 
+  types: { return?: string }
 }): Node {
-  const block = createSourceFile('temp.ts', code, ScriptTarget.ESNext, false)
   return patchLeadingComment(
     factory.createFunctionDeclaration(
       [factory.createToken(SyntaxKind.ExportKeyword)],
@@ -41,8 +41,8 @@ export function createFunctionDeclaration({
           undefined
         ))
         : [],
-      undefined,
-      factory.createBlock(block.statements, true)
+      getAstTypeNode(types?.return),
+      factory.createBlock(getAstStatements(code) || [], true)
     ),
     openapi
   )

@@ -22,7 +22,10 @@ export default defineConfig({
         method, path, doc,
       }) => {
         return {
-          imports: [{ from: 'axios', import: 'axios' }],
+          imports: [
+            { from: 'axios', import: 'axios' },
+            { from: 'axios', imports: [{ name: 'AxiosResponse', type: true }] }
+          ],
           ...doc.name.startsWith('gpx-') ? { name: basename(path) } : {},
           arguments: [
             method === 'get' ? 'params' : 'data', 
@@ -34,8 +37,11 @@ export default defineConfig({
               url: "${path}",
               ${method === 'get' ? 'params' : 'data'},
               ...options
-            })
-          `
+            }) as any
+          `,
+          types: {
+            return: 'Promise<AxiosResponse<&Response, &RequestBody>>',
+          }
         }
       }
     })
