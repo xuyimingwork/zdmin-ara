@@ -19,5 +19,6 @@ export type {
 }
 
 export type GetResponse<paths, path extends string, method extends string> = Get<Get<paths, `${path}.${method}.responses`>['200'], 'schema'>
+export type GetRequestParams<paths, path extends string, method extends string> = Get<paths, `${path}.${method}.parameters.path`>
 export type GetRequestQuery<paths, path extends string, method extends string> = Get<paths, `${path}.${method}.parameters.query`>
 export type GetRequestBody<paths, path extends string, method extends string> = Get<paths, `${path}.${method}.parameters.body.body`>

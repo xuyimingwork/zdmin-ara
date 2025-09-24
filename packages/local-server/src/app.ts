@@ -58,4 +58,9 @@ export type {
   GetResponse, 
   GetRequestQuery,
   GetRequestBody,
+  GetRequestParams
 } from '@/types/openapi'
+
+export type { 
+  UserOptions
+} from '@/types/option'

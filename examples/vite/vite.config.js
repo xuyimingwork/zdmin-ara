@@ -19,17 +19,27 @@ export default defineConfig({
         ['ruoyi']: 'http://192.168.8.186:8080/gpx-ruoyi-flex/swagger-ui/index.html?urls.primaryName=6.%E8%84%9A%E6%9C%AC%E7%94%9F%E6%88%90%E6%A8%A1%E5%9D%97#/'
       },
       transform: ({
-        method, path, doc,
+        method, path, doc
       }) => {
         return {
           imports: [
             { from: 'axios', import: 'axios' },
-            { from: 'axios', imports: [{ name: 'AxiosResponse', type: true }] }
+            { from: 'axios', imports: [{ name: 'AxiosResponse', type: true }, { name: 'AxiosRequestConfig', type: true }] }
           ],
           ...doc.name.startsWith('gpx-') ? { name: basename(path) } : {},
           arguments: [
-            method === 'get' ? 'params' : 'data', 
-            'options'
+            method === 'get' ? {
+              name: 'params',
+              type: '&RequestQuery'
+            } : {
+              name: 'data',
+              type: '&RequestBody'
+            }, 
+            { 
+              name: 'options',
+              optional: true,
+              type: 'AxiosRequestConfig<&RequestBody>'
+            }
           ],
           code: `
             return axios({

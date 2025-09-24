@@ -1,6 +1,6 @@
 import { upperFirst } from "es-toolkit"
 
-export const UTIL_TYPES = ['Response', 'RequestBody', 'RequestQuery'] as const
+export const UTIL_TYPES = ['Response', 'RequestBody', 'RequestQuery', 'RequestParams'] as const
 export type UtilType = typeof UTIL_TYPES[number]
 
 export function getRequestTypeName(name: string, type: UtilType) {
