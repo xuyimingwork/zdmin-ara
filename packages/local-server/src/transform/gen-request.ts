@@ -4,7 +4,7 @@ import { print } from "@/transform/ast/printer"
 import { getRequestTypeName, getUtilTypeName, replaceRefRequestType, UTIL_TYPES } from "@/transform/type"
 import { getImportRelative, patchBanner } from "@/transform/utils"
 import { camelCase, groupBy, kebabCase, mapValues } from "es-toolkit"
-import { each } from "es-toolkit/compat"
+import { each, isObject } from "es-toolkit/compat"
 import { basename, dirname, normalize } from "path"
 import { factory } from 'typescript'
 import { createTypeAliasDeclaration } from "@/transform/ast/type"
@@ -120,7 +120,7 @@ function genFileOfRequests({ item, pairTypeFile }: {
         name: request.name,
         openapi: request.openapi,
         code: replaceRefRequestType(request.name, request.code),
-        arguments: request.arguments || [],
+        arguments: normalizeArguments(request.name, request.arguments),
         types: normalizeTypes(request.name, request.types)
       }),
       factory.createIdentifier('\n')
@@ -142,14 +142,20 @@ function normalizeTypes(name: string, types?: { [key: string]: string }) {
   return mapValues(types, code => replaceRefRequestType(name, code))
 }
 
+function normalizeArguments(name: string, parameters: ReturnType<ApiTransformer>['arguments']): ReturnType<ApiTransformer>['arguments'] {
+  if (!Array.isArray(parameters)) return []
+  return parameters.map(item => {
+    if (!isObject(item) || !item?.type) return item
+    return { ...item, type: replaceRefRequestType(name, item.type) }
+  })
+}
+
 export function genRequest({ openapi, transform, relocate, rootTypes }: {
   openapi: OpenAPI,
   transform: ApiTransformer
   relocate?: (output: string) => string
   rootTypes?: string
 }): GenResult<{ functions: number }> {
-
-  // 先生成类型文件，request 的 import 需要依赖类型文件
 
   // 所有请求
   const requests = mapEachRequest<AstApiData>(openapi, ({ method, path, openapi }) => {
@@ -175,11 +181,7 @@ export function genRequest({ openapi, transform, relocate, rootTypes }: {
     })
   
   const files = rawFiles.map(item => {
-    const fileOfTypes = genFileOfRequestTypes({ 
-      rootTypes, 
-      pairOutput: item.output, 
-      requests: item.requests 
-    })
+    const fileOfTypes = genFileOfRequestTypes({ rootTypes, pairOutput: item.output, requests: item.requests })
     const fileOfRequests = genFileOfRequests({ item, pairTypeFile: fileOfTypes })
     return [fileOfTypes, fileOfRequests]
   }).flat().filter(file => !!file)

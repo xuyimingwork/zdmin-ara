@@ -21,7 +21,15 @@ export interface ApiTransformer {
     /* 函数体（代码块） */
     code?: string
     /* 函数入参 */
-    arguments?: string[]
+    arguments?: Array<string | {
+      name: string
+      /* 配置可选参数 */
+      optional?: boolean
+      /* 配置剩余参数 */
+      rest?: boolean
+      /* 配置参数类型 */
+      type?: string
+    }>
     /* 函数依赖 */
     imports?: ApiImport[]
     /* 类型声明 */

@@ -1,7 +1,8 @@
 import { getAstStatements, getAstTypeNode } from "@/transform/ast/code";
 import { createJSDocFunctionLeadingComment } from "@/transform/ast/comment";
+import { ApiTransformer } from "@/types/api";
 import { OpenAPIPathOperationObject } from "@/types/openapi";
-import { Node, factory, SyntaxKind } from "typescript";
+import { Node, factory, SyntaxKind, ParameterDeclaration } from "typescript";
 
 function patchLeadingComment(node: Node, context: any) {
   return (context.summary || context.description) 
@@ -10,6 +11,21 @@ function patchLeadingComment(node: Node, context: any) {
       { key: 'description', value: context.description },
     ])
     : node
+}
+
+function createParameterDeclaration(parameters: ReturnType<ApiTransformer>['arguments']): ParameterDeclaration[] {
+  if (!Array.isArray(parameters)) return []
+  return parameters.map(parameter => {
+    parameter = typeof parameter === 'string' ? { name: parameter } : parameter
+    return factory.createParameterDeclaration(
+      undefined,
+      parameter.rest ? factory.createToken(SyntaxKind.DotDotDotToken) : undefined,
+      factory.createIdentifier(parameter.name),
+      parameter.optional ? factory.createToken(SyntaxKind.QuestionToken) : undefined,
+      getAstTypeNode(parameter.type),
+      undefined
+    )
+  })
 }
 
 export function createFunctionDeclaration({
@@ -21,7 +37,7 @@ export function createFunctionDeclaration({
 }: { 
   name: string
   code: string,
-  arguments: string[]
+  arguments: ReturnType<ApiTransformer>['arguments']
   openapi: OpenAPIPathOperationObject 
   types: { return?: string }
 }): Node {
@@ -31,16 +47,7 @@ export function createFunctionDeclaration({
       undefined,
       factory.createIdentifier(name),
       undefined,
-      Array.isArray(parameters) 
-        ? parameters.map(key => factory.createParameterDeclaration(
-          undefined,
-          undefined,
-          factory.createIdentifier(key),
-          undefined,
-          undefined,
-          undefined
-        ))
-        : [],
+      createParameterDeclaration(parameters),
       getAstTypeNode(types?.return),
       factory.createBlock(getAstStatements(code) || [], true)
     ),
