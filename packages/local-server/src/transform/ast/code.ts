@@ -1,6 +1,7 @@
 import { createSourceFile, NodeArray, ScriptTarget, Statement, SyntaxKind, TypeNode } from "typescript";
 
 export function getAstTypeNode(code?: string): TypeNode | undefined {
+  if (!code) return
   const statements = getAstStatements(`type Temp = ${code}`)
   if (!statements || !statements[0]) return
   const statement = statements[0]
