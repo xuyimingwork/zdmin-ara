@@ -1,14 +1,14 @@
-import { patchBanner } from "@/transform/banner"
-import { createFunctionDeclaration } from "@/transform/function"
+import { createFunctionDeclaration } from "@/transform/ast/function"
 import { genImports, normalizeImports } from "@/transform/gen-imports"
 import { output } from "@/transform/printer"
-import { createTypeAliasDeclaration, getRequestTypeName, getUtilTypeName, replaceRefRequestType, UTIL_TYPES } from "@/transform/type"
-import { getImportRelative } from "@/transform/utils"
+import { getRequestTypeName, getUtilTypeName, replaceRefRequestType, UTIL_TYPES } from "@/transform/type"
+import { getImportRelative, patchBanner } from "@/transform/utils"
 import { AstInputFile, AstInputImportNormalized, AstInputRequest, GenRequestTransformer, GenRequestTransformerOptions, GenRequestTransformerReturn, GenResult, OpenAPI, OpenAPIPathOperationObject, GenFile } from "@/types"
 import { camelCase, groupBy, kebabCase, mapValues } from "es-toolkit"
 import { each } from "es-toolkit/compat"
 import { basename, dirname, normalize } from "path"
 import ts from 'typescript'
+import { createTypeAliasDeclaration } from "@/transform/ast/type"
 
 const factory = ts.factory
 

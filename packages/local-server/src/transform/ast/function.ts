@@ -1,5 +1,5 @@
-import { getAstStatements, getAstTypeNode } from "@/transform/code";
-import { createJSDocFunctionLeadingComment } from "@/transform/comment";
+import { getAstStatements, getAstTypeNode } from "@/transform/ast/code";
+import { createJSDocFunctionLeadingComment } from "@/transform/ast/comment";
 import { OpenAPIPathOperationObject } from "@/types";
 import { Node, factory, SyntaxKind } from "typescript";
 
