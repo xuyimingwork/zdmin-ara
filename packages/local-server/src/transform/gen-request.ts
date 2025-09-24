@@ -1,16 +1,15 @@
 import { createFunctionDeclaration } from "@/transform/ast/function"
-import { genImports, normalizeImports } from "@/transform/gen-imports"
-import { output } from "@/transform/printer"
+import { normalizeImports } from "@/transform/gen-imports"
+import { print } from "@/transform/ast/printer"
 import { getRequestTypeName, getUtilTypeName, replaceRefRequestType, UTIL_TYPES } from "@/transform/type"
 import { getImportRelative, patchBanner } from "@/transform/utils"
 import { AstInputFile, AstInputImportNormalized, AstInputRequest, GenRequestTransformer, GenRequestTransformerOptions, GenRequestTransformerReturn, GenResult, OpenAPI, OpenAPIPathOperationObject, GenFile } from "@/types"
 import { camelCase, groupBy, kebabCase, mapValues } from "es-toolkit"
 import { each } from "es-toolkit/compat"
 import { basename, dirname, normalize } from "path"
-import ts from 'typescript'
+import { factory } from 'typescript'
 import { createTypeAliasDeclaration } from "@/transform/ast/type"
-
-const factory = ts.factory
+import { createImportDeclarations } from "@/transform/ast/import"
 
 type ForEachRequestCallback = (request: Omit<GenRequestTransformerOptions, 'base'>) => void
 
@@ -63,8 +62,8 @@ function genFileOfRequestTypes({ rootTypes, pairOutput, requests }: {
     types: Array.isArray(requests) 
       ? requests.map(request => UTIL_TYPES.map(name => getRequestTypeName(request.name, name))).flat()
       : [],
-    content: patchBanner(output(factory.createNodeArray([
-      ...genImports([
+    content: patchBanner(print(factory.createNodeArray([
+      ...createImportDeclarations([
         {
           mode: 'type',
           from: '@zdmin/ara-unplugin',
@@ -96,7 +95,7 @@ function genFileOfRequests({ item, pairTypeFile }: {
   item: AstInputFile 
   pairTypeFile?: GenFile & { types: string[] }
 }): GenFile {
-  const imports = genImports([
+  const imports = createImportDeclarations([
     ...item.imports as AstInputImportNormalized[],
     ...(pairTypeFile ? [{
       mode: 'type' as const,
@@ -116,7 +115,7 @@ function genFileOfRequests({ item, pairTypeFile }: {
       factory.createIdentifier('\n')
     ]
   }).flat() : []
-  const content = output(factory.createNodeArray([
+  const content = print(factory.createNodeArray([
     ...imports,
     ...(imports.length ? [factory.createIdentifier('\n')] : []),
     ...functions

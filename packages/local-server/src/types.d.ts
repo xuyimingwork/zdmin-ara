@@ -169,3 +169,5 @@ export type GetRequestQuery<paths, path extends string, method extends string> =
 export type GetRequestBody<paths, path extends string, method extends string> = Get<paths, `${path}.${method}.parameters.body.body`>
 
 export type WithRequired<T, K extends keyof T> = T & { [P in K]-?: T[P] }
+
+/* TODO: 类型结构调整：分内外使用、分阶段，类型分散至各文件内 */
