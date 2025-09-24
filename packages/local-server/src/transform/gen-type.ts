@@ -1,7 +1,8 @@
 import v3OpenAPITS, { astToString as v3AstToString } from "openapi-typescript7";
 import v2OpenAPITS from "openapi-typescript5";
-import { GenResult, OpenAPI } from "@/types";
 import { isOpenAPI2, isOpenAPI3, patchBanner } from "@/transform/utils";
+import { OpenAPI } from "@/types/openapi";
+import { GenResult } from "@/types/gen";
 
 export const DEFAULT_TYPE_FILE = 'openapi.d.ts'
 

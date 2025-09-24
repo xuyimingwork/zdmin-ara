@@ -1,6 +1,6 @@
 import { getAstStatements, getAstTypeNode } from "@/transform/ast/code";
 import { createJSDocFunctionLeadingComment } from "@/transform/ast/comment";
-import { OpenAPIPathOperationObject } from "@/types";
+import { OpenAPIPathOperationObject } from "@/types/openapi";
 import { Node, factory, SyntaxKind } from "typescript";
 
 function patchLeadingComment(node: Node, context: any) {

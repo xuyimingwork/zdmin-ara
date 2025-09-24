@@ -4,11 +4,11 @@ import cors from 'cors'
 import bodyParser from 'body-parser'
 import ConnectRest from 'connect-rest';
 import getPort, { portNumbers } from 'get-port';
-import { UserOptions, UserOptionsNormalized } from '@/types';
 import { normalizeOptions } from '@/options/normalize';
 import { createError, createResponse } from '@/utils/server';
 import { getProject } from '@/api/project';
 import { outputOpenAPI } from '@/api/openapi';
+import { UserOptions, UserOptionsNormalized } from '@/types/option';
 
 const BASE_PORT = 9125
 const BASE_URL = '/openapi-codegen'
@@ -44,12 +44,6 @@ function createConnect(options: UserOptionsNormalized) {
   return app;
 }
 
-/**
- * 外部项目需要配置些什么东西？
- * 需要配置 root 吗？如果都不配置可以用吗？
- * 0 config
- * cwd 表示当前项目位置，主要用于区分不同项目
- */
 export function main(options: UserOptions = {}) {
   return getPort({ port: portNumbers(BASE_PORT, BASE_PORT + 99) })
     .then(port => {
@@ -63,5 +57,4 @@ export type {
   GetResponse, 
   GetRequestQuery,
   GetRequestBody,
-  UserOptions 
-} from '@/types'
+} from '@/types/openapi'

@@ -1,7 +1,7 @@
-import { AstInputImportNormalized } from "@/types"
+import { ImportDataNormalized } from "@/types/import"
 import { factory, ImportDeclaration } from "typescript"
 
-export function createImportDeclarations(imports?: AstInputImportNormalized[]): ImportDeclaration[] {
+export function createImportDeclarations(imports?: ImportDataNormalized[]): ImportDeclaration[] {
   if (!Array.isArray(imports)) return []
   return imports.map(item => {
     if (item.mode === 'simple') return factory.createImportDeclaration(

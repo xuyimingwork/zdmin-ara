@@ -1,4 +1,4 @@
-import { OpenAPI, OpenAPI2, OpenAPI3 } from "@/types"
+import { OpenAPI, OpenAPI2, OpenAPI3 } from "@/types/openapi"
 import { dirname, relative } from "path"
 
 export function getCommentMultiLine(text: string[] | string, { trim = false } = {}) {

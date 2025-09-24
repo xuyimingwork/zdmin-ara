@@ -34,7 +34,8 @@
     "get-port": "^7.1.0",
     "mkdirp": "^3.0.1",
     "openapi-typescript5": "npm:openapi-typescript@5",
-    "openapi-typescript7": "npm:openapi-typescript@7"
+    "openapi-typescript7": "npm:openapi-typescript@7",
+    "type-fest": "^5.0.1"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",

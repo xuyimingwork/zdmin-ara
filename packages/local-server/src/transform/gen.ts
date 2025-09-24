@@ -1,6 +1,8 @@
 import { genRequest } from '@/transform/gen-request'
 import { genType } from '@/transform/gen-type'
-import { GenRequestTransformer, GenRequestTransformerReturn, GenResult, OpenAPI } from '@/types'
+import { ApiTransformer } from '@/types/api'
+import { GenResult } from '@/types/gen'
+import { OpenAPI } from '@/types/openapi'
 
 export const DEFAULT_DATA_FILE = 'openapi.json'
 
@@ -9,7 +11,7 @@ export const DEFAULT_DATA_FILE = 'openapi.json'
  */
 export async function gen({ openapi, transform, relocate }: {
   openapi: OpenAPI, 
-  transform: (...args: Parameters<GenRequestTransformer>) => Partial<GenRequestTransformerReturn>
+  transform: ApiTransformer
   relocate?: (output: string) => string
 }): Promise<GenResult<{ functions: number }>> {
   relocate = typeof relocate === 'function' ? relocate : (output: string) => output

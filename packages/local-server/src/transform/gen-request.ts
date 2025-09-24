@@ -3,15 +3,26 @@ import { normalizeImports } from "@/transform/gen-imports"
 import { print } from "@/transform/ast/printer"
 import { getRequestTypeName, getUtilTypeName, replaceRefRequestType, UTIL_TYPES } from "@/transform/type"
 import { getImportRelative, patchBanner } from "@/transform/utils"
-import { AstInputFile, AstInputImportNormalized, AstInputRequest, GenRequestTransformer, GenRequestTransformerOptions, GenRequestTransformerReturn, GenResult, OpenAPI, OpenAPIPathOperationObject, GenFile } from "@/types"
 import { camelCase, groupBy, kebabCase, mapValues } from "es-toolkit"
 import { each } from "es-toolkit/compat"
 import { basename, dirname, normalize } from "path"
 import { factory } from 'typescript'
 import { createTypeAliasDeclaration } from "@/transform/ast/type"
 import { createImportDeclarations } from "@/transform/ast/import"
+import { OpenAPI } from "@/types/openapi"
+import { FileData } from "@/types/file"
+import { ImportDataNormalized } from "@/types/import"
+import { GenResult } from "@/types/gen"
+import { ApiBaseData, ApiTransformer } from "@/types/api"
 
-type ForEachRequestCallback = (request: Omit<GenRequestTransformerOptions, 'base'>) => void
+type AstApiData = ApiBaseData & Required<ReturnType<ApiTransformer>>
+type AstFileData = {
+  output: string
+  imports: ImportDataNormalized[]
+  requests?: Omit<AstApiData, 'imports' | 'output'>[]
+}
+
+type ForEachRequestCallback = (api: ApiBaseData) => void
 
 function forEachRequest(openapi: OpenAPI, cb: ForEachRequestCallback) {
   each(Object.keys(openapi.paths || {}).map(path => {
@@ -33,7 +44,7 @@ function mapEachRequest<T = void>(openapi: OpenAPI, cb: MapEachRequestCallback<T
   return result
 }
 
-type PresetApiTransformer = (options: Omit<GenRequestTransformerOptions, 'base'>) => Required<GenRequestTransformerReturn>
+type PresetApiTransformer = (options: ApiBaseData) => Required<ReturnType<ApiTransformer>>
 
 const baseTransformer: PresetApiTransformer = ({ path, method }) => {
   const base = basename(path)
@@ -54,8 +65,8 @@ const baseTransformer: PresetApiTransformer = ({ path, method }) => {
 function genFileOfRequestTypes({ rootTypes, pairOutput, requests }: {
   rootTypes?: string
   pairOutput: string
-  requests?: AstInputFile['requests']
-}): (GenFile & { types: string[] }) | undefined {
+  requests?: AstFileData['requests']
+}): (FileData & { types: string[] }) | undefined {
   if (!rootTypes) return
   return {
     output: pairOutput.replace(/\.ts$/, '.d.ts'),
@@ -92,11 +103,11 @@ function genFileOfRequestTypes({ rootTypes, pairOutput, requests }: {
 }
 
 function genFileOfRequests({ item, pairTypeFile }: { 
-  item: AstInputFile 
-  pairTypeFile?: GenFile & { types: string[] }
-}): GenFile {
+  item: AstFileData 
+  pairTypeFile?: FileData & { types: string[] }
+}): FileData {
   const imports = createImportDeclarations([
-    ...item.imports as AstInputImportNormalized[],
+    ...item.imports as ImportDataNormalized[],
     ...(pairTypeFile ? [{
       mode: 'type' as const,
       from: `./${basename(pairTypeFile.output, '.ts')}`,
@@ -133,7 +144,7 @@ function normalizeTypes(name: string, types?: { [key: string]: string }) {
 
 export function genRequest({ openapi, transform, relocate, rootTypes }: {
   openapi: OpenAPI,
-  transform: (...args: Parameters<GenRequestTransformer>) => Partial<GenRequestTransformerReturn>
+  transform: ApiTransformer
   relocate?: (output: string) => string
   rootTypes?: string
 }): GenResult<{ functions: number }> {
@@ -141,7 +152,7 @@ export function genRequest({ openapi, transform, relocate, rootTypes }: {
   // 先生成类型文件，request 的 import 需要依赖类型文件
 
   // 所有请求
-  const requests = mapEachRequest<AstInputRequest>(openapi, ({ method, path, openapi }) => {
+  const requests = mapEachRequest<AstApiData>(openapi, ({ method, path, openapi }) => {
     const baseConfig = baseTransformer({ method, path, openapi })
     const config = transform({ method, path, openapi, base: baseConfig })
     const result = Object.assign({ openapi, method, path }, baseConfig, config)
@@ -152,7 +163,7 @@ export function genRequest({ openapi, transform, relocate, rootTypes }: {
   })
 
   // 所有请求构成的文件
-  const rawFiles: AstInputFile[] = Object.keys(groupBy(requests, item => item.output))
+  const rawFiles: AstFileData[] = Object.keys(groupBy(requests, item => item.output))
     .map(output => {
       const fileRequests = requests.filter(item => item.output === output)
       const imports = normalizeImports(fileRequests.map(item => Array.isArray(item.imports) ? item.imports : []).flat())

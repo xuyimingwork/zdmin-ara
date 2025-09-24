@@ -1,8 +1,8 @@
-import { AstInputImport, AstInputImportDefault, AstInputImportMix, AstInputImportNormalized } from "@/types"
+import { ImportData, ImportDataDefault, ImportDataMix, ImportDataNormalized } from "@/types/import"
 import { isObjectLike } from "es-toolkit/compat"
 
-export function normalizeImports(imports: AstInputImport[]): AstInputImportNormalized[] {
-  const map = new Map<string, AstInputImportNormalized[]>()
+export function normalizeImports(imports: ImportData[]): ImportDataNormalized[] {
+  const map = new Map<string, ImportDataNormalized[]>()
 
   const prepare = (from: string) => !map.has(from) && map.set(from, [])
   const prepareType = (from: string) => {
@@ -27,8 +27,8 @@ export function normalizeImports(imports: AstInputImport[]): AstInputImportNorma
     return !!one.imports.find(item => item.name === name && item.alias === alias)
   })
   const getTypeImports = (from: string) => map.get(from)?.find(one => one.mode === 'type')?.imports
-  const isAstInputImportDefault = (item: AstInputImport): item is AstInputImportDefault => isObjectLike(item) && !!(item as AstInputImportDefault).import
-  const isAstInputImportMix = (item: AstInputImport): item is AstInputImportMix => isObjectLike(item) && Array.isArray((item as AstInputImportMix).imports)
+  const isAstInputImportDefault = (item: ImportData): item is ImportDataDefault => isObjectLike(item) && !!(item as ImportDataDefault).import
+  const isAstInputImportMix = (item: ImportData): item is ImportDataMix => isObjectLike(item) && Array.isArray((item as ImportDataMix).imports)
   
   imports.forEach(item => {
     if (typeof item === 'string') {
