@@ -7,7 +7,7 @@ import getPort, { portNumbers } from 'get-port';
 import { normalizeOptions } from '@/options/normalize';
 import { createError, createResponse } from '@/utils/server';
 import { getProject } from '@/api/project';
-import { outputOpenAPI } from '@/api/openapi';
+import { outputOpenAPI, previewOpenAPI } from '@/api/openapi';
 import { UserOptions, UserOptionsNormalized } from '@/types/option';
 
 const BASE_PORT = 9125
@@ -26,7 +26,8 @@ function createRest(options: UserOptionsNormalized) {
     if (!content?.name) return createError('No OpenAPI Doc Name');
     const doc = options.doc.find(item => item.name === content.name)
     if (!doc) return createError('OpenAPI Doc Not Config')
-    return outputOpenAPI({ openapi: content.data, doc, transform: options.transform })
+    const preview = !!content.preview
+    return (preview ? previewOpenAPI : outputOpenAPI)({ openapi: content.data, doc, transform: options.transform })
       .then(({ files, statistic }) => createResponse({ statistic, files }))
       .catch(err => createError(err.message));
   })
