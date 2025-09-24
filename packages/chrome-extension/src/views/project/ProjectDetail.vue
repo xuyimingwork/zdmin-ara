@@ -102,7 +102,7 @@
       v-for="doc of project?.docs"
       :key="doc.name"
       :title="doc.name"
-      :subtitle="doc.path"
+      :subtitle="doc.url"
       tip="点击访问"
       @click="reload(doc)"
     />

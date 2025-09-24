@@ -29,8 +29,14 @@
       }"
       :title="statusTitle"
     />
-    <span class="text-(--el-text-color-primary) font-medium">{{ title }}</span>
-    <span class="ml-1 text-(--el-text-color-regular)">{{ subtitle }}</span>
+    <span
+      class="text-(--el-text-color-primary) font-medium"
+      :title="title"
+    >{{ title }}</span>
+    <span
+      class="ml-1 text-(--el-text-color-regular)"
+      :title="subtitle"
+    >{{ subtitle }}</span>
   </div>
 </template>
 
