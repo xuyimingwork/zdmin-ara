@@ -3,7 +3,7 @@ import { DEFAULT_TYPE_FILE } from "@/transform/gen-type";
 import { OpenAPI } from "@/types/openapi";
 import { UserApiTransformer, UserDocNormalized } from "@/types/option";
 import { writep } from "@/utils/output";
-import { kebabCase } from "es-toolkit";
+import { kebabCase } from "@/utils/string";
 import { resolve } from "path";
 
 const RENAME_FILE_LIST = [DEFAULT_DATA_FILE, DEFAULT_TYPE_FILE]

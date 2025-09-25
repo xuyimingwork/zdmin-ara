@@ -3,9 +3,9 @@ import { normalizeImports } from "@/transform/gen-imports"
 import { print } from "@/transform/ast/printer"
 import { getRequestTypeName, getUtilTypeName, replaceRefRequestType, UTIL_TYPES } from "@/transform/type"
 import { getImportRelative, patchBanner } from "@/transform/utils"
-import { camelCase, groupBy, kebabCase, mapValues } from "es-toolkit"
+import { groupBy, mapValues } from "es-toolkit"
 import { each, isObject } from "es-toolkit/compat"
-import { basename, dirname, normalize } from "path"
+import { basename } from "path"
 import { factory } from 'typescript'
 import { createTypeAliasDeclaration } from "@/transform/ast/type"
 import { createImportDeclarations } from "@/transform/ast/import"
@@ -14,6 +14,7 @@ import { FileData } from "@/types/file"
 import { ImportDataNormalized } from "@/types/import"
 import { GenResult } from "@/types/gen"
 import { ApiBaseData, ApiTransformer } from "@/types/api"
+import { baseTransformer } from "@/transform/transformer/base"
 
 type AstApiData = ApiBaseData & Required<ReturnType<ApiTransformer>>
 type AstFileData = {
@@ -42,25 +43,6 @@ function mapEachRequest<T = void>(openapi: OpenAPI, cb: MapEachRequestCallback<T
     result.push(item)
   })
   return result
-}
-
-type PresetApiTransformer = (options: ApiBaseData) => Required<ReturnType<ApiTransformer>>
-
-const baseTransformer: PresetApiTransformer = ({ path, method }) => {
-  const base = basename(path)
-  const dir = dirname(path).startsWith('/')
-    ? dirname(path).substring(1)
-    : dirname(path)
-  const output = normalize(dir || 'index').split('/').map(item => kebabCase(item)).join('/') + '.ts'
-  return {
-    output: output.startsWith('/') ? output.substring(1) : output,
-    name: camelCase(`${method}+${base}`),
-    code: '',
-    ignore: false,
-    arguments: [],
-    imports: [],
-    types: {}
-  }
 }
 
 function genFileOfRequestTypes({ rootTypes, pairOutput, requests }: {
