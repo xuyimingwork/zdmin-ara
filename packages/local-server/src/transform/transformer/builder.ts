@@ -1,9 +1,3 @@
-// createTransformer()
-//   .when({  }, () => ({}))
-//   .when({  }, () => ({}))
-//   .default() // others
-//   .build()
-
 import { UserApiTransformer } from "@/types/option"
 import { get } from "es-toolkit/compat"
 
@@ -35,21 +29,34 @@ function match(matcher: MatcherTarget, options: Parameters<UserApiTransformer>['
   })
 }
 
-export function createTransformerBuilder() {
+/**
+ * @example 
+ * {
+ *   transform: createTransformBuilder()
+ *                .when({ method: 'get' }, () => ({  }))
+ *                .when({ doc: 'pet-v2' }, () => ({  }))
+ *                .build()
+ * }
+ */
+export function createTransformBuilder({
+  baseTransformer = () => ({})
+}: {
+  baseTransformer?: UserApiTransformer
+} = {}) {
   const cases: { 
     matcher?: Matcher, 
-    transformers: UserApiTransformer[] 
+    transform: UserApiTransformer
   }[] = []
-  function when(matcher: Matcher, ...transformers: UserApiTransformer[]) {
-    cases.push({ matcher, transformers })
+  function when(matcher: Matcher, transform: UserApiTransformer) {
+    cases.push({ matcher, transform })
     return {
       when,
       default: _default,
       build
     }
   }
-  function _default(...transformers: UserApiTransformer[]): UserApiTransformer {
-    cases.push({ transformers })
+  function _default(transform: UserApiTransformer): UserApiTransformer {
+    cases.push({ transform })
     return build()
   }
   function build(): UserApiTransformer {
@@ -62,7 +69,11 @@ export function createTransformerBuilder() {
         return false
       })
       if (!matched) return { ignore: true }
-      return Object.assign({}, ...matched.transformers.map(transformer => transformer(options)))
+      const base = baseTransformer(options)
+      return Object.assign({}, base, matched.transform({
+        ...options,
+        base: Object.assign({}, options.base, base)
+      })) 
     }
   }
   return {

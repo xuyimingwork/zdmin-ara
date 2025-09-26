@@ -54,6 +54,8 @@ export function main(options: UserOptions = {}) {
     })
 }
 
+export { createTransformBuilder } from '@/transform/transformer/builder'
+
 export type { 
   GetResponse, 
   GetRequestQuery,
