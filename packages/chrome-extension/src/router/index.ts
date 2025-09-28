@@ -11,7 +11,6 @@ export default createRouter({
     {
       path: '/',
       redirect: '/project',
-      // component: () => import('@/views/HomeView.vue'),
     },
     {
       path: '/network',
@@ -23,6 +22,7 @@ export default createRouter({
     },
     {
       path: '/project-detail',
+      name: 'project-detail',
       props: (to) => ({ 
         ...to.params, 
         ...to.query 

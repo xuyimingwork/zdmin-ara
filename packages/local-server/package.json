@@ -21,9 +21,9 @@
     "./package.json": "./package.json"
   },
   "scripts": {
-    "dev:run": "tsdown --config ./vite.config.dev.ts --watch",
+    "dev:run": "tsdown src/run.ts -d dist-dev --watch",
     "dev:lib": "tsdown --watch",
-    "dev": "run-p dev:*",
+    "dev": "run-s dev:*",
     "build": "tsdown"
   },
   "dependencies": {

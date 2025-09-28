@@ -19,6 +19,7 @@
     }"
     :title="tip"
   >
+    <slot name="start" />
     <span
       v-if="status"
       class="size-[9px] rounded-full inline-block mr-1"
@@ -34,14 +35,26 @@
       :title="title"
     >{{ title }}</span>
     <span
-      class="ml-1 text-(--el-text-color-regular)"
+      class="base-item__subtitle ml-1 text-(--el-text-color-regular) break-all line-clamp-1"
       :title="subtitle"
     >{{ subtitle }}</span>
+    <slot name="end" />
   </div>
 </template>
 
 <style lang="scss" scoped>
   .base-item {
+    display: flex;
+    align-items: center;
+
+    > * {
+      flex: 0 0 auto;
+    }
+
+    &__subtitle {
+      flex: auto;
+    }
+
     &--hover:hover {
       background-color: color-mix(in srgb, #1f1f1fff 6%, transparent);
     }

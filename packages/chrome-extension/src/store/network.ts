@@ -9,7 +9,7 @@ const navigations = ref<Array<{
 }>>([])
 // 请求内容对应响应详情
 const contents = ref<WeakMap<chrome.devtools.network.Request, { content: any, encoding: string } | undefined>>(new WeakMap())
-// 请求列表
+// 所有请求列表（平铺）
 const requests = computed(() => navigations.value.map(({ requests }) => requests).flat())
 // 请求+URL+内容列表
 const records = computed(() => {

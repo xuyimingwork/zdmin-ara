@@ -7,6 +7,10 @@ export interface Options extends AraLocalServerOptions {
   // define your plugin options here
 }
 
+function getServer(options: Options) {
+
+}
+
 export const unpluginFactory: UnpluginFactory<Options | undefined> = (options?: Options) => {
   console.log('hello unplugin')
   return {

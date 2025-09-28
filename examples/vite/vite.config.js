@@ -33,7 +33,7 @@ export default defineConfig({
           output: `${doc.name.replace('pet-', '')}/${base.output}`  
         }))
         .when({ doc: /^gpx-/ }, createTransformBuilder()
-          .when({ doc: 'gpx-document' }, () => ({
+          .when({ doc: 'gpx-document' }, ({ base }) => ({
             output: base.output.substring('gpx-document/'.length)
           }))
           .default(({ path }) => ({
