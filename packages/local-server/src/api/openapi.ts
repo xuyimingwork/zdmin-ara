@@ -1,12 +1,26 @@
 import { DEFAULT_DATA_FILE, gen } from "@/transform/gen";
 import { DEFAULT_TYPE_FILE } from "@/transform/gen-type";
+import { FileData } from "@/types/file";
 import { OpenAPI } from "@/types/openapi";
 import { UserApiTransformer, UserDocNormalized } from "@/types/option";
 import { writep } from "@/utils/output";
 import { kebabCase } from "@/utils/string";
+import { access, readFile } from "fs/promises";
 import { resolve } from "path";
 
 const RENAME_FILE_LIST = [DEFAULT_DATA_FILE, DEFAULT_TYPE_FILE]
+
+const exists = (path: string) => access(path)
+    .then(() => true)
+    .catch(() => false)
+
+async function getFileDiff(file: FileData): Promise<'new' | 'update' | 'same' | 'unknown'> {
+  const existed = await exists(file.output)
+  if (!existed) return 'new'
+  return readFile(file.output, 'utf-8')
+      .then(res => res === file.content ? 'same' : 'update')
+      .catch(e => 'unknown')
+}
 
 /**
  * TODO: doc 为空状态待处理
@@ -30,6 +44,18 @@ export function previewOpenAPI({ openapi, doc, transform }: {
       return resolve(doc.outDir, output)
     }
   })
+    .then((res) => {
+      return Promise.all(res.files.map(file => new Promise((resolve) => {
+        getFileDiff(file).then(diff => {
+          resolve({
+            ...file, diff
+          })
+        })
+      }))).then(files => ({
+        ...res,
+        files
+      }))
+    })
 }
 
 export function outputOpenAPI({ openapi, doc, transform }: { 

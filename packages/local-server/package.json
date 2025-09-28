@@ -21,9 +21,9 @@
     "./package.json": "./package.json"
   },
   "scripts": {
-    "dev:run": "tsdown src/run.ts -d dist-dev --watch",
-    "dev:lib": "tsdown --watch",
-    "dev": "run-s dev:*",
+    "dev:run": "tsdown src/run.ts -d dist-dev --watch ./src",
+    "dev:lib": "tsdown --watch ./src",
+    "dev": "run-p dev:*",
     "build": "tsdown"
   },
   "dependencies": {

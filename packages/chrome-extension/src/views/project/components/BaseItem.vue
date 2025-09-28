@@ -2,7 +2,7 @@
   defineProps<{
     title?: string
     subtitle?: string
-    status?: 'success' | 'info'
+    status?: 'primary' | 'success' | 'info' | 'warning'
     statusTitle?: string
     statusPulse?: boolean
     noHover?: boolean
@@ -25,8 +25,10 @@
       class="size-[9px] rounded-full inline-block mr-1"
       :class="{
         'animate-pulse': statusPulse,
+        'bg-(--el-color-primary)': status === 'primary',
         'bg-(--el-color-success)': status === 'success',
-        'bg-(--el-color-info)': status === 'info'
+        'bg-(--el-color-warning)': status === 'warning',
+        'bg-(--el-color-info)': status === 'info',
       }"
       :title="statusTitle"
     />

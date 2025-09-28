@@ -12,4 +12,17 @@
     font-size: var(--text-base);
     padding: 0 calc(var(--spacing) * 2);
   }
+
+  .el-select {
+    --el-select-input-font-size: var(--el-font-size-base);
+
+    .el-select__input {
+      height: 20px;
+    }
+
+    .el-select__wrapper {
+      font-size: var(--el-select-input-font-size);
+      line-height: 1.15;
+    }
+  }
 }
