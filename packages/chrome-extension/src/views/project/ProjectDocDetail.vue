@@ -22,6 +22,7 @@ const { openapis } = useNetwork()
 // 最新的在第一个
 const requests = computed(() => reverse(openapis.value.filter(item => props.doc.url?.startsWith(item.url))))
 
+
 function getDefaultActive() {
   if (!Array.isArray(requests.value) || !requests.value.length) return
   return requests.value[0]
@@ -71,6 +72,12 @@ const DiffList = [
     label: '未知'
   }
 ]
+
+watch(() => props.doc.url, () => {
+  if (!props.doc.url) return
+  if (requests.value.length) return
+  reload(props.doc.url)
+}, { immediate: true })
 </script>
 
 <template>
@@ -88,7 +95,7 @@ const DiffList = [
         >
           {{ active.request.request.url }}
         </div>
-        <CrabFlex v-if="tab === 'preview'">
+        <CrabFlex>
           <template #default>
             <ElSelect
               v-model="tab"
@@ -105,7 +112,10 @@ const DiffList = [
               />
             </ElSelect>
           </template>
-          <template #end>
+          <template
+            v-if="tab === 'preview'"
+            #end
+          >
             <ElButton
               :loading="uploadLoading"
               type="primary"

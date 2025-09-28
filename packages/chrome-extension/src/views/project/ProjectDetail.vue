@@ -70,33 +70,6 @@
         </template>
       </CrabFlex>
     </template>
-    <!-- <ElCollapse>
-      <BaseCollapseItem
-        v-for="doc of docs"
-        :key="doc.name"
-      >
-        <template #title>
-          <ElButton
-            :icon="Refresh"
-            circle
-            class="ml-1!"
-            title="刷新"
-            text
-            @click.stop="reload(doc)"
-          />
-          <BaseItem
-            :title="doc.name"
-            :subtitle="doc.url"
-            no-hover
-          />
-        </template>
-        <ProjectDocDetail
-          :path="path"
-          :url="doc.url"
-          :name="doc.name"
-        />
-      </BaseCollapseItem>
-    </ElCollapse> -->
     <CrabFlex 
       style="height: 100%;"
       :start="{ style: `width: ${activeDoc ? '200px' : '100%'}` }"
@@ -125,38 +98,6 @@
         />
       </template>
     </CrabFlex>
-    
-    <!-- <ElCollapse>
-      <ElCollapseItem
-        v-for="(record, i) in openapis"
-        :key="i"
-      >
-        <template #title>
-          <CrabFlex :main="{ class: 'text-nowrap truncate' }">
-            <template #start>
-              <ElButton
-                circle
-                @click.stop="upload(record.content, getDocOf(record.url)?.name)"
-              >
-                <template #icon>
-                  <Icon icon="mdi:upload" />
-                </template>
-              </ElButton>
-              <ElTag
-                v-if="getDocOf(record.url)"
-                type="success"
-                class="mx-2"
-              >
-                {{ getDocOf(record.url)?.name }}
-              </ElTag>
-            </template>
-            {{ record.url }}
-          </CrabFlex>
-        </template>
-        <div>{{ record.request.request.url }}</div>
-        {{ record.content }}
-      </ElCollapseItem>
-    </ElCollapse> -->
     <template
       v-if="project?.docs"
       #end
