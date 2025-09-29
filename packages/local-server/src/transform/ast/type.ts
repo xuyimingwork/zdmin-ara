@@ -1,5 +1,8 @@
 import { getRequestTypeName, getUtilTypeName, UtilType } from "@/transform/type"
-import { factory, SyntaxKind } from "typescript"
+import ts from "typescript"
+
+const factory = ts.factory
+const SyntaxKind = ts.SyntaxKind
 
 export function createTypeAliasDeclaration({
   name, path, method, type

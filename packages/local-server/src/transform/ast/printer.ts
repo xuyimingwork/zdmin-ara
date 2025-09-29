@@ -1,4 +1,8 @@
-import ts, { NewLineKind, Node, NodeArray, ScriptTarget,  } from "typescript";
+import ts from "typescript";
+import type { Node, NodeArray } from 'typescript'
+
+const NewLineKind = ts.NewLineKind
+const ScriptTarget = ts.ScriptTarget
 
 export function print(list: NodeArray<Node>): string  {
   const printer = ts.createPrinter({ newLine: NewLineKind.LineFeed });

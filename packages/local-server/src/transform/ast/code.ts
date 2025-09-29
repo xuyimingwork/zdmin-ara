@@ -1,4 +1,9 @@
-import { createSourceFile, NodeArray, ScriptTarget, Statement, SyntaxKind, TypeNode } from "typescript";
+import ts from "typescript";
+import type { NodeArray, Statement, TypeNode } from "typescript";
+
+const ScriptTarget = ts.ScriptTarget
+const SyntaxKind = ts.SyntaxKind
+const createSourceFile = ts.createSourceFile
 
 export function getAstTypeNode(code?: string): TypeNode | undefined {
   if (!code) return

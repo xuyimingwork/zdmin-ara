@@ -2,7 +2,10 @@ import { getAstStatements, getAstTypeNode } from "@/transform/ast/code";
 import { createJSDocFunctionLeadingComment } from "@/transform/ast/comment";
 import { ApiTransformer } from "@/types/api";
 import { OpenAPIPathOperationObject } from "@/types/openapi";
-import { Node, factory, SyntaxKind, ParameterDeclaration } from "typescript";
+import type { Node, ParameterDeclaration } from "typescript";
+import ts from "typescript";
+const factory = ts.factory
+const SyntaxKind = ts.SyntaxKind
 
 function patchLeadingComment(node: Node, context: any) {
   return (context.summary || context.description) 

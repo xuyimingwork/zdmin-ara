@@ -1,4 +1,5 @@
-import { OpenAPIPathOperationObject } from "@/types/openapi"
+import type { ImportData } from "@/types/import"
+import type { OpenAPIPathOperationObject } from "@/types/openapi"
 
 export interface ApiBaseData {
   // http 方法
@@ -33,7 +34,7 @@ export interface ApiTransformer {
       type?: string
     }>
     /* 函数依赖 */
-    imports?: ApiImport[]
+    imports?: ImportData[]
     /* 类型声明 */
     types?: { 
       return?: string 

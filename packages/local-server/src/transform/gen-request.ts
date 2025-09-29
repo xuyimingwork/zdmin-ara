@@ -6,7 +6,7 @@ import { getImportRelative, patchBanner } from "@/transform/utils"
 import { groupBy, mapValues } from "es-toolkit"
 import { each, isObject } from "es-toolkit/compat"
 import { basename } from "path"
-import { factory } from 'typescript'
+import ts from 'typescript'
 import { createTypeAliasDeclaration } from "@/transform/ast/type"
 import { createImportDeclarations } from "@/transform/ast/import"
 import { OpenAPI } from "@/types/openapi"
@@ -15,6 +15,8 @@ import { ImportDataNormalized } from "@/types/import"
 import { GenResult } from "@/types/gen"
 import { ApiBaseData, ApiTransformer } from "@/types/api"
 import { baseTransformer } from "@/transform/transformer/base"
+
+const factory = ts.factory
 
 type AstApiData = ApiBaseData & Required<ReturnType<ApiTransformer>>
 type AstFileData = {

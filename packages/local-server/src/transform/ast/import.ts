@@ -1,5 +1,8 @@
-import { ImportDataNormalized } from "@/types/import"
-import { factory, ImportDeclaration } from "typescript"
+import type { ImportDataNormalized } from "@/types/import"
+import type { ImportDeclaration } from "typescript"
+import ts from "typescript"
+
+const factory = ts.factory
 
 export function createImportDeclarations(imports?: ImportDataNormalized[]): ImportDeclaration[] {
   if (!Array.isArray(imports)) return []
