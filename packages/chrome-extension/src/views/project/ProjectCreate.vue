@@ -106,7 +106,7 @@
     <template v-if="project">
       <ElFormItem
         v-loading="queryProjectLoading"
-        label="路径"
+        label="项目"
       >
         {{ project?.path }}
       </ElFormItem>
@@ -114,7 +114,7 @@
         v-loading="queryProjectLoading"
         label="输出"
       >
-        {{ project?.output }}
+        {{ project?.outDir }}
       </ElFormItem>
       <ElFormItem
         v-loading="queryProjectLoading"
@@ -123,10 +123,10 @@
         <ul class="w-full">
           <li
             v-for="doc of project?.docs"
-            :key="doc.path"
+            :key="doc.url"
             class="text-nowrap truncate"
           >
-            <span v-if="doc.name">{{ doc.name }}：</span>{{ doc.path }}
+            <span v-if="doc.name">{{ doc.name }}：</span>{{ doc.url }}
           </li>
         </ul>
       </ElFormItem>

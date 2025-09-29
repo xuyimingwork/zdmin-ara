@@ -192,6 +192,7 @@ watch(() => props.doc.url, () => {
           class="p-3"
         >
           <ElAlert
+            v-loading="previewLoading"
             :title="`预览失败：${queryPreviewResultError?.message || queryPreviewResultError || '未知错误'}`"
             center
             type="error"
