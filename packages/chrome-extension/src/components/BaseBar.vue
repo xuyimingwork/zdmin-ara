@@ -8,7 +8,7 @@ import { CrabFlex } from '@zdmin/crab';
 
 <template>
   <CrabFlex
-    class="base-bar items-center" 
+    class="base-bar items-center px-1" 
     :class="{
       'base-bar--divider-top': divider === 'top',
       'base-bar--divider-bottom': divider === 'bottom',

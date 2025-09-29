@@ -1,6 +1,5 @@
 @import "@zdmin/crab/dist/index.css";
 @import "tailwindcss";
-@import "./scss/index.scss";
 
 @theme {
   /* Supplementary text	12px Extra Small	Build with Element

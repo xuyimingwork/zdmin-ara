@@ -67,6 +67,7 @@
         <template #default>
           <ElDropdown
             placement="bottom-start"
+            :disabled="!projects || !projects.length"
             :popper-options="{
               modifiers: [{
                 name: 'offset',
@@ -80,7 +81,10 @@
               :path="path"
               no-hover
             />
-            <template #dropdown>
+            <template
+              v-if="projects && projects.length"
+              #dropdown
+            >
               <ProjectListPure
                 :projects="projects"
                 @click-item="project => {
@@ -115,6 +119,7 @@
               <ElDropdownMenu>
                 <ElDropdownItem
                   :icon="Delete"
+                  data-ara-type="danger"
                   @click="() => {
                     remove()
                     if (route.name !== 'project-detail') $emit('remove')

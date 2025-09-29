@@ -3,8 +3,9 @@ import { useProjects } from '@/store/projects';
 import { useLocalServers } from '@/views/project/hooks/servers';
 import ProjectCreate from '@/views/project/ProjectCreate.vue';
 import ProjectListPure from '@/views/project/ProjectListPure.vue';
-import { Delete, Plus, Refresh } from '@element-plus/icons-vue';
+import { Delete, InfoFilled, Operation, Plus, Refresh } from '@element-plus/icons-vue';
 import { CrabFlex } from '@zdmin/crab';
+import pkg from '#/package.json'
 
 const { projects, create, clear } = useProjects()
 const active = ref<typeof projects.value[0]>()
@@ -17,7 +18,7 @@ const { free: freeProjects, refresh, refreshLoading } = useLocalServers()
     class="project-list"
   >
     <template #start>
-      <CrabFlex class="project-list__toolbar px-1">
+      <BaseBar divider="bottom">
         <template #start>
           <BaseDrawer size="80%">
             <template #trigger="{ open }">
@@ -51,19 +52,43 @@ const { free: freeProjects, refresh, refreshLoading } = useLocalServers()
           />
         </template>
         <template #end>
-          <ElButton
-            v-if="projects && projects.length"
-            :icon="Delete"
-            circle
-            title="删除全部项目"
-            size="large"
-            text
-            disabled
-            type="danger"
-            @click="clear"
-          />
+          <ElDropdown
+            placement="bottom-end"
+            :popper-options="{
+              modifiers: [{
+                name: 'offset',
+                options: {
+                  offset: [0, 4] // [horizontal, vertical] offset in px
+                }
+              }]
+            }"
+          >
+            <ElButton
+              :icon="Operation"
+              circle
+              size="large"
+              text
+            />
+            <template #dropdown>
+              <ElDropdownMenu>
+                <ElDropdownItem
+                  v-if="projects && projects.length"
+                  :icon="Delete"
+                  data-ara-type="danger"
+                  @click="() => clear()"
+                >
+                  删除全部项目
+                </ElDropdownItem>
+                <ElDropdownItem
+                  :icon="InfoFilled"
+                >
+                  {{ pkg.version }}
+                </ElDropdownItem>
+              </ElDropdownMenu>
+            </template>
+          </ElDropdown>
         </template>
-      </CrabFlex>
+      </BaseBar>
     </template>
     <template #main>
       <ProjectListPure 

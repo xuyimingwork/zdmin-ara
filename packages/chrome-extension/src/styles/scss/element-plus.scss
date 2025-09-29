@@ -39,3 +39,12 @@
     padding: 4px 8px;
   }
 }
+
+$elp-types: primary, success, warning, danger, error;
+
+@each $type in $elp-types {
+  .el-dropdown-menu__item[data-ara-type="#{$type}"] {
+    --el-dropdown-menuItem-hover-fill: var(--el-color-#{$type}-light-9);
+    --el-dropdown-menuItem-hover-color: var(--el-color-#{$type});
+  }
+}
