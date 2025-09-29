@@ -1,5 +1,6 @@
 {
   "name": "@zdmin/ara-chrome-extension",
+  "version": "1.0.0-alpha.0",
   "type": "module",
   "license": "MIT",
   "publishConfig": {
@@ -41,6 +42,5 @@
     "@vitejs/plugin-vue": "^6.0.1",
     "@vitejs/plugin-vue-jsx": "^5.0.1",
     "sass-embedded": "^1.89.2"
-  },
-  "version": "1.0.0-alpha.0"
+  }
 }
