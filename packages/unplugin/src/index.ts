@@ -29,7 +29,7 @@ export const unpluginFactory: UnpluginFactory<Options | undefined> = (options?: 
 }
 
 export type * from '@zdmin/ara-local-server'
-export { createTransformBuilder } from '@zdmin/ara-local-server'
+export { createTransformBuilder, TypeRef } from '@zdmin/ara-local-server'
 export const unplugin: UnpluginInstance<Options | undefined> = /* #__PURE__ */ createUnplugin(unpluginFactory)
 
 export default unplugin

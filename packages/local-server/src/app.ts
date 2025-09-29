@@ -66,3 +66,7 @@ export type {
 export type { 
   UserOptions
 } from '@/types/option'
+
+export { 
+  TypeRef
+} from '@/transform/type'
