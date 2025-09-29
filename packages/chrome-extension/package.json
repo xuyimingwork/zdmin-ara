@@ -22,7 +22,8 @@
     "type-check": "vue-tsc --build",
     "lint:oxlint": "oxlint . --fix -D correctness --ignore-path .gitignore",
     "lint:eslint": "eslint . --fix",
-    "lint": "run-s lint:*"
+    "lint": "run-s lint:*",
+    "prepublishOnly": "pnpm build-only"
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.2",

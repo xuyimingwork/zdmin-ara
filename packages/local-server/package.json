@@ -25,7 +25,8 @@
     "dev:run": "tsdown src/run.ts -d dist-dev --watch ./src",
     "dev:lib": "tsdown --watch ./src",
     "dev": "run-p dev:*",
-    "build": "tsdown"
+    "build": "tsdown",
+    "prepublishOnly": "pnpm build"
   },
   "dependencies": {
     "body-parser": "^2.2.0",
