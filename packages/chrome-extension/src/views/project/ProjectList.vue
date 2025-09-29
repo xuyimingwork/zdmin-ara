@@ -2,12 +2,11 @@
 import { useProjects } from '@/store/projects';
 import { useLocalServers } from '@/views/project/hooks/servers';
 import ProjectCreate from '@/views/project/ProjectCreate.vue';
-import ProjectDetail from '@/views/project/ProjectDetail.vue';
 import ProjectListPure from '@/views/project/ProjectListPure.vue';
 import { Delete, Plus, Refresh } from '@element-plus/icons-vue';
 import { CrabFlex } from '@zdmin/crab';
 
-const { projects, create, clear, remove } = useProjects()
+const { projects, create, clear } = useProjects()
 const active = ref<typeof projects.value[0]>()
 const { free: freeProjects, refresh, refreshLoading } = useLocalServers()
 </script>
@@ -67,58 +66,33 @@ const { free: freeProjects, refresh, refreshLoading } = useLocalServers()
       </CrabFlex>
     </template>
     <template #main>
-      <BaseDrawer
-        size="80%"
-        :with-header="false"
-        body-class="p-0"
-        style="--el-drawer-padding-primary: 0"
-      >
-        <template #trigger="{ open }">
-          <ProjectListPure 
-            key="used"
-            :active="active"
-            :projects="projects"
-            @click-item="project => {
-              active = project
-              open()
-            }"
-          />
-          <!-- 是否要对已添加/未添加项目做区分 -->
-          <!-- <ElDivider
-            v-if="projects && projects.length && freeProjects && freeProjects.length"
-            class="m-2!"
-            content-position="left"
-          >
-            更多项目
-          </ElDivider> -->
-          <ProjectListPure 
-            key="free"
-            :active="active"
-            :projects="freeProjects" 
-            @click-item="project => {
-              create(project)
-              active = project
-              open()
-            }"
-          />
-          <ElEmpty
-            v-if="(!projects || !projects.length) && (!freeProjects || !freeProjects.length)"
-            description="未发现项目"
-          />
-        </template>
-        <template #default="{ close }">
-          <ProjectDetail
-            v-if="active"
-            :path="active.path"
-            @close="close"
-            @remove="() => {
-              remove(active)
-              close()
-              active = undefined
-            }"
-          />
-        </template>
-      </BaseDrawer>
+      <ProjectListPure 
+        key="used"
+        :active="active"
+        :projects="projects"
+        @click-item="project => {
+          $router.push({ 
+            name: 'project-detail', 
+            query: { path: project.path }
+          })
+        }"
+      />
+      <ProjectListPure 
+        key="free"
+        :active="active"
+        :projects="freeProjects" 
+        @click-item="project => {
+          create(project)
+          $router.push({ 
+            name: 'project-detail', 
+            query: { path: project.path }
+          })
+        }"
+      />
+      <ElEmpty
+        v-if="(!projects || !projects.length) && (!freeProjects || !freeProjects.length)"
+        description="未发现项目"
+      />
     </template>
   </CrabFlex>
 </template>

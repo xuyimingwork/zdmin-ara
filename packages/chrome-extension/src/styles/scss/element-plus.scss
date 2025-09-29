@@ -25,4 +25,13 @@
       line-height: 1.15;
     }
   }
+
+  .el-dropdown .el-button.is-text:not(.is-disabled):focus-visible {
+    outline: none;
+    transition: none;
+  }
+
+  .el-button {
+    padding: 4px 8px;
+  }
 }

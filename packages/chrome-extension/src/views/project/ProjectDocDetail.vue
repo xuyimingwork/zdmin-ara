@@ -4,7 +4,7 @@ import { reload } from '@/utils/chrome';
 import BaseCollapseItem from '@/views/project/components/BaseCollapseItem.vue';
 import BaseItem from '@/views/project/components/BaseItem.vue';
 import { useProjectCodeGen } from '@/views/project/hooks/project';
-import { Refresh } from '@element-plus/icons-vue';
+import { CaretRight, Close, Refresh, Upload } from '@element-plus/icons-vue';
 import { CrabFlex } from '@zdmin/crab';
 import { find, reverse } from 'es-toolkit/compat';
 import { useAsyncData } from 'vue-asyncx';
@@ -16,6 +16,10 @@ const props = defineProps<{
     outDir: string,
     name?: string
   }
+}>()
+
+defineEmits<{
+  close: []
 }>()
 
 const { openapis } = useNetwork()
@@ -45,6 +49,10 @@ const {
   return _preview(active.value.content, props.doc.name) as unknown as any
 }, { watch: active, immediate: true })
 
+const TABS = [
+  { value: 'preview', label: '生成预览' },
+  { value: 'raw', label: '请求数据' }
+] as const
 const tab = ref<'raw' | 'preview'>('preview')
 
 function basename(output: string) {
@@ -64,7 +72,6 @@ const DiffList = [
     label: '修改'
   }, {
     type: 'same',
-    value: 'info',
     label: '无更改'
   }, {
     type: 'unknown',
@@ -78,56 +85,86 @@ watch(() => props.doc.url, () => {
   if (requests.value.length) return
   reload(props.doc.url)
 }, { immediate: true })
+
 </script>
 
 <template>
   <CrabFlex
-    v-if="active"
     direction="column"
     class="project-doc-detail"
-    :start="{ class: 'project-doc-detail__toolbar' }"
   >
     <template #start>
-      <CrabFlex class="project-doc-detail__toolbar items-center">
+      <BaseBar
+        divider="bottom"
+        :start="{ class: 'flex items-center' }"
+      >
+        <template #start>
+          <ElButton
+            :icon="Close"
+            circle
+            title="关闭"
+            size="large"
+            text
+            @click="$emit('close')"
+          />
+          <ElDivider
+            direction="vertical"
+            class="ml-0!"
+          />
+        </template>
         <div
+          v-if="active"
           class="break-all line-clamp-1"
           :title="active.request.request.url"
         >
           {{ active.request.request.url }}
         </div>
-        <CrabFlex>
-          <template #default>
-            <ElSelect
-              v-model="tab"
-              style="width: 90px;"
-            >
-              <ElOption
-                v-for="item in [
-                  { value: 'preview', label: '生成预览' },
-                  { value: 'raw', label: '请求数据' }
-                ]"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              />
-            </ElSelect>
-          </template>
-          <template
-            v-if="tab === 'preview'"
-            #end
-          >
+      </BaseBar>
+      <BaseBar
+        v-if="active"
+        divider="bottom"
+      >
+        <template #default>
+          <ElDropdown>
             <ElButton
-              :loading="uploadLoading"
-              type="primary"
-              @click="upload(active.content, doc.name).then(() => preview())"
+              :icon="CaretRight"
+              text
             >
-              生成
+              {{ TABS.find(item => item.value === tab)?.label }}
             </ElButton>
-          </template>
-        </CrabFlex>
-      </CrabFlex>
+            <template #dropdown>
+              <ElDropdownMenu>
+                <ElDropdownItem
+                  v-for="item in TABS"
+                  :key="item.value"
+                  @click="tab = item.value"
+                >
+                  {{ item.label }}
+                </ElDropdownItem>
+              </ElDropdownMenu>
+            </template>
+          </ElDropdown>
+        </template>
+        <template
+          v-if="tab === 'preview'"
+          #end
+        >
+          <ElButton
+            :icon="Upload"
+            text
+            :loading="uploadLoading"
+            type="primary"
+            @click="upload(active.content, doc.name).then(() => preview())"
+          >
+            生成
+          </ElButton>
+        </template>
+      </BaseBar>
     </template>
-    <template #default>
+    <template
+      v-if="active"
+      #default
+    >
       <pre v-if="tab === 'raw'">{{ JSON.stringify(active?.content, undefined, 2) }}</pre>
       <div
         v-else-if="tab === 'preview'"
@@ -156,40 +193,37 @@ watch(() => props.doc.url, () => {
       </div>
     </template>
     <template
+      v-else
+      #default
+    >
+      <ElEmpty
+    
+        description="未发现文档请求，您可以"
+      >
+        <ElButton
+          :icon="Refresh"
+          @click="reload(props.doc.url)"
+        >
+          刷新页面
+        </ElButton>
+      </ElEmpty>
+    </template>
+    <template
       v-if="tab === 'preview' && previewResult"
       #end
     >
-      <CrabFlex class="project-doc-detail__statusbar items-center">
+      <BaseBar divider="top">
         <span>{{ previewResult?.files?.length || 0 }}份文件</span>
         <ElDivider direction="vertical" />
         <span>{{ previewResult?.statistic?.functions || 0 }}个函数</span>
-      </CrabFlex>
+      </BaseBar>
     </template>
   </CrabFlex>
-  <ElEmpty
-    v-else
-    description="未发现文档请求，您可以"
-  >
-    <ElButton
-      :icon="Refresh"
-      @click="reload(props.doc.url)"
-    >
-      刷新页面
-    </ElButton>
-  </ElEmpty>
 </template>
 
 <style lang="scss" scoped>
   .project-doc-detail {
-    &__toolbar {
-      border-bottom: 1px solid var(--color-divider);
-      min-height: 26px;
-      line-height: 26px;
-    }
-    &__statusbar {
-      border-top: 1px solid var(--color-divider);
-      min-height: 26px;
-    }
+
   }
 
 </style>
