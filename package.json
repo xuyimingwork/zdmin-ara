@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "@zdmin/ara",
-  "version": "0.0.1",
+  "version": "1.0.0-alpha.0",
   "description": "Ara is a tool to improve DX of client API integration",
   "type": "module",
   "scripts": {
@@ -9,7 +9,8 @@
     "dev:local-server": "pnpm --filter @zdmin/ara-local-server dev",
     "dev:local-server:start": "nodemon ./packages/local-server/dist-dev/run.js",
     "dev:unplugin": "pnpm --filter @zdmin/ara-unplugin dev",
-    "dev": "run-p dev:**"
+    "dev": "run-p dev:**",
+    "release": "node scripts/release.js"
   },
   "license": "MIT",
   "dependencies": {
