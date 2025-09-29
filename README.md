@@ -4,7 +4,11 @@ This project is aim to provide a set of tools to generate client api code from O
 
 ## next
 
-- [ ] generate type file based on function files
+- [ ] prepare docs
+
+---
+
+- [x] generate type file based on function files
 - [ ] changing local server to use express? or use express.router to drop connect-rest
 - [ ] setup test, first for normalizeImports
 
