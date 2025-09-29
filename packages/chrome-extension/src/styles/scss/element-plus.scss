@@ -31,6 +31,10 @@
     transition: none;
   }
 
+  .el-dropdown > *:focus-visible {
+    outline: none;
+  }
+
   .el-button {
     padding: 4px 8px;
   }

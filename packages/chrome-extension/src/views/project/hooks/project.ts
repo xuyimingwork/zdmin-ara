@@ -25,10 +25,7 @@ export function useProjectCodeGen(path: MaybeRefOrGetter<string | undefined>) {
   const connected = useServerConnected(() => project.value?.server)
 
   function openapi(content: any, name?: string, preview?: boolean) {
-    if (!connected.value) {
-      ElMessage.warning('服务未连接')
-      throw Error()
-    }
+    if (!connected.value) throw Error('服务未连接')
     return request({
       method: 'post',
       url: `${project.value?.server}/openapi-codegen/openapi`,

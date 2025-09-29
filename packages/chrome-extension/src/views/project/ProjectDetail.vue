@@ -41,27 +41,15 @@
         :start="{ class: 'flex items-center' }"
       >
         <template #start>
-          <ElDropdown v-if="route.name === 'project-detail'">
-            <ElButton
-              :icon="HomeFilled"
-              circle
-              title="项目页"
-              size="large"
-              text
-              @click="$router.push('/project')"
-            />
-            <template #dropdown>
-              <ProjectListPure
-                :projects="projects"
-                @click-item="project => {
-                  $router.push({ 
-                    name: 'project-detail', 
-                    query: { path: project.path }
-                  })
-                }"
-              />
-            </template>
-          </ElDropdown>
+          <ElButton
+            v-if="route.name === 'project-detail'"
+            :icon="HomeFilled"
+            circle
+            title="项目页"
+            size="large"
+            text
+            @click="$router.push('/project')"
+          />
           <ElButton
             v-else
             :icon="Close"
@@ -77,13 +65,46 @@
           />
         </template>
         <template #default>
-          <ProjectListItem
-            :path="path"
-            no-hover
-          />
+          <ElDropdown
+            placement="bottom-start"
+            :popper-options="{
+              modifiers: [{
+                name: 'offset',
+                options: {
+                  offset: [0, 4] // [horizontal, vertical] offset in px
+                }
+              }]
+            }"
+          >
+            <ProjectListItem
+              :path="path"
+              no-hover
+            />
+            <template #dropdown>
+              <ProjectListPure
+                :projects="projects"
+                @click-item="project => {
+                  $router.push({ 
+                    name: 'project-detail', 
+                    query: { path: project.path }
+                  })
+                }"
+              />
+            </template>
+          </ElDropdown>
         </template>
         <template #end>
-          <ElDropdown>
+          <ElDropdown
+            placement="bottom-end"
+            :popper-options="{
+              modifiers: [{
+                name: 'offset',
+                options: {
+                  offset: [0, 4] // [horizontal, vertical] offset in px
+                }
+              }]
+            }"
+          >
             <ElButton
               :icon="Operation"
               circle

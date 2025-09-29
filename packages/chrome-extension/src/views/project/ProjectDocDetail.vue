@@ -22,7 +22,7 @@ defineEmits<{
   close: []
 }>()
 
-const { openapis } = useNetwork()
+const { openapis, records } = useNetwork()
 // 最新的在第一个
 const requests = computed(() => reverse(openapis.value.filter(item => props.doc.url?.startsWith(item.url))))
 
@@ -50,8 +50,8 @@ const {
 }, { watch: active, immediate: true })
 
 const TABS = [
-  { value: 'preview', label: '生成预览' },
-  { value: 'raw', label: '请求数据' }
+  { value: 'preview', label: '预览' },
+  { value: 'raw', label: '原始数据' }
 ] as const
 const tab = ref<'raw' | 'preview'>('preview')
 
@@ -119,13 +119,29 @@ watch(() => props.doc.url, () => {
         >
           {{ active.request.request.url }}
         </div>
+        <div
+          v-else-if="records.length"
+          class="break-all line-clamp-1"
+        >
+          加载中：{{ records[records.length - 1].request.request.url }}
+        </div>
       </BaseBar>
       <BaseBar
         v-if="active"
         divider="bottom"
       >
         <template #default>
-          <ElDropdown>
+          <ElDropdown
+            placement="bottom-start"
+            :popper-options="{
+              modifiers: [{
+                name: 'offset',
+                options: {
+                  offset: [0, 4] // [horizontal, vertical] offset in px
+                }
+              }]
+            }"
+          >
             <ElButton
               :icon="CaretRight"
               text
@@ -170,9 +186,19 @@ watch(() => props.doc.url, () => {
         v-else-if="tab === 'preview'"
         v-loading="previewLoading"
         style="height: 100%; overflow-y: auto;"
-      >
-        <div v-if="queryPreviewResultError">
-          {{ queryPreviewResultError }}
+      > 
+        <div
+          v-if="queryPreviewResultError"
+          class="p-3"
+        >
+          <ElAlert
+            :title="`预览失败：${queryPreviewResultError?.message || queryPreviewResultError || '未知错误'}`"
+            center
+            type="error"
+            :closable="false"
+            show-icon
+            @click="preview()"
+          />
         </div>
         <ElCollapse v-else>
           <BaseCollapseItem
