@@ -1,19 +1,21 @@
 import { getAstStatements, getAstTypeNode } from "@/transform/ast/code";
 import { createJSDocFunctionLeadingComment } from "@/transform/ast/comment";
-import { ApiTransformer } from "@/types/api";
-import { OpenAPIPathOperationObject } from "@/types/openapi";
+import { ApiBaseData, ApiTransformer } from "@/types/api";
 import type { Node, ParameterDeclaration } from "typescript";
 import ts from "typescript";
 const factory = ts.factory
 const SyntaxKind = ts.SyntaxKind
 
-function patchLeadingComment(node: Node, context: any) {
-  return (context.summary || context.description) 
-    ? createJSDocFunctionLeadingComment(node, [
-      { key: 'summary', value: context.summary },
-      { key: 'description', value: context.description },
-    ])
-    : node
+function patchLeadingComment(node: Node, context: ApiBaseData, debug: boolean) {
+  const openapi = context.openapi
+  if (!openapi.summary && !openapi.description && !debug) return node
+  return createJSDocFunctionLeadingComment(node, [
+    { key: 'summary', value: openapi.summary! },
+    { key: 'description', value: openapi.description! },
+    debug ? { key: 'see', value: `debug
+  ${context.method} ${context.path}
+  ${JSON.stringify(openapi, undefined, 2)}` } : undefined
+  ].filter(item => !!item))
 }
 
 function createParameterDeclaration(parameters: ReturnType<ApiTransformer>['arguments']): ParameterDeclaration[] {
@@ -35,14 +37,16 @@ export function createFunctionDeclaration({
   name, 
   code,
   arguments: parameters,
-  openapi,
-  types
+  context,
+  types,
+  debug
 }: { 
   name: string
   code: string,
   arguments: ReturnType<ApiTransformer>['arguments']
-  openapi: OpenAPIPathOperationObject 
+  context: ApiBaseData
   types: { return?: string }
+  debug: boolean
 }): Node {
   return patchLeadingComment(
     factory.createFunctionDeclaration(
@@ -54,6 +58,7 @@ export function createFunctionDeclaration({
       getAstTypeNode(types?.return),
       factory.createBlock(getAstStatements(code) || [], true)
     ),
-    openapi
+    context,
+    debug
   )
 }

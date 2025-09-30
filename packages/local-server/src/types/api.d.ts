@@ -38,6 +38,7 @@ export interface ApiTransformer {
     /* 类型声明 */
     types?: { 
       return?: string 
-    }
+    },
+    debug?: boolean
   }
 }

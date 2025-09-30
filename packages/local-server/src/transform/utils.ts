@@ -2,7 +2,9 @@ import { OpenAPI, OpenAPI2, OpenAPI3 } from "@/types/openapi"
 import { dirname, relative } from "path"
 
 export function getCommentMultiLine(text: string[] | string, { trim = false } = {}) {
-  const middle = (Array.isArray(text) ? text : [text]).map(item => ` * ${item}`).join('\n')
+  text = Array.isArray(text) ? text : [text]
+  text = text.map(item => item.split('\n')).flat()
+  const middle = text.map(item => ` * ${item}`).join('\n')
   if (trim) return middle
   return `/**\n${middle}\n */`
 }

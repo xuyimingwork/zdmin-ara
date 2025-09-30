@@ -103,10 +103,11 @@ function genFileOfRequests({ item, pairTypeFile }: {
     return [
       createFunctionDeclaration({
         name: request.name,
-        openapi: request.openapi,
+        context: { ...request },
         code: replaceRefRequestType(request.name, request.code),
         arguments: normalizeArguments(request.name, request.arguments),
-        types: normalizeTypes(request.name, request.types)
+        types: normalizeTypes(request.name, request.types),
+        debug: request.debug
       }),
       factory.createIdentifier('\n')
     ]

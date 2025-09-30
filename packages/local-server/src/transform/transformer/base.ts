@@ -18,6 +18,7 @@ export const baseTransformer: PresetApiTransformer = ({ path, method }) => {
     ignore: false,
     arguments: [],
     imports: [],
-    types: {}
+    types: {},
+    debug: false
   }
 }

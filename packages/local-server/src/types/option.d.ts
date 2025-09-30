@@ -25,6 +25,11 @@ export interface UserDoc {
  */
 export interface UserOptions {
   /**
+   * @description debug 模式
+   * TODO: 待实现
+   */
+  debug?: boolean
+  /**
    * @description 项目文件夹
    */
   cwd?: string
