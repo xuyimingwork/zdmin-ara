@@ -20,9 +20,15 @@ export function useProject(path: MaybeRefOrGetter<string | undefined>) {
   }
 }
 
+export function useProjectConnected(path: MaybeRefOrGetter<string | undefined>) {
+  const { project } = useProject(path)
+  const serverConnected = useServerConnected(() => project.value?.server)
+  return computed(() => !!serverConnected.value && serverConnected.value.path === project.value?.path)
+}
+
 export function useProjectCodeGen(path: MaybeRefOrGetter<string | undefined>) {
   const { project } = useProject(path)
-  const connected = useServerConnected(() => project.value?.server)
+  const connected = useProjectConnected(path)
 
   function openapi(content: any, name?: string, preview?: boolean) {
     if (!connected.value) throw Error('服务未连接')

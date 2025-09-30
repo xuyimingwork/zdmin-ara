@@ -119,5 +119,5 @@ export function useServerConnected(server: MaybeRefOrGetter<string | undefined>)
     return single(_server)
   }, { immediate: true, watch: () => toValue(server) })
   useIntervalFn(queryData, 2 * 1000)
-  return computed(() => !!data.value)
+  return computed(() => data.value)
 }

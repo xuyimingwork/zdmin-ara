@@ -166,6 +166,13 @@ watch(() => props.doc.url, () => {
           #end
         >
           <ElButton
+            :icon="Refresh"
+            text
+            :loading="previewLoading"
+            type="primary"
+            @click="preview()"
+          />
+          <ElButton
             :icon="Upload"
             text
             :loading="uploadLoading"
@@ -185,7 +192,7 @@ watch(() => props.doc.url, () => {
       <div
         v-else-if="tab === 'preview'"
         v-loading="previewLoading"
-        style="height: 100%; overflow-y: auto;"
+        style="height: 100%;"
       > 
         <div
           v-if="queryPreviewResultError"
@@ -201,7 +208,10 @@ watch(() => props.doc.url, () => {
             @click="preview()"
           />
         </div>
-        <ElCollapse v-else>
+        <ElCollapse
+          v-else
+          style="height: 100%; overflow-y: auto;"
+        >
           <BaseCollapseItem
             v-for="file of previewResult?.files"
             :key="file.output"
