@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "@zdmin/ara",
-  "version": "1.0.0-alpha.1",
+  "version": "1.0.0-alpha.2",
   "description": "Ara is a tool to improve DX of client API integration",
   "type": "module",
   "scripts": {
