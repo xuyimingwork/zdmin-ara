@@ -21,6 +21,3 @@ export async function genType({ openapi }: { openapi: OpenAPI }): Promise<GenRes
   }
   return Promise.resolve({ files: [] })
 }
-
-/** 手动导入做技术验证，后续自动生成 */
-/** 手动导入做技术验证，后续自动生成 */

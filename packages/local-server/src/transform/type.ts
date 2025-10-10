@@ -1,12 +1,14 @@
 import { upperFirst } from "es-toolkit"
 
 const TypeResponseRaw = 'Response'
+const TypeRequestOptionsRaw = 'RequestOptions'
 const TypeRequestBodyRaw = 'RequestBody'
 const TypeRequestQueryRaw = 'RequestQuery'
 const TypeRequestParamsRaw = 'RequestParams'
 
 export const UTIL_TYPES = [
   TypeResponseRaw, 
+  TypeRequestOptionsRaw,
   TypeRequestBodyRaw, 
   TypeRequestQueryRaw, 
   TypeRequestParamsRaw
@@ -16,6 +18,7 @@ export type UtilType = typeof UTIL_TYPES[number]
 
 export const TypeRef = {
   Response: `&${TypeResponseRaw}`,
+  RequestOptions: `&${TypeRequestOptionsRaw}`,
   RequestBody: `&${TypeRequestBodyRaw}`,
   RequestQuery: `&${TypeRequestQueryRaw}`,
   RequestParams: `&${TypeRequestParamsRaw}`,

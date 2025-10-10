@@ -1,6 +1,6 @@
 # @zdmin/ara
 
-This project is aim to provide a set of tools to generate client api code from OpenAPI specification.
+This project provide a set of tools to generate client api request code from OpenAPI specification.
 
 ## next
 

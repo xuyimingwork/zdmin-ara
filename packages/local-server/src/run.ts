@@ -1,9 +1,13 @@
 import { main } from "@/app";
-import { resolve } from "path";
+import { resolve, dirname } from "path";
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 main({ 
   // 输出文件不会在该目录之外
-  outDir: resolve(process.cwd(), 'temp'),
+  outDir: resolve(__dirname, '../temp'),
   doc: {
     'pet-v2': 'https://petstore.swagger.io/',
     'pet-v3': 'https://petstore3.swagger.io/',      

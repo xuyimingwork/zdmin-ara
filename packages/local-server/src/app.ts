@@ -58,6 +58,7 @@ export { createTransformBuilder } from '@/transform/transformer/builder'
 
 export type { 
   GetResponse, 
+  GetRequestOptions,
   GetRequestQuery,
   GetRequestBody,
   GetRequestParams

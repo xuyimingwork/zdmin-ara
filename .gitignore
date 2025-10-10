@@ -31,5 +31,5 @@ coverage
 
 *.tsbuildinfo
 
-temp/*
+temp
 !temp/.gitkeep
