@@ -29,6 +29,20 @@ function match(matcher: MatcherTarget, options: Parameters<UserApiTransformer>['
   })
 }
 
+interface Builder {
+  (options?: {
+    baseTransformer?: UserApiTransformer
+  }): {
+    when: When,
+    default: (transform: UserApiTransformer) => UserApiTransformer
+    build: () => UserApiTransformer
+  }
+}
+
+interface When {
+  (matcher: Matcher, transform: UserApiTransformer): ReturnType<Builder>
+}
+
 /**
  * @example 
  * {
@@ -42,12 +56,12 @@ export function createTransformBuilder({
   baseTransformer = () => ({})
 }: {
   baseTransformer?: UserApiTransformer
-} = {}) {
+} = {}): ReturnType<Builder> {
   const cases: { 
     matcher?: Matcher, 
     transform: UserApiTransformer
   }[] = []
-  function when(matcher: Matcher, transform: UserApiTransformer) {
+  function when(matcher: Matcher, transform: UserApiTransformer): ReturnType<When> {
     cases.push({ matcher, transform })
     return {
       when,

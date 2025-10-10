@@ -8,7 +8,7 @@ import type {
   PathItemObject as OpenAPIPathItemObject3,
   OperationObject as OpenAPIOperationObject3,
 } from "openapi-typescript7";
-import { ConditionalKeys, Get, SetOptional, IsEqual } from "type-fest";
+import type { ConditionalKeys, Get, SetOptional, IsEqual } from "type-fest";
 
 export type OpenAPI = OpenAPI2 | OpenAPI3
 export type OpenAPIPathOperationObject = OpenAPIOperationObject2 | OpenAPIOperationObject3
@@ -23,7 +23,7 @@ export type GetRequestParams<paths, path extends string, method extends string> 
 export type GetRequestQuery<paths, path extends string, method extends string> = Get<paths, `${path}.${method}.parameters.query`>
 // TODO: 兼容 v2(formData) & v3(requestBody)
 export type GetRequestBody<paths, path extends string, method extends string> = Get<paths, `${path}.${method}.parameters.body.body`>
-type RawGetRequestOptions<paths, path extends string, method extends string> = {
+type GetRequestOptionsRaw<paths, path extends string, method extends string> = {
   params: GetRequestParams<paths, path, method>
   query: GetRequestQuery<paths, path, method>
   body: GetRequestBody<paths, path, method>
@@ -33,6 +33,6 @@ type TypeKeys<O, VT> = keyof {
 }
 // make unknown property optional
 export type GetRequestOptions<paths, path extends string, method extends string> = SetOptional<
-  RawGetRequestOptions<paths, path, method>,
-  TypeKeys<RawGetRequestOptions<paths, path, method>, unknown>
+  GetRequestOptionsRaw<paths, path, method>,
+  TypeKeys<GetRequestOptionsRaw<paths, path, method>, unknown>
 >

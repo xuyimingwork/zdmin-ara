@@ -1,11 +1,11 @@
-import { ApiBaseData, ApiTransformer } from "@/types/api"
+import { ApiTransformer } from "@/types/api"
 import { kebabCase } from "@/utils/string"
 import { camelCase } from "es-toolkit"
 import { basename, dirname, normalize } from "path"
 
-type PresetApiTransformer = (options: ApiBaseData) => Required<ReturnType<ApiTransformer>>
+type PresetApiTransformer = (options: Omit<Parameters<ApiTransformer>[0], 'base'>) => Required<ReturnType<ApiTransformer>>
 
-export const baseTransformer: PresetApiTransformer = ({ path, method }) => {
+export const baseTransformer: PresetApiTransformer = ({ path, method, refs }) => {
   const base = basename(path)
   const dir = dirname(path).startsWith('/')
     ? dirname(path).substring(1)
@@ -16,7 +16,11 @@ export const baseTransformer: PresetApiTransformer = ({ path, method }) => {
     name: camelCase(`${method}+${base}`),
     code: '',
     ignore: false,
-    arguments: [],
+    arguments: [{ 
+      name: 'options',
+      type: refs.types.RequestOptions,
+      optional: true
+    }],
     imports: [],
     types: {},
     debug: false

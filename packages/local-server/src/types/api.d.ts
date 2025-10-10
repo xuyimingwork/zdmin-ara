@@ -1,3 +1,4 @@
+import type { UtilType } from "@/transform/type"
 import type { ImportData } from "@/types/import"
 import type { OpenAPIPathOperationObject } from "@/types/openapi"
 
@@ -13,7 +14,8 @@ export interface ApiBaseData {
 export interface ApiTransformer {
   (options: ApiBaseData & {
     // 默认值
-    base: ReturnType<ApiTransformer>
+    base: ReturnType<ApiTransformer> & { [x: string | number | symbol]: unknown; }
+    refs: { types: { [key in UtilType]: string } }
   }): {
     /* 忽略该函数 */
     ignore?: boolean

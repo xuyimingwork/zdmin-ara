@@ -1,7 +1,7 @@
 import { createFunctionDeclaration } from "@/transform/ast/function"
 import { normalizeImports } from "@/transform/gen-imports"
 import { print } from "@/transform/ast/printer"
-import { getRequestTypeName, getUtilTypeName, replaceRefRequestType, UTIL_TYPES } from "@/transform/type"
+import { getRequestTypeName, getUtilTypeName, replaceRefRequestType, TypeRef, UTIL_TYPES } from "@/transform/type"
 import { getImportRelative, patchBanner } from "@/transform/utils"
 import { groupBy, mapValues } from "es-toolkit"
 import { each, isObject } from "es-toolkit/compat"
@@ -145,8 +145,14 @@ export function genRequest({ openapi, transform, relocate, rootTypes }: {
 
   // 所有请求
   const requests = mapEachRequest<AstApiData>(openapi, ({ method, path, openapi }) => {
-    const baseConfig = baseTransformer({ method, path, openapi })
-    const config = transform({ method, path, openapi, base: baseConfig })
+    const baseConfig = baseTransformer({ 
+      method, path, openapi, refs: { types: TypeRef }
+    })
+    const config = transform({ 
+      method, path, openapi, 
+      base: baseConfig,
+      refs: { types: TypeRef }
+    })
     const result = Object.assign({ openapi, method, path }, baseConfig, config)
     return {
       ...result,

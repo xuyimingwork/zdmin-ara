@@ -61,13 +61,18 @@ export type {
   GetRequestOptions,
   GetRequestQuery,
   GetRequestBody,
-  GetRequestParams
+  GetRequestParams,
 } from '@/types/openapi'
 
 export type { 
-  UserOptions
+  UserOptions,
+  UserApiTransformer
 } from '@/types/option'
 
 export { 
   TypeRef
 } from '@/transform/type'
+
+export {
+  normalizePath as normalizeApiPath
+} from '@/utils/restful'
