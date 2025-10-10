@@ -9,13 +9,20 @@ import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import tailwindcss from '@tailwindcss/vite'
 import { version } from './package.json'
 import { readFile, writeFile } from 'node:fs/promises'
+const GREEK_MAP = { alpha: 100, beta: 200 } as const
 
 function change(pkg: string) {
   return readFile(pkg, 'utf-8')
     .then(content => {
       return writeFile(pkg, JSON.stringify({
         ...JSON.parse(content),
-        version
+        version: version.includes('-') 
+          // chrome version only support at most four parts & all parts need be int
+          ? [version.split('-')[0], version.split('-')[1].split('.').reduce((v, part) => {
+            if (part in GREEK_MAP) return v + GREEK_MAP[part as keyof typeof GREEK_MAP]
+            return v + Number.parseInt(part)
+          }, 0)].join('.')
+          : version
       }, undefined, 2), 'utf-8')
     })
 }
