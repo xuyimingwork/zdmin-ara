@@ -12,7 +12,7 @@ This project provide a set of tools to generate client api request code from Ope
 ### setup plugin in project
 
 - install: `pnpm install -D @zdmin/ara-unplugin`
-- setup: TODO: 
+- setup: still in progress, you can check my [vite example](./examples/vite) first.
 
 ## build
 
