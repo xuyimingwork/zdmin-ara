@@ -12,8 +12,10 @@
   },
   "author": "Xu Yiming",
   "files": [
-    "dist"
+    "dist", 
+    "ara-chrome-extension.zip"
   ],
+  "jsdelivr": "ara-chrome-extension.zip",
   "scripts": {
     "dev:mock": "vite",
     "dev": "vite build --watch",
@@ -42,6 +44,7 @@
   "devDependencies": {
     "@vitejs/plugin-vue": "^6.0.1",
     "@vitejs/plugin-vue-jsx": "^5.0.1",
-    "sass-embedded": "^1.89.2"
+    "sass-embedded": "^1.89.2",
+    "zip-a-folder": "^3.1.9"
   }
 }

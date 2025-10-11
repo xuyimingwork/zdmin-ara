@@ -8,6 +8,7 @@ import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import tailwindcss from '@tailwindcss/vite'
 import { ManifestVersion } from './build/plugins/manifest-version'
+import { Zip } from './build/plugins/zip'
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -44,7 +45,8 @@ export default defineConfig({
         (name) => name === 'Icon' ? { name: 'Icon', from: '@iconify/vue' } : undefined,
       ],
     }),
-    ManifestVersion()
+    ManifestVersion(),
+    Zip()
   ],
   resolve: {
     alias: {
