@@ -66,6 +66,8 @@ function commit() {
   return git.add('*')
     .commit(`version: v${root.version}`)
     .addTag(`v${root.version}`)
+    .push()
+    .pushTags()
     .then(() => console.log('commit done.'))
 }
 
