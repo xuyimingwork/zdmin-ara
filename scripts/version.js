@@ -53,7 +53,7 @@ function prepare() {
     .then(diff => {
       if ([diff.changed,  diff.deletions, diff.insertions].some(item => item !== 1)) throw Error('Not only package.json change.')
       if (diff.files.length !== 1 || diff.files[0].file !== 'package.json') throw Error('No package.json change.')
-      if (diff.files[0].changes !== 2 || diff.files[0].insertions !== 1 || diff.files.deletions !== 1) throw Error('Not only package.json version change.')
+      if (diff.files[0].changes !== 2 || diff.files[0].insertions !== 1 || diff.files[0].deletions !== 1) throw Error('Not only package.json version change.')
       return git.diff()
     })
     .then(diff => {
