@@ -1,6 +1,6 @@
 {
   "name": "@zdmin/ara-chrome-extension",
-  "version": "1.0.0-alpha.6",
+  "version": "1.0.0-alpha.7",
   "type": "module",
   "license": "MIT",
   "publishConfig": {
@@ -12,7 +12,7 @@
   },
   "author": "Xu Yiming",
   "files": [
-    "dist", 
+    "dist",
     "ara-chrome-extension.zip"
   ],
   "jsdelivr": "ara-chrome-extension.zip",
