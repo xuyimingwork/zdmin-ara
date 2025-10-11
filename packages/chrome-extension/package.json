@@ -1,6 +1,6 @@
 {
   "name": "@zdmin/ara-chrome-extension",
-  "version": "1.0.0-alpha.5",
+  "version": "1.0.0-alpha.6",
   "type": "module",
   "license": "MIT",
   "publishConfig": {
