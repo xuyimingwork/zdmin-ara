@@ -2,6 +2,18 @@
 
 This project provide a set of tools to generate client api request code from OpenAPI specification.
 
+## usage
+
+### download & install chrome extension
+
+- [download](https://cdn.jsdelivr.net/npm/@zdmin/ara-chrome-extension)
+- unzip download file and [load-unpacked](https://developer.chrome.com/docs/extensions/get-started/tutorial/hello-world#load-unpacked) chrome extension.
+
+### setup plugin in project
+
+- install: `pnpm install -D @zdmin/ara-unplugin`
+- setup: TODO: 
+
 ## build
 
 - version: update `package.json`'s `version` and then run `pnpm run version`
