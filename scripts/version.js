@@ -26,7 +26,7 @@ function sync() {
     .then(result => result.filter(item => item.status === 'fulfilled').map(item => item.value))
     .then(pkgs => Promise.allSettled(pkgs.map(pkg => version(pkg).then(() => pkg))))
     .then(result => {
-      console.log(result.map(item => item.value).join('\n'), '\n\n new version', root.version)
+      console.log(result.map(item => item.value).join('\n'), '\n\nsync new version:', root.version)
     })
 }
 
