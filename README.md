@@ -2,6 +2,11 @@
 
 This project provide a set of tools to generate client api request code from OpenAPI specification.
 
+## build
+
+- version: update `package.json`'s `version` and then run `pnpm run version`
+- publish: run `pnpm publish -r`
+
 ## next
 
 - [ ] prepare docs
