@@ -14,10 +14,11 @@ export function OpenAPI() {
           url: 'https://petstore3.swagger.io/',
           outDir: 'pet'
         },
+        // another example
         apple: 'https://apis.guru/apis/apple.com/app-store-connect'
       },
       transform: createTransformBuilder({ 
-        // base transform for config basic import & response & arguments
+        // base transform for config basic import & response & arguments first
         baseTransformer: ({ refs }) => ({
           imports: [
             // import axios & axios's type
@@ -43,15 +44,18 @@ export function OpenAPI() {
             // base transform only for doc name starts pet-
             baseTransformer: ({ doc, base }) => ({
               // add version dir when output apis
-              // all pet-v2 api will generate under v2/*
+              // all pet-v* api will generate under v*/ dir
               output: `${doc.name.replace('pet-', '')}/${base.output}`  
             }) 
           })
-          // use myAxiosTransformer.codeFactory
+          // config different baseURL for different docs
           .when({ doc: 'pet-v2' }, ({ path, method }) => ({ code: codeFactory({ path, method, baseURL: `'https://petstore.swagger.io/v2'` }) }))
-          .when({ doc: 'pet-v3' }, ({ path, method }) => ({ code: codeFactory({ path, method, baseURL: `'https://petstore.swagger.io/v2'` }) }))
+          .when({ doc: 'pet-v3' }, ({ path, method }) => ({ code: codeFactory({ path, method, baseURL: `'https://petstore3.swagger.io/api/v3/'` }) }))
+          // since use build, if there is pet-v4 doc, all api in pet-v4 will be ignored
+          // if you want pet-v4 will generate by transformer above, use default to build transformer
           .build()   
         )
+        // all other doc will use this transform
         .default(({ path, method }) => ({ code: codeFactory({ path, method }) }))
     })
 }
