@@ -1,63 +1,85 @@
-import { ApiTransformer } from "@/types/api"
+import { ApiTransformer, ApiTransformerReturn } from "@/types/api"
 import { OpenAPI } from "@/types/openapi"
-import { SetRequired } from "type-fest"
-
-/**
- * @description 用户 OpenAPI 文档配置
- */
-export interface UserDoc {
-  /**
-   * @description 文档地址
-   */
-  url: string
-  /**
-   * @description 文档名
-   */
-  name?: string
-  /**
-   * @description 文档输出路径
-   */
-  outDir?: string
-}
+import { SetRequired, Simplify, SimplifyDeep } from "type-fest"
 
 /**
  * @description 用户配置
  */
 export interface UserOptions {
   /**
-   * @description debug 模式
-   * TODO: 待实现
+   * @ignore NOT used right now.
    */
   debug?: boolean
   /**
-   * @description 项目文件夹
+   * @description project root dir
+   * @default process.cwd()
    */
   cwd?: string
   /**
-   * @description 输出路径
-   * @default `${options.cwd}/openapi-codegen`
+   * @description dir of all generated code. \
+   * if relative, it will under ${options.cwd}. \
+   * if absolute, it absolute as it is.
+   * @default 'openapi-codegen'
    */
   outDir?: string
   /**
-   * @description OpenAPI 文档
+   * @description openapi doc
    */
   doc?: UserDoc['url']
     | Array<SetRequired<UserDoc, 'name'>> 
     | { [name: string]: UserDoc['url'] | UserDoc },
   /**
-   * @description 单个 Api 转换器
+   * @description transform every api.
    */
   transform?: UserApiTransformer
 }
 
-/**
- * @description 用户侧的 API 转换器
- */
-export interface UserApiTransformer {
-  (options: {
-    doc: UserDocNormalized & { openapi: OpenAPI }
-  } & Parameters<ApiTransformer>['0']): Partial<ReturnType<ApiTransformer>>
+export interface UserDoc {
+  /**
+   * @description doc url
+   */
+  url: string
+  /**
+   * @description doc name. \
+   * effect raw data output & api outDir. \
+   * strongly recommend to provide a name.
+   * 
+   * doc's raw data will output to `${name}.openapi.json`. \
+   * doc's raw d.ts file will output to `${name}.openapi.d.ts`. \
+   * if name is missing, `openapi.json` & `openapi.d.ts` will be use.
+   * 
+   * @default ''
+   */
+  name?: string
+  /**
+   * @description dir of this doc's generated code. \
+   * if relative, it will under ${options.outDir}. \
+   * if absolute, it absolute as it is.
+   * @default ${doc.name} || ''
+   */
+  outDir?: string
 }
+
+export interface UserApiTransformer {
+  (input: UserApiTransformerInput): UserApiTransformerReturn
+}
+
+export type UserApiTransformerInput = Simplify<{
+  /**
+   * @description doc config of current api
+   */
+  doc: Simplify<UserDocNormalized & { 
+    /**
+     * @description whole openapi data of this doc
+     */
+    openapi: OpenAPI 
+  }>
+} & Parameters<ApiTransformer>['0']>
+
+/**
+ * @see {@link ApiTransformerReturn}
+ */
+export type UserApiTransformerReturn = Simplify<Partial<ApiTransformerReturn>>
 
 export type UserDocNormalized = SetRequired<UserDoc, 'outDir'>
 export type UserOptionsNormalized = Required<Omit<UserOptions, 'doc'>> & { doc: Array<UserDocNormalized> }

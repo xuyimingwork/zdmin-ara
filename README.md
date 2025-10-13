@@ -1,6 +1,6 @@
 # @zdmin/ara
 
-This project provide a set of tools to generate client api request code from OpenAPI specification.
+This project contains a set of tools for generating client api request code from OpenAPI specification.
 
 ## usage
 
@@ -9,10 +9,14 @@ This project provide a set of tools to generate client api request code from Ope
 - [download](https://cdn.jsdelivr.net/npm/@zdmin/ara-chrome-extension)
 - unzip download file and [load-unpacked](https://developer.chrome.com/docs/extensions/get-started/tutorial/hello-world#load-unpacked) chrome extension.
 
-### setup plugin in project
+### for js/ts project: setup plugin
 
 - install: `pnpm install -D @zdmin/ara-unplugin`
 - setup: still in progress, you can check my [vite example](./examples/vite) first.
+
+### for other client project
+
+build your own server like [local-server](./packages/local-server/)
 
 ## build
 

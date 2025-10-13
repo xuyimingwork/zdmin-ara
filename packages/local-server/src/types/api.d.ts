@@ -1,46 +1,112 @@
 import type { UtilType } from "@/transform/type"
 import type { ImportData } from "@/types/import"
 import type { OpenAPIPathOperationObject } from "@/types/openapi"
+import { Simplify, SimplifyDeep } from "type-fest";
 
 export interface ApiBaseData {
-  // http 方法
+  /**
+   * @description HTTP method
+   */
   method: string, 
-  // http 路径
+  /**
+   * @description HTTP path
+   */
   path: string, 
-  // openapi 数据（函数层级）
-  openapi: OpenAPIPathOperationObject,
+  /**
+   * @description open api data for this api
+   */
+  openapi:  OpenAPIPathOperationObject,
 }
 
+export type ApiTransformerInput = Simplify<ApiBaseData & {
+  /**
+   * @description prev base transformer result
+   */
+  base: ApiTransformerBaseReturn
+  /**
+   * @description provide some ref content that will be replace by real code in generate
+   */
+  refs: { types: { [key in UtilType]: string } }
+}>
+
+export type ApiTransformerReturn = {
+  /**
+   * @description ignore this api, NOT generate code of this api.
+   * @default false
+   */
+  ignore?: boolean
+  /**
+   * @description file path of this api's client code will be output.
+   * relative path will generated under doc.outDir.
+   * absolute path will generated as it is.
+   */
+  output?: string
+  /**
+   * @description function name of this api.
+   */
+  name?: string
+  /**
+   * @description function body of this api.
+   * refs.types.xxx is ok in this field.
+   * @example
+   * `
+   *   return axios({ ... })
+   * `
+   */
+  code?: string
+  /**
+   * @description function arguments of this api.
+   */
+  arguments?: Array<string | {
+    /** @description name of argument, eg: `options` */
+    name: string
+    /** @description make this argument optional, eg: `options?` */
+    optional?: boolean
+    /** @description make this argument as rest parameter, eg: `...options` */
+    rest?: boolean
+    /** 
+     * @description add type for this argument, eg: `options: string`.
+     * refs.types.xxx is ok in this field.
+     */
+    type?: string
+  }>
+  /**
+   * @description imports of this api's code needs
+   * @example
+   * want: import 'vue'
+   * conf: 'vue'
+   * 
+   * want: import Vue from 'vue'
+   * conf: { from: 'vue', import: 'Vue' }
+   * 
+   * want: import * as Vue from 'vue'
+   * conf: { from: 'vue', imports: [{ name: '*', alias: 'Vue' }] }
+   * 
+   * want: import { ref } from 'vue'
+   * conf: { from: 'vue', imports: [{ name: 'ref' }] }
+   * 
+   * want: import { ref as myRef } from 'vue'
+   * conf: { from: 'vue', imports: [{ name: 'ref', alias: 'myRef' }] } 
+   * 
+   * want: import { type Ref as MyRef } from 'vue'
+   * conf: { from: 'vue', imports: [{ name: 'Ref', alias: 'MyRef', type: true }] } 
+   */
+  imports?: ImportData[]
+  /**
+   * @description type definitions.
+   * refs.types.xxx is ok in this field.
+   */
+  types?: { 
+    return?: string 
+  },
+  /**
+   * @ignore NOT used right now.
+   */
+  debug?: boolean
+}
+
+type ApiTransformerBaseReturn = Simplify<ApiTransformerReturn & { [x: string | number | symbol]: unknown; }>
+
 export interface ApiTransformer {
-  (options: ApiBaseData & {
-    // 默认值
-    base: ReturnType<ApiTransformer> & { [x: string | number | symbol]: unknown; }
-    refs: { types: { [key in UtilType]: string } }
-  }): {
-    /* 忽略该函数 */
-    ignore?: boolean
-    /* 函数输出文件路径 */
-    output?: string
-    /* 函数名 */
-    name?: string
-    /* 函数体（代码块） */
-    code?: string
-    /* 函数入参 */
-    arguments?: Array<string | {
-      name: string
-      /* 配置可选参数 */
-      optional?: boolean
-      /* 配置剩余参数 */
-      rest?: boolean
-      /* 配置参数类型 */
-      type?: string
-    }>
-    /* 函数依赖 */
-    imports?: ImportData[]
-    /* 类型声明 */
-    types?: { 
-      return?: string 
-    },
-    debug?: boolean
-  }
+  (input: ApiTransformerInput): ApiTransformerReturn
 }
