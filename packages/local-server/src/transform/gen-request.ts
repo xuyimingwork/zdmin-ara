@@ -4,7 +4,7 @@ import { print } from "@/transform/ast/printer"
 import { getRequestTypeName, getUtilTypeName, replaceRefRequestType, TypeRef, UTIL_TYPES } from "@/transform/type"
 import { getImportRelative, patchBanner } from "@/transform/utils"
 import { groupBy, mapValues } from "es-toolkit"
-import { each, isObject } from "es-toolkit/compat"
+import { each, fromPairs, isObject } from "es-toolkit/compat"
 import { basename } from "path"
 import ts from 'typescript'
 import { createTypeAliasDeclaration } from "@/transform/ast/type"
@@ -54,7 +54,7 @@ function genFileOfRequestTypes({ rootTypes, pairOutput, requests }: {
 }): (FileData & { types: string[] }) | undefined {
   if (!rootTypes) return
   return {
-    output: pairOutput.replace(/\.ts$/, '.d.ts'),
+    output: pairOutput.replace(/\.(ts|js)$/, '.d.ts'),
     types: Array.isArray(requests) 
       ? requests.map(request => UTIL_TYPES.map(name => getRequestTypeName(request.name, name))).flat()
       : [],
@@ -62,6 +62,7 @@ function genFileOfRequestTypes({ rootTypes, pairOutput, requests }: {
       ...createImportDeclarations([
         {
           mode: 'type',
+          // TODO: 辅助类工具库导入位置允许配置
           from: '@zdmin/ara-unplugin',
           imports: UTIL_TYPES.map(name => ({ name: getUtilTypeName(name) }))
         },
@@ -136,6 +137,32 @@ function normalizeArguments(name: string, parameters: ReturnType<ApiTransformer>
   })
 }
 
+function toAstFiles(requests: AstApiData[]): AstFileData[] {
+  if (!Array.isArray(requests)) return []
+  const groups = groupBy(requests, item => item.output)
+  const outputs = Object.keys(groups)
+    .filter(output => {
+      if (output.endsWith('.js')) return true
+      if (output.endsWith('.ts')) return !(output.replace(/\.ts$/, '.js') in groups)
+      return false
+    })
+  const uniqGroups = fromPairs(outputs.map(output => {
+    if (output.endsWith('.ts')) return [output, groups[output]]
+    const tsOutput = output.replace(/\.js$/, '.ts')
+    if (!(tsOutput in groups)) return [output, groups[output]]
+    return [output, [...groups[tsOutput], ...groups[output]]]
+  }))
+  return Object.keys(uniqGroups).map(output => {
+    const requests = uniqGroups[output]
+    const imports = normalizeImports(requests.map(item => Array.isArray(item.imports) ? item.imports : []).flat())
+    return {
+      output,
+      imports,
+      requests: requests.map(({ imports: _, ...item }) => item)
+    }
+  })
+}
+
 export function genRequest({ openapi, transform, relocate, rootTypes }: {
   openapi: OpenAPI,
   transform: ApiTransformer
@@ -161,19 +188,14 @@ export function genRequest({ openapi, transform, relocate, rootTypes }: {
   }).filter(item => !item.ignore)
 
   // 所有请求构成的文件
-  const rawFiles: AstFileData[] = Object.keys(groupBy(requests, item => item.output))
-    .map(output => {
-      const fileRequests = requests.filter(item => item.output === output)
-      const imports = normalizeImports(fileRequests.map(item => Array.isArray(item.imports) ? item.imports : []).flat())
-      return {
-        output,
-        imports,
-        requests: fileRequests.map(({ imports: _, ...item }) => item)
-      }
-    })
+  const rawFiles: AstFileData[] = toAstFiles(requests)
   
   const files = rawFiles.map(item => {
-    const fileOfTypes = genFileOfRequestTypes({ rootTypes, pairOutput: item.output, requests: item.requests })
+    const fileOfTypes = genFileOfRequestTypes({ 
+      rootTypes, 
+      pairOutput: item.output, 
+      requests: item.requests 
+    })
     const fileOfRequests = genFileOfRequests({ item, pairTypeFile: fileOfTypes })
     return [fileOfTypes, fileOfRequests]
   }).flat().filter(file => !!file)
