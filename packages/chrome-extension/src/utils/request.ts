@@ -23,6 +23,10 @@ export function request<D = any>(options: RequestOptions<D>) {
     }
   } as Partial<RequestOptions>, options)
   instance.interceptors.response.use(res => {
+    if (res.data && res.data.ok === false) throw Error(res.data.message)
+    return res
+  })
+  instance.interceptors.response.use(res => {
     const path = get(res.config, 'ara.response.path')
     return path ? get(res, path) : res
   })

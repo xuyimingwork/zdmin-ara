@@ -39,7 +39,10 @@ export function useProjectCodeGen(path: MaybeRefOrGetter<string | undefined>) {
         preview,
         data: content,
         name: name || ''
-      } 
+      },
+      ara: {
+        silent: true
+      }
     })
   }
 
