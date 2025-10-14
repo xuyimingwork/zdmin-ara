@@ -64,7 +64,7 @@ function prepare() {
 
 function commit() {
   return git.add('*')
-    .commit(`version: v${root.version}`)
+    .commit(`chore(version): v${root.version}`)
     .addTag(`v${root.version}`)
     .push()
     .pushTags()
