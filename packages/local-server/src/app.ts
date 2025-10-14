@@ -30,8 +30,9 @@ function createRest(options: UserOptionsNormalized) {
   rest.post('/openapi', (request, content) => {
     if (!content?.data) return createError('No OpenAPI Doc Content');
     // TODO: 允许无配置输出
-    if (!content?.name) return createError('No OpenAPI Doc Name');
-    const doc = options.doc.find(item => item.name === content.name)
+    const doc = !content?.name 
+      ? options.doc.find(item => !item.name) 
+      : options.doc.find(item => item.name === content.name)
     if (!doc) return createError('OpenAPI Doc Not Config')
     const preview = !!content.preview
     return (preview ? previewOpenAPI : outputOpenAPI)({ openapi: content.data, doc, transform: options.transform })

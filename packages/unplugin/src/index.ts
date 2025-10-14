@@ -2,7 +2,8 @@ import type { UnpluginFactory, UnpluginInstance } from 'unplugin'
 import { createUnplugin } from 'unplugin'
 import { createServer } from '@zdmin/ara-local-server'
 import type { UserOptions as AraLocalServerOptions } from '@zdmin/ara-local-server'
-import { bold, cyan, dim, green, yellow } from 'kolorist'
+import { bold, cyan, yellow } from 'kolorist'
+import { camelCase, upperFirst } from 'es-toolkit'
 
 export interface Options extends AraLocalServerOptions {
   // define your plugin options here
@@ -21,10 +22,12 @@ const current: {
 function next(cb: () => any) {
   return current.p = current.p.then(() => cb())
 }
+const colorUrl = (url: string) => cyan(url.replace(/:(\d+)\//, (_, port) => `:${bold(port)}/`))
 
 export const unpluginFactory: UnpluginFactory<Options | undefined> = (options?: Options) => {
+  const name = 'unplugin-zdmin-ara'
   return {
-    name: 'unplugin-zdmin-ara',
+    name,
     vite: {
       configureServer(server) {
         const _restart = server.restart
@@ -33,18 +36,35 @@ export const unpluginFactory: UnpluginFactory<Options | undefined> = (options?: 
           return _restart(...args)
         }
         const _printUrls = server.printUrls
-        const colorUrl = (url: string) => cyan(url.replace(/:(\d+)\//, (_, port) => `:${bold(port)}/`))
         server.printUrls = () => {
           _printUrls()
-          console.log(`  ${green('➜')}  ${bold('Zdmin Ara')}: ${colorUrl(`http://localhost:${current.server?.port}/openapi-codegen`)}`)
+          console.log(`  ${yellow('➜')}  ${bold('Zdmin Ara')}: ${colorUrl(`http://localhost:${current.server?.port}/openapi-codegen`)}`)
         }
         return next(() => createServer(options).then(({ port, close }: any) => {
           current.server = { close, port }
         }))
       },
     },
-    webpack() {
-
+    webpack(compiler) {
+      const PLUGIN_NAME = upperFirst(camelCase(name))
+      const start = () => {
+        next(() => createServer(options).then(({ port, close }: any) => {
+          current.server = { close, port }
+          console.log(`<i> ${bold(yellow(`[${name}] Server is running at:`))} ${colorUrl(`http://localhost:${current.server?.port}/openapi-codegen`)}`)
+        }))
+      }
+      const end = () => {
+        if (current.server) next(() => current.server!.close())
+      }
+      // webpack 4 & 5 support
+      if (compiler.hooks) {
+        compiler.hooks.watchRun.tap(PLUGIN_NAME, start)
+        compiler.hooks.watchClose.tap(PLUGIN_NAME, end)
+        return
+      }
+      // webpack 3 support
+      compiler.plugin('watch-run', start)
+      compiler.plugin('watch-close', end)
     }
   }
 }
