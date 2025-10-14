@@ -12,7 +12,11 @@ This project contains a set of tools for generating client api request code from
 ### for js/ts project: setup plugin
 
 - install: `pnpm install -D @zdmin/ara-unplugin`
-> reference: [vite example](./examples/vite).
+- setup: in progress
+
+> reference: 
+> - [vite example](./examples/vite)
+> - [webpack example](./examples/webpack)
 
 
 
