@@ -30,14 +30,14 @@ export function OpenAPI() {
               name: 'options',
               // use axios request config's data as body
               type: `Omit<${refs.types.RequestOptions}, 'body'> & AxiosRequestConfig<${refs.types.RequestBody}>`,
-              optional: true,
+              optional: true
             }
           ],
           types: {
             // integration with axios's response
             return: `Promise<AxiosResponse<${refs.types.Response}, ${refs.types.RequestBody}>>`,
           }
-        }) 
+        })
       })
         // doc name start with pet- will handled by this transformer
         .when({ doc: /^pet-/ }, createTransformBuilder({ 
@@ -53,7 +53,7 @@ export function OpenAPI() {
           .when({ doc: 'pet-v3' }, ({ path, method }) => ({ code: codeFactory({ path, method, baseURL: `'https://petstore3.swagger.io/api/v3/'` }) }))
           // since use build, if there is pet-v4 doc, all api in pet-v4 will be ignored
           // if you want pet-v4 will generate by transformer above, use default to build transformer
-          .build()   
+          .build() 
         )
         // all other doc will use this transform
         .default(({ path, method }) => ({ code: codeFactory({ path, method }) }))

@@ -82,7 +82,7 @@ interface When {
  * // only transform get api, and ignore get /abc api
  * createTransformBuilder({ baseTransformer: () => ({ ...some default config }) })
  *   .when({ method: 'get' }, createTransformBuilder()
- *     .then(({ path }) => path === '/abc', () => ({ ignore: true }))
+ *     .when(({ path }) => path === '/abc', () => ({ ignore: true }))
  *     .default()
  *   )
  *   .build()

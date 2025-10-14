@@ -32,6 +32,7 @@
   "license": "MIT",
   "dependencies": {
     "@zdmin/ara-local-server": "workspace:*",
+    "kolorist": "^1.8.0",
     "unplugin": "^2.3.10"
   },
   "typesVersions": {
