@@ -93,18 +93,25 @@ function genFileOfRequests({ item, pairTypeFile }: {
   pairTypeFile?: FileData & { types: string[] }
 }): FileData {
   const imports = createImportDeclarations([
-    ...item.imports as ImportDataNormalized[],
+    ...item.imports,
     ...(pairTypeFile ? [{
       mode: 'type' as const,
       from: `./${basename(pairTypeFile.output, '.ts')}`,
       imports: pairTypeFile.types.map(name => ({ name }))
     }] : [])
-  ])
+  ].map(importNormalized => {
+    if (importNormalized.mode !== 'type') return importNormalized
+    if (item.output.endsWith('.js')) return { ...importNormalized, jsdoc: true }
+    return importNormalized
+  }))
   const functions = Array.isArray(item.requests) ? item.requests.map(request => {
     return [
-      createFunctionDeclaration({
+      ...createFunctionDeclaration({
         name: request.name,
-        context: { ...request },
+        context: { 
+          ...request, 
+          output: item.output 
+        },
         code: replaceRefRequestType(request.name, request.code),
         arguments: normalizeArguments(request.name, request.arguments),
         types: normalizeTypes(request.name, request.types),
@@ -146,6 +153,7 @@ function toAstFiles(requests: AstApiData[]): AstFileData[] {
       if (output.endsWith('.ts')) return !(output.replace(/\.ts$/, '.js') in groups)
       return false
     })
+  // 当 api.js 与 api.ts 同时存在，保留 api.js
   const uniqGroups = fromPairs(outputs.map(output => {
     if (output.endsWith('.ts')) return [output, groups[output]]
     const tsOutput = output.replace(/\.js$/, '.ts')

@@ -1,6 +1,6 @@
 # @zdmin/ara
 
-**TS Code Generate is Ready Now!**
+**TS/JS Code Generate is Ready Now!**
 
 This project contains a set of tools for generating client api request code from OpenAPI specification.
 
@@ -15,8 +15,8 @@ This project contains a set of tools for generating client api request code from
    2. [load-unpacked](https://developer.chrome.com/docs/extensions/get-started/tutorial/hello-world#load-unpacked) chrome extension.
 
 > About chrome extension version: 
-> - alpha: `1.0.0-alpha.7` will be `1.0.0.107`
-> - beta: `1.0.0-beta.7` will be `1.0.0.207`
+> - alpha: `1.0.0-alpha.8` will be `1.0.0.108`
+> - beta: `1.0.0-beta.8` will be `1.0.0.208`
 
 ### for js/ts project: setup plugin
 

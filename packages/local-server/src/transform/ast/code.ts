@@ -1,5 +1,5 @@
-import ts from "typescript";
-import type { NodeArray, Statement, TypeNode } from "typescript";
+import ts, { factory, ScriptKind } from "typescript";
+import type { NodeArray, Statement, TypeNode, Visitor } from "typescript";
 
 const ScriptTarget = ts.ScriptTarget
 const SyntaxKind = ts.SyntaxKind
@@ -14,8 +14,9 @@ export function getAstTypeNode(code?: string): TypeNode | undefined {
   return (statement as any).type as TypeNode
 }
 
-export function getAstStatements(code?: string): NodeArray<Statement> | undefined {
+export function getAstStatements(code?: string, target: 'ts' | 'js' = 'ts'): NodeArray<Statement> | undefined {
   if (!code) return undefined
+  if (target === 'js') code = ts.transpile(code, { target: ScriptTarget.ESNext })
   const source = createSourceFile('temp.ts', code, ScriptTarget.ESNext, false)
   return source.statements
 }

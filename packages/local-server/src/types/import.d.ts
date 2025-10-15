@@ -63,11 +63,13 @@ export type ImportDataNormalizedStar = {
 
 /**
  * @example import type { Ref as MyRef } from 'vue'
+ * @example /** @import { Ref as MyRef } from 'vue' *\/
  */
 export type ImportDataNormalizedType = {
   mode: 'type'
   from: string
-  imports: { name: string, alias?: string }[]
+  imports: { name: string, alias?: string }[],
+  jsdoc?: boolean
 }
 
 /**

@@ -1,33 +1,28 @@
 import { getAstStatements, getAstTypeNode } from "@/transform/ast/code";
 import { createJSDocFunctionLeadingComment } from "@/transform/ast/comment";
 import { ApiBaseData, ApiTransformer } from "@/types/api";
-import type { Node, ParameterDeclaration } from "typescript";
+import type { FunctionDeclaration, JSDoc, JSDocTag, Node, ParameterDeclaration } from "typescript";
 import ts from "typescript";
 const factory = ts.factory
 const SyntaxKind = ts.SyntaxKind
 
-function patchLeadingComment(node: Node, context: ApiBaseData, debug: boolean) {
-  const openapi = context.openapi
-  if (!openapi.summary && !openapi.description && !debug) return node
-  return createJSDocFunctionLeadingComment(node, [
-    { key: 'summary', value: openapi.summary! },
-    { key: 'description', value: openapi.description! },
-    debug ? { key: 'see', value: `debug
-  ${context.method} ${context.path}
-  ${JSON.stringify(openapi, undefined, 2)}` } : undefined
-  ].filter(item => !!item))
-}
+/**
+ * 
+ */
 
-function createParameterDeclaration(parameters: ReturnType<ApiTransformer>['arguments']): ParameterDeclaration[] {
+type FunctionContext = ApiBaseData & { output: string }
+
+function createParameterDeclaration(parameters: ReturnType<ApiTransformer>['arguments'], js = false): ParameterDeclaration[] {
   if (!Array.isArray(parameters)) return []
+  const inTs = (condition?: boolean) => !js && condition
   return parameters.map(parameter => {
     parameter = typeof parameter === 'string' ? { name: parameter } : parameter
     return factory.createParameterDeclaration(
       undefined,
       parameter.rest ? factory.createToken(SyntaxKind.DotDotDotToken) : undefined,
       factory.createIdentifier(parameter.name),
-      parameter.optional ? factory.createToken(SyntaxKind.QuestionToken) : undefined,
-      getAstTypeNode(parameter.type),
+      inTs(parameter.optional) ? factory.createToken(SyntaxKind.QuestionToken) : undefined,
+      inTs() ? getAstTypeNode(parameter.type) : undefined,
       undefined
     )
   })
@@ -44,21 +39,52 @@ export function createFunctionDeclaration({
   name: string
   code: string,
   arguments: ReturnType<ApiTransformer>['arguments']
-  context: ApiBaseData
+  context: FunctionContext
   types: { return?: string }
   debug: boolean
-}): Node {
-  return patchLeadingComment(
+}): (JSDoc | FunctionDeclaration)[] {
+  const isTs = context.output.endsWith('.ts')
+  return [
+    createFunctionJSDocComment({ 
+      ...types,
+      parameters, 
+    }, context, debug),
     factory.createFunctionDeclaration(
       [factory.createToken(SyntaxKind.ExportKeyword)],
       undefined,
       factory.createIdentifier(name),
       undefined,
-      createParameterDeclaration(parameters),
-      getAstTypeNode(types?.return),
-      factory.createBlock(getAstStatements(code) || [], true)
-    ),
-    context,
-    debug
-  )
+      createParameterDeclaration(parameters, !isTs),
+      isTs ? getAstTypeNode(types?.return) : undefined,
+      factory.createBlock(getAstStatements(code, isTs ? 'ts' : 'js') || [], true)
+    )
+  ].filter(item => !!item)
+}
+
+function createFunctionJSDocComment(types: { 
+  parameters?: ReturnType<ApiTransformer>['arguments'],
+  return?: string
+}, context: FunctionContext, debug: boolean): JSDoc | undefined {
+  const openapi = context.openapi
+  const isJs = context.output.endsWith('.js')
+  const typeTags: JSDocTag[] = isJs ? [
+    ...(types.parameters || []).filter(item => typeof item !== 'string' && !!item.type).map(parameter => {
+      if (typeof parameter === 'string') return
+      return factory.createJSDocParameterTag(
+        undefined, 
+        factory.createIdentifier(parameter.name), 
+        !!parameter.optional, 
+        getAstTypeNode(parameter.type) ? factory.createJSDocTypeExpression(getAstTypeNode(parameter.type)!) : undefined, 
+        false
+      )
+    }),
+    getAstTypeNode(types?.return) ? factory.createJSDocReturnTag(undefined, factory.createJSDocTypeExpression(getAstTypeNode(types?.return)!)) : undefined,
+  ].filter(item => !!item) : []
+  const tags: JSDocTag[] = [
+    openapi.summary ? factory.createJSDocUnknownTag(factory.createIdentifier('summary'), openapi.summary) : undefined,
+    openapi.description ? factory.createJSDocUnknownTag(factory.createIdentifier('description'), openapi.description) : undefined,
+    ...typeTags,
+    debug ? factory.createJSDocUnknownTag(factory.createIdentifier('see'), `debug\n ${context.method} ${context.path}\n ${JSON.stringify(openapi, undefined, 2)}`) : undefined
+  ].filter(item => !!item)
+  return tags.length ? factory.createJSDocComment(undefined, tags) : undefined
 }

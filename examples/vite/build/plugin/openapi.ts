@@ -49,8 +49,13 @@ export function OpenAPI() {
             }) 
           })
           // config different baseURL for different docs
-          .when({ doc: 'pet-v2' }, ({ path, method }) => ({ code: codeFactory({ path, method, baseURL: `'https://petstore.swagger.io/v2'` }) }))
-          .when({ doc: 'pet-v3' }, ({ path, method }) => ({ code: codeFactory({ path, method, baseURL: `'https://petstore3.swagger.io/api/v3/'` }) }))
+          .when({ doc: 'pet-v2' }, ({ path, method, base }) => ({ 
+            output: base.output.replace(/.ts$/, '.js'),
+            code: codeFactory({ path, method, baseURL: `'https://petstore.swagger.io/v2'` }) 
+          }))
+          .when({ doc: 'pet-v3' }, ({ path, method }) => ({ 
+            code: codeFactory({ path, method, baseURL: `'https://petstore3.swagger.io/api/v3/'` }) 
+          }))
           // since use build, if there is pet-v4 doc, all api in pet-v4 will be ignored
           // if you want pet-v4 will generate by transformer above, use default to build transformer
           .build() 
