@@ -6,8 +6,15 @@ This project contains a set of tools for generating client api request code from
 
 ### download & install chrome extension
 
-- [download](https://cdn.jsdelivr.net/npm/@zdmin/ara-chrome-extension)
-- unzip download file and [load-unpacked](https://developer.chrome.com/docs/extensions/get-started/tutorial/hello-world#load-unpacked) chrome extension.
+- [Chrome Web Store](https://chromewebstore.google.com/detail/openapi-codegen/fjncpcopojccenmapbhicjcgeiabojli)
+
+- **OR** if Chrome Web Store not latest, you can: 
+  1. [download](https://cdn.jsdelivr.net/npm/@zdmin/ara-chrome-extension) manually and unzip it.
+   2. [load-unpacked](https://developer.chrome.com/docs/extensions/get-started/tutorial/hello-world#load-unpacked) chrome extension.
+
+> About chrome extension version: 
+> - alpha: `1.0.0-alpha.7` will be `1.0.0.107`
+> - beta: `1.0.0-beta.7` will be `1.0.0.207`
 
 ### for js/ts project: setup plugin
 
