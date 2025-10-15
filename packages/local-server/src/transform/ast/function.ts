@@ -8,7 +8,10 @@ type FunctionContext = ApiBaseData & { output: string }
 
 function createParameterDeclaration(parameters: ReturnType<ApiTransformer>['parameters'], js = false): ParameterDeclaration[] {
   if (!Array.isArray(parameters)) return []
-  const inTs = (condition?: boolean) => !js && condition
+  function inTs(...args: (boolean | undefined)[]) {
+    if (!args.length) return !js
+    return args.every(condition => !!condition) && !js
+  }
   return parameters.map(parameter => {
     parameter = typeof parameter === 'string' ? { name: parameter } : parameter
     return factory.createParameterDeclaration(
