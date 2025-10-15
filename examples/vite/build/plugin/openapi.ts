@@ -23,13 +23,14 @@ export function OpenAPI() {
           imports: [
             // import axios & axios's type
             { from: 'axios', import: 'axios' },
+            { from: 'type-fest', imports: [{ name: 'Merge', type: true }] },
             { from: 'axios', imports: [{ name: 'AxiosResponse', type: true }, { name: 'AxiosRequestConfig', type: true }] }
           ],
           parameters: [
             { 
               name: 'options',
               // use axios request config's data as body
-              type: `Omit<${refs.types.RequestOptions}, 'body'> & AxiosRequestConfig<${refs.types.RequestBody}>`,
+              type: `Merge<AxiosRequestConfig<${refs.types.RequestBody}>, Omit<${refs.types.RequestOptions}, 'body'>>`,
               optional: true
             }
           ],
