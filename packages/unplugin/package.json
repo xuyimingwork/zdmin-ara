@@ -18,6 +18,10 @@
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xuyimingwork/zdmin-ara.git"
+  },
   "scripts": {
     "build": "tsdown",
     "dev": "tsdown --watch",
