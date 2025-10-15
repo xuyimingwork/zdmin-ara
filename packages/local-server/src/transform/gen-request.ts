@@ -54,7 +54,7 @@ function genFileOfRequestTypes({ rootTypes, pairOutput, requests }: {
 }): (FileData & { types: string[] }) | undefined {
   if (!rootTypes) return
   return {
-    output: pairOutput.replace(/\.(ts|js)$/, '.d.ts'),
+    output: pairOutput.replace(/\.(ts|js)$/, '.meta.d.ts'),
     types: Array.isArray(requests) 
       ? requests.map(request => UTIL_TYPES.map(name => getRequestTypeName(request.name, name))).flat()
       : [],
