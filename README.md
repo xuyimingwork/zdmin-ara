@@ -1,12 +1,14 @@
 # @zdmin/ara
 
+**TS Code Generate is Ready Now!**
+
 This project contains a set of tools for generating client api request code from OpenAPI specification.
 
 ## usage
 
 ### download & install chrome extension
 
-- [Chrome Web Store](https://chromewebstore.google.com/detail/openapi-codegen/fjncpcopojccenmapbhicjcgeiabojli)
+- 🚀 [Chrome Web Store](https://chromewebstore.google.com/detail/openapi-codegen/fjncpcopojccenmapbhicjcgeiabojli)
 
 - **OR** if Chrome Web Store not latest, you can: 
   1. [download](https://cdn.jsdelivr.net/npm/@zdmin/ara-chrome-extension) manually and unzip it.
