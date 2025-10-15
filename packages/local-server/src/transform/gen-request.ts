@@ -113,7 +113,7 @@ function genFileOfRequests({ item, pairTypeFile }: {
           output: item.output 
         },
         code: replaceRefRequestType(request.name, request.code),
-        arguments: normalizeArguments(request.name, request.arguments),
+        parameters: normalizeArguments(request.name, request.parameters),
         types: normalizeTypes(request.name, request.types),
         debug: request.debug
       }),
@@ -136,7 +136,7 @@ function normalizeTypes(name: string, types?: { [key: string]: string }) {
   return mapValues(types, code => replaceRefRequestType(name, code))
 }
 
-function normalizeArguments(name: string, parameters: ReturnType<ApiTransformer>['arguments']): ReturnType<ApiTransformer>['arguments'] {
+function normalizeArguments(name: string, parameters: ReturnType<ApiTransformer>['parameters']): ReturnType<ApiTransformer>['parameters'] {
   if (!Array.isArray(parameters)) return []
   return parameters.map(item => {
     if (!isObject(item) || !item?.type) return item

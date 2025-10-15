@@ -25,7 +25,7 @@ export function OpenAPI() {
             { from: 'axios', import: 'axios' },
             { from: 'axios', imports: [{ name: 'AxiosResponse', type: true }, { name: 'AxiosRequestConfig', type: true }] }
           ],
-          arguments: [
+          parameters: [
             { 
               name: 'options',
               // use axios request config's data as body

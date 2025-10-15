@@ -1,18 +1,12 @@
 import { getAstStatements, getAstTypeNode } from "@/transform/ast/code";
-import { createJSDocFunctionLeadingComment } from "@/transform/ast/comment";
 import { ApiBaseData, ApiTransformer } from "@/types/api";
 import type { FunctionDeclaration, JSDoc, JSDocTag, Node, ParameterDeclaration } from "typescript";
 import ts from "typescript";
 const factory = ts.factory
 const SyntaxKind = ts.SyntaxKind
-
-/**
- * 
- */
-
 type FunctionContext = ApiBaseData & { output: string }
 
-function createParameterDeclaration(parameters: ReturnType<ApiTransformer>['arguments'], js = false): ParameterDeclaration[] {
+function createParameterDeclaration(parameters: ReturnType<ApiTransformer>['parameters'], js = false): ParameterDeclaration[] {
   if (!Array.isArray(parameters)) return []
   const inTs = (condition?: boolean) => !js && condition
   return parameters.map(parameter => {
@@ -31,14 +25,14 @@ function createParameterDeclaration(parameters: ReturnType<ApiTransformer>['argu
 export function createFunctionDeclaration({
   name, 
   code,
-  arguments: parameters,
+  parameters,
   context,
   types,
   debug
 }: { 
   name: string
   code: string,
-  arguments: ReturnType<ApiTransformer>['arguments']
+  parameters: ReturnType<ApiTransformer>['parameters']
   context: FunctionContext
   types: { return?: string }
   debug: boolean
@@ -62,7 +56,7 @@ export function createFunctionDeclaration({
 }
 
 function createFunctionJSDocComment(types: { 
-  parameters?: ReturnType<ApiTransformer>['arguments'],
+  parameters?: ReturnType<ApiTransformer>['parameters'],
   return?: string
 }, context: FunctionContext, debug: boolean): JSDoc | undefined {
   const openapi = context.openapi

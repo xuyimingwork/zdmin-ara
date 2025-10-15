@@ -16,7 +16,7 @@ export const baseTransformer: PresetApiTransformer = ({ path, method, refs }) =>
     name: camelCase(`${method}+${base}`),
     code: '',
     ignore: false,
-    arguments: [{ 
+    parameters: [{ 
       name: 'options',
       type: refs.types.RequestOptions,
       optional: true

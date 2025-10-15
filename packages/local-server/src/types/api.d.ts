@@ -57,7 +57,7 @@ export type ApiTransformerReturn = {
   /**
    * @description function arguments of this api.
    */
-  arguments?: Array<string | {
+  parameters?: Array<string | {
     /** @description name of argument, eg: `options` */
     name: string
     /** @description make this argument optional, eg: `options?` */
