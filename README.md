@@ -2,7 +2,7 @@
 
 **TS/JS Code Gen is Ready Now!**
 
-![](./docs/images/screenshot-generate-code.png)
+![TS/JS Code Gen](./docs/images/screenshot-generate-code.png)
 
 This project contains a set of tools for generating client api request code from OpenAPI specification.
 
@@ -78,6 +78,8 @@ export default {
 
 - Visit doc page in Chrome then Open Chrome DevTools
 - Preview & Generate Code from OpenAPI CodeGen
+
+![Preview & Generate Code in Chrome DevTools](./docs/images/screenshot-preview.png)
 
 ## build
 
