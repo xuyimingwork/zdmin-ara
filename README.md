@@ -1,6 +1,8 @@
 # @zdmin/ara
 
-**TS/JS Code Generate is Ready Now!**
+**TS/JS Code Gen is Ready Now!**
+
+![](./docs/images/screenshot-generate-code.png)
 
 This project contains a set of tools for generating client api request code from OpenAPI specification.
 
