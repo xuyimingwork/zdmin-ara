@@ -6,35 +6,76 @@ This project contains a set of tools for generating client api request code from
 
 ## usage
 
-### 1. download & install chrome extension
+### 1. Download & Install Chrome Extension
 
 - 🚀 [Chrome Web Store](https://chromewebstore.google.com/detail/openapi-codegen/fjncpcopojccenmapbhicjcgeiabojli)
 
 - **OR** if Chrome Web Store not latest, you can: 
   1. [download](https://cdn.jsdelivr.net/npm/@zdmin/ara-chrome-extension) manually and unzip it.
-   2. [load-unpacked](https://developer.chrome.com/docs/extensions/get-started/tutorial/hello-world#load-unpacked) chrome extension.
+  2. [load-unpacked](https://developer.chrome.com/docs/extensions/get-started/tutorial/hello-world#load-unpacked) chrome extension.
 
 > About chrome extension version: 
 > - alpha: `1.0.0-alpha.8` will be `1.0.0.108`
 > - beta: `1.0.0-beta.8` will be `1.0.0.208`
 
-### 2. for js/ts project: setup plugin
+### 2. Setup Project
 
-- install: `pnpm install -D @zdmin/ara-unplugin`
-- setup: in progress
+install: `pnpm install -D @zdmin/ara-unplugin`
 
-> reference: 
-> - [vite example](./examples/vite)
-> - [webpack example](./examples/webpack)
+<details open>
+
+<summary>Vite</summary>
+
+```js
+import { defineConfig } from 'vite'
+import Ara from '@zdmin/ara-unplugin/vite'
+
+// https://vite.dev/config/
+export default defineConfig({
+  plugins: [
+    Ara({
+      doc: 'https://petstore.swagger.io/'
+    }),
+    // ...
+  ],
+  // ...
+})
+```
+
+</details>
+
+<details>
+
+<summary>Webpack</summary>
+
+```js
+import Ara from '@zdmin/ara-unplugin/webpack'
+
+export default {
+  plugins: [
+    Ara({
+      doc: 'https://petstore.swagger.io/'
+    }),
+    // ...
+  ],
+  // ...
+};
+```
+
+</details>
+
+- More Options: [@zdmin/ara-unplugin](./packages/unplugin/README.md)
+
+- Examples: 
+  - [vite example](./examples/vite)
+  - [webpack example](./examples/webpack)
 
 > for other client project: build your own server like [local-server](./packages/local-server/)
 
-### 3. ok
+### 3. Preview & Generate
 
-- visit doc page in browser and open chrome devtools
-- preview & generate code from OpenAPI CodeGen
-
-
+- Visit doc page in Chrome then Open Chrome DevTools
+- Preview & Generate Code from OpenAPI CodeGen
 
 ## build
 
