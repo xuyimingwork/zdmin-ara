@@ -1,4 +1,4 @@
-const PANEL_TITLE = 'OpenAPI CodeGen'
+const PANEL_TITLE = 'Ara'
 
 chrome.devtools.panels.create(
   PANEL_TITLE, 
