@@ -1,4 +1,4 @@
-# @zdmin/ara
+# @zdmin/ara [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/xuyimingwork/zdmin-ara)
 
 **TS/JS Code Gen is Ready Now!**
 
@@ -80,25 +80,4 @@ export default {
 - Preview & Generate Code from OpenAPI CodeGen
 
 ![Preview & Generate Code in Chrome DevTools](./docs/images/screenshot-preview.png)
-
-## build
-
-- version: update `package.json`'s `version` and then run `pnpm run version`
-- publish: run `pnpm publish -r`
-
-## next
-
-- [ ] prepare docs
-
----
-
-- [x] generate type file based on function files
-- [ ] changing local server to use express? or use express.router to drop connect-rest
-- [ ] setup test, first for normalizeImports
-
----
-
-- [x] change repo to monorepo
-- [x] redesign backend api
-- [x] change frontend ui to project base
 
