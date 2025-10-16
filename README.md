@@ -6,7 +6,7 @@ This project contains a set of tools for generating client api request code from
 
 ## usage
 
-### download & install chrome extension
+### 1. download & install chrome extension
 
 - 🚀 [Chrome Web Store](https://chromewebstore.google.com/detail/openapi-codegen/fjncpcopojccenmapbhicjcgeiabojli)
 
@@ -18,7 +18,7 @@ This project contains a set of tools for generating client api request code from
 > - alpha: `1.0.0-alpha.8` will be `1.0.0.108`
 > - beta: `1.0.0-beta.8` will be `1.0.0.208`
 
-### for js/ts project: setup plugin
+### 2. for js/ts project: setup plugin
 
 - install: `pnpm install -D @zdmin/ara-unplugin`
 - setup: in progress
@@ -27,11 +27,14 @@ This project contains a set of tools for generating client api request code from
 > - [vite example](./examples/vite)
 > - [webpack example](./examples/webpack)
 
+> for other client project: build your own server like [local-server](./packages/local-server/)
+
+### 3. ok
+
+- visit doc page in browser and open chrome devtools
+- preview & generate code from OpenAPI CodeGen
 
 
-### for other client project
-
-build your own server like [local-server](./packages/local-server/)
 
 ## build
 
