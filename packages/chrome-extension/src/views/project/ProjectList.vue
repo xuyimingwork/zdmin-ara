@@ -5,7 +5,7 @@ import ProjectCreate from '@/views/project/ProjectCreate.vue';
 import ProjectListPure from '@/views/project/ProjectListPure.vue';
 import { Delete, InfoFilled, Operation, Plus, Refresh } from '@element-plus/icons-vue';
 import { CrabFlex } from '@zdmin/crab';
-import pkg from '#/package.json'
+import pkg from '~/package.json'
 
 const { projects, create, clear } = useProjects()
 const active = ref<typeof projects.value[0]>()
