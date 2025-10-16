@@ -2,7 +2,7 @@ import type { UnpluginFactory, UnpluginInstance } from 'unplugin'
 import { createUnplugin } from 'unplugin'
 import { createServer } from '@zdmin/ara-local-server'
 import type { UserOptions as AraLocalServerOptions } from '@zdmin/ara-local-server'
-import { bold, cyan, yellow } from 'kolorist'
+import { bold, cyan, yellow, green } from 'kolorist'
 import { camelCase, upperFirst } from 'es-toolkit'
 
 export interface Options extends AraLocalServerOptions {
@@ -23,6 +23,7 @@ function next(cb: () => any) {
   return current.p = current.p.then(() => cb())
 }
 const colorUrl = (url: string) => cyan(url.replace(/:(\d+)\//, (_, port) => `:${bold(port)}/`))
+const hint = (port?: string | number) => `${green(`Open ${colorUrl(`http://localhost${port ? `:${port}` : ''}/openapi-codegen`)} in Chrome then Open Chrome DevTools to use`)}`
 
 export const unpluginFactory: UnpluginFactory<Options | undefined> = (options?: Options) => {
   const name = 'unplugin-zdmin-ara'
@@ -38,7 +39,7 @@ export const unpluginFactory: UnpluginFactory<Options | undefined> = (options?: 
         const _printUrls = server.printUrls
         server.printUrls = () => {
           _printUrls()
-          console.log(`  ${yellow('➜')}  ${bold('Zdmin Ara')}: ${colorUrl(`http://localhost:${current.server?.port}/openapi-codegen`)}`)
+          console.log(`  ${yellow('➜')}  ${bold('Zdmin Ara')}: ${hint(current.server?.port)}`)
         }
         return next(() => createServer(options).then(({ port, close }: any) => {
           current.server = { close, port }
@@ -50,7 +51,7 @@ export const unpluginFactory: UnpluginFactory<Options | undefined> = (options?: 
       const start = () => {
         next(() => createServer(options).then(({ port, close }: any) => {
           current.server = { close, port }
-          console.log(`<i> ${bold(yellow(`[${name}] Server is running at:`))} ${colorUrl(`http://localhost:${current.server?.port}/openapi-codegen`)}`)
+          console.log(`<i> ${bold(green(`[${name}]`))} ${bold(hint(port))}`)
         }))
       }
       const end = () => {
@@ -63,8 +64,8 @@ export const unpluginFactory: UnpluginFactory<Options | undefined> = (options?: 
         return
       }
       // webpack 3 support
-      compiler.plugin('watch-run', start)
-      compiler.plugin('watch-close', end)
+      ;(compiler as any).plugin('watch-run', start)
+      ;(compiler as any).plugin('watch-close', end)
     }
   }
 }
