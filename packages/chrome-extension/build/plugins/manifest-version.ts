@@ -12,11 +12,13 @@ function version(root: any, target: string) {
         ...JSON.parse(content),
         version: version.includes('-') 
           // chrome version only support at most four parts & all parts need be int
-          ? [version.split('-')[0], version.split('-')[1].split('.').reduce((v, part) => {
-            if (part in GREEK_MAP) return v + GREEK_MAP[part as keyof typeof GREEK_MAP]
+          ? [version.split('-')[0], version.split('-')[1].split('.').reduce((v, part, i) => {
+            if (i === 0 && part in GREEK_MAP) return v + GREEK_MAP[part as keyof typeof GREEK_MAP]
+            else if (i === 0) throw Error(`manifest-version: unknown release phase ${part}`)
             return v + Number.parseInt(part)
           }, 0)].join('.')
-          : version
+          // 1.0.0.999 is last release of 1.0.0
+          : version + '.999'
       }, undefined, 2), 'utf-8')
     })
 }
