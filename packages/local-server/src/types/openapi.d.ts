@@ -15,7 +15,7 @@ export type OpenAPIPathOperationObject = OpenAPIOperationObject2 | OpenAPIOperat
 
 export type { 
   OpenAPI2, 
-  OpenAPI2,
+  OpenAPI3,
 }
 
 type HasRequestBody<paths, path extends string, method extends string> = Get<paths, `${path}.${method}`> extends { requestBody: any } ? true : false

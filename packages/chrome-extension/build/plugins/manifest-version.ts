@@ -17,7 +17,7 @@ function version(root: any, target: string) {
             else if (i === 0) throw Error(`manifest-version: unknown release phase ${part}`)
             return v + Number.parseInt(part)
           }, 0)].join('.')
-          // 1.0.0.999 is last release of 1.0.0
+          // 1.0.0.999 is final release of 1.0.0
           : version + '.999'
       }, undefined, 2), 'utf-8')
     })
