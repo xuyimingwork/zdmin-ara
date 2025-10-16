@@ -128,3 +128,7 @@ export {
 export {
   normalizePath as normalizeApiPath
 } from '@/utils/restful'
+
+export {
+  getBanner as createDefaultBanner
+} from '@/utils/banner'

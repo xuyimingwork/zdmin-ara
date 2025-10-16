@@ -1,9 +1,10 @@
 import type { UnpluginFactory, UnpluginInstance } from 'unplugin'
 import { createUnplugin } from 'unplugin'
-import { createServer } from '@zdmin/ara-local-server'
+import { createDefaultBanner, createServer,  } from '@zdmin/ara-local-server'
 import type { UserOptions as AraLocalServerOptions } from '@zdmin/ara-local-server'
 import { bold, cyan, yellow, green } from 'kolorist'
 import { camelCase, upperFirst } from 'es-toolkit'
+import { name as pkgName, version } from '~/package.json'
 
 export interface Options extends AraLocalServerOptions {
   // define your plugin options here
@@ -25,8 +26,15 @@ function next(cb: () => any) {
 const colorUrl = (url: string) => cyan(url.replace(/:(\d+)\//, (_, port) => `:${bold(port)}/`))
 const hint = (port?: string | number) => `${green(`Open ${colorUrl(`http://localhost${port ? `:${port}` : ''}/openapi-codegen`)} in Chrome then Open Chrome DevTools to use`)}`
 
-export const unpluginFactory: UnpluginFactory<Options | undefined> = (options?: Options) => {
+export const unpluginFactory: UnpluginFactory<Options | undefined> = (options: Options = {}) => {
   const name = 'unplugin-zdmin-ara'
+  const init = () => next(() => createServer({
+    banner: createDefaultBanner({ name: pkgName, version }),
+    typeGettersModule: pkgName,
+    ...options
+  }).then(({ port, close }: any) => {
+    current.server = { close, port }
+  }))
   return {
     name,
     vite: {
@@ -41,18 +49,13 @@ export const unpluginFactory: UnpluginFactory<Options | undefined> = (options?: 
           _printUrls()
           console.log(`  ${yellow('➜')}  ${bold('Zdmin Ara')}: ${hint(current.server?.port)}`)
         }
-        return next(() => createServer(options).then(({ port, close }: any) => {
-          current.server = { close, port }
-        }))
+        return init()
       },
     },
     webpack(compiler) {
       const PLUGIN_NAME = upperFirst(camelCase(name))
       const start = () => {
-        next(() => createServer(options).then(({ port, close }: any) => {
-          current.server = { close, port }
-          console.log(`<i> ${bold(green(`[${name}]`))} ${bold(hint(port))}`)
-        }))
+        init().then(() => console.log(`<i> ${bold(green(`[${name}]`))} ${bold(hint(current.server!.port))}`))
       }
       const end = () => {
         if (current.server) next(() => current.server!.close())
