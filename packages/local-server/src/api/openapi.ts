@@ -28,10 +28,12 @@ async function getFileDiff(file: FileData): Promise<'new' | 'update' | 'same' | 
  * @param  
  * @returns 
  */
-export function previewOpenAPI({ openapi, doc, transform }: { 
+export function previewOpenAPI({ openapi, doc, transform, banner, typeGettersModule }: { 
   openapi: OpenAPI, 
   doc: UserDocNormalized,
-  transform: UserApiTransformer
+  transform: UserApiTransformer,
+  banner?: string
+  typeGettersModule?: string 
 }) {
   return gen({ 
     openapi, 
@@ -42,10 +44,13 @@ export function previewOpenAPI({ openapi, doc, transform }: {
         ? `${kebabCase(doc.name)}.${output}`
         : output
       return resolve(doc.outDir, output)
-    }
+    },
+    typeGettersModule,
+    // TODO: 是否收归到该处统一修改
+    banner
   })
     .then((res) => {
-      return Promise.all(res.files.map(file => new Promise((resolve) => {
+      return Promise.all(res.files.map(file => new Promise<FileData & { diff: Awaited<ReturnType<typeof getFileDiff>> }>((resolve) => {
         getFileDiff(file).then(diff => {
           resolve({
             ...file, diff
@@ -58,12 +63,14 @@ export function previewOpenAPI({ openapi, doc, transform }: {
     })
 }
 
-export function outputOpenAPI({ openapi, doc, transform }: { 
+export function outputOpenAPI({ openapi, doc, transform, banner, typeGettersModule }: { 
   openapi: OpenAPI, 
   doc: UserDocNormalized,
   transform: UserApiTransformer 
+  banner?: string
+  typeGettersModule?: string 
 }) {
-  return previewOpenAPI({ openapi, doc, transform })
+  return previewOpenAPI({ openapi, doc, transform, banner, typeGettersModule })
     .then(({ files, statistic }) => {
       return Promise.all(files.map(item => writep(item.output, item.content)))
         .then(() => ({ files, statistic }))

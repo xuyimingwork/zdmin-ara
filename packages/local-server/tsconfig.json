@@ -1,13 +1,15 @@
 {
   "extends": "../../tsconfig.node.json",
   "include": [
-    "src/**/*"
+    "src/**/*",
+    "temp/**/*"
   ],
   "exclude": ["src/**/__tests__/*"],
   "compilerOptions": {
     "noImplicitAny": false,
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "~/*": ["./*"]
     }
   }
 }

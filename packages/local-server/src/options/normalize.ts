@@ -47,6 +47,7 @@ export function normalizeOptions(options: UserOptions): UserOptionsNormalized {
   const outDir = typeof options.outDir === 'string' ? resolve(cwd, options.outDir) : resolve(cwd, DEFAULT_OUT_DIR)
   const doc = normalizeDoc(options.doc, outDir)
   return {
+    ...options,
     debug: false,
     cwd,
     outDir,

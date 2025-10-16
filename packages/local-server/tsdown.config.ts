@@ -4,6 +4,7 @@ export default defineConfig({
   entry: 'src/app.ts',
   external: ['typescript'],
   alias: {
-    '@': './src'
+    '@': './src',
+    '~': '.',
   }
 })

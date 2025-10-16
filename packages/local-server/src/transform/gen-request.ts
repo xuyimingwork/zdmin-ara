@@ -15,6 +15,7 @@ import { ImportDataNormalized } from "@/types/import"
 import { GenResult } from "@/types/gen"
 import { ApiBaseData, ApiTransformer } from "@/types/api"
 import { baseTransformer } from "@/transform/transformer/base"
+import { name as pkgName } from '~/package.json'
 
 const factory = ts.factory
 
@@ -47,10 +48,18 @@ function mapEachRequest<T = void>(openapi: OpenAPI, cb: MapEachRequestCallback<T
   return result
 }
 
-function genFileOfRequestTypes({ rootTypes, pairOutput, requests }: {
-  rootTypes?: string
+function genFileOfRequestTypes({ 
+  pairOutput, 
+  rootTypes, 
+  utilTypes,
+  requests, 
+  banner 
+}: {
   pairOutput: string
+  rootTypes?: string
+  utilTypes?: string
   requests?: AstFileData['requests']
+  banner?: string
 }): (FileData & { types: string[] }) | undefined {
   if (!rootTypes) return
   return {
@@ -62,8 +71,7 @@ function genFileOfRequestTypes({ rootTypes, pairOutput, requests }: {
       ...createImportDeclarations([
         {
           mode: 'type',
-          // TODO: 辅助类工具库导入位置允许配置
-          from: '@zdmin/ara-unplugin',
+          from: utilTypes || pkgName,
           imports: UTIL_TYPES.map(name => ({ name: getUtilTypeName(name) }))
         },
         {
@@ -84,13 +92,14 @@ function genFileOfRequestTypes({ rootTypes, pairOutput, requests }: {
           factory.createIdentifier('\n')
         ]
       }).flat() : []
-    ])))
+    ])), banner)
   }
 }
 
-function genFileOfRequests({ item, pairTypeFile }: { 
+function genFileOfRequests({ item, pairTypeFile, banner }: { 
   item: AstFileData 
   pairTypeFile?: FileData & { types: string[] }
+  banner?: string
 }): FileData {
   const imports = createImportDeclarations([
     ...item.imports,
@@ -127,7 +136,7 @@ function genFileOfRequests({ item, pairTypeFile }: {
   ]))
   return {
     output: item.output,
-    content: patchBanner(content)
+    content: patchBanner(content, banner)
   }
 }
 
@@ -171,11 +180,20 @@ function toAstFiles(requests: AstApiData[]): AstFileData[] {
   })
 }
 
-export function genRequest({ openapi, transform, relocate, rootTypes }: {
+export function genRequest({ 
+  openapi, 
+  transform, 
+  relocate, 
+  rootTypes, 
+  utilTypes,
+  banner 
+}: {
   openapi: OpenAPI,
   transform: ApiTransformer
   relocate?: (output: string) => string
   rootTypes?: string
+  utilTypes?: string
+  banner?: string
 }): GenResult<{ functions: number }> {
 
   // 所有请求
@@ -201,10 +219,12 @@ export function genRequest({ openapi, transform, relocate, rootTypes }: {
   const files = rawFiles.map(item => {
     const fileOfTypes = genFileOfRequestTypes({ 
       rootTypes, 
+      utilTypes,
       pairOutput: item.output, 
-      requests: item.requests 
+      requests: item.requests,
+      banner
     })
-    const fileOfRequests = genFileOfRequests({ item, pairTypeFile: fileOfTypes })
+    const fileOfRequests = genFileOfRequests({ item, pairTypeFile: fileOfTypes, banner })
     return [fileOfTypes, fileOfRequests]
   }).flat().filter(file => !!file)
 

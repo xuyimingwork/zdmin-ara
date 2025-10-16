@@ -1,9 +1,9 @@
 import { ApiTransformer, ApiTransformerReturn } from "@/types/api"
 import { OpenAPI } from "@/types/openapi"
-import { SetRequired, Simplify, SimplifyDeep } from "type-fest"
+import { SetOptional, SetRequired, Simplify, SimplifyDeep } from "type-fest"
 
 /**
- * @description 用户配置
+ * @description User Options
  */
 export interface UserOptions {
   /**
@@ -32,6 +32,25 @@ export interface UserOptions {
    * @description transform every api.
    */
   transform?: UserApiTransformer
+  /**
+   * @description banner of generated files
+   */
+  banner?: string
+  /**
+   * @description config Getter types import from 
+   * 
+   * @example
+   * ```ts
+   * import type { 
+   *   GetResponse, 
+   *   GetRequestOptions, 
+   *   GetRequestBody, 
+   *   GetRequestQuery, 
+   *   GetRequestParams 
+   * } from "${typeGettersModule}";
+   * ```
+   */
+  typeGettersModule?: string
 }
 
 export interface UserDoc {
@@ -82,4 +101,6 @@ export type UserApiTransformerInput = Simplify<{
 export type UserApiTransformerReturn = Simplify<Partial<ApiTransformerReturn>>
 
 export type UserDocNormalized = SetRequired<UserDoc, 'outDir'>
-export type UserOptionsNormalized = Required<Omit<UserOptions, 'doc'>> & { doc: Array<UserDocNormalized> }
+export type UserOptionsNormalized = SetOptional<Required<Omit<UserOptions, 'doc'>> & { 
+  doc: Array<UserDocNormalized> 
+}, 'banner' | 'typeGettersModule'>

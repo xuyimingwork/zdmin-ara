@@ -35,7 +35,13 @@ function createRest(options: UserOptionsNormalized) {
       : options.doc.find(item => item.name === content.name)
     if (!doc) return createError('OpenAPI Doc Not Config')
     const preview = !!content.preview
-    return (preview ? previewOpenAPI : outputOpenAPI)({ openapi: content.data, doc, transform: options.transform })
+    return (preview ? previewOpenAPI : outputOpenAPI)({ 
+      openapi: content.data, 
+      doc, 
+      transform: options.transform,
+      banner: options.banner,
+      typeGettersModule: options.typeGettersModule
+    })
       .then(({ files, statistic }) => createResponse({ statistic, files }))
       .catch(err => createError(err.message));
   })

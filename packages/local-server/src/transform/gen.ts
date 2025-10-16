@@ -9,10 +9,12 @@ export const DEFAULT_DATA_FILE = 'openapi.json'
 /**
  * 获取代码
  */
-export async function gen({ openapi, transform, relocate }: {
+export async function gen({ openapi, transform, relocate, banner, typeGettersModule }: {
   openapi: OpenAPI, 
   transform: ApiTransformer
   relocate?: (output: string) => string
+  typeGettersModule?: string
+  banner?: string
 }): Promise<GenResult<{ functions: number }>> {
   relocate = typeof relocate === 'function' ? relocate : (output: string) => output
 
@@ -23,7 +25,8 @@ export async function gen({ openapi, transform, relocate }: {
   const {
     files: _fileOfTypes,  
   } = await genType({ 
-    openapi
+    openapi,
+    banner
   })
   const fileOfTypes = _fileOfTypes.map(item => ({ ...item, output: relocate(item.output) }))
 
@@ -34,7 +37,9 @@ export async function gen({ openapi, transform, relocate }: {
     openapi, 
     transform,
     relocate,
-    rootTypes: fileOfTypes.length === 1 ? fileOfTypes[0].output : undefined
+    rootTypes: fileOfTypes.length === 1 ? fileOfTypes[0].output : undefined,
+    utilTypes: typeGettersModule,
+    banner
   })
   
   return {
