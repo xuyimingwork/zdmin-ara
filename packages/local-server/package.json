@@ -14,11 +14,14 @@
   "files": [
     "dist"
   ],
-  "main": "./dist/app.js",
+  "main": "./dist/app.cjs",
   "module": "./dist/app.js",
-  "types": "./dist/app.d.ts",
+  "types": "./dist/app.d.cts",
   "exports": {
-    ".": "./dist/app.js",
+    ".": {
+      "import": "./dist/app.js",
+      "require": "./dist/app.cjs"
+    },
     "./package.json": "./package.json"
   },
   "scripts": {
