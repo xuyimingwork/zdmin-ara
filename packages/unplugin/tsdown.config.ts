@@ -6,6 +6,7 @@ export default defineConfig({
   entry: ['./src/*.ts'],
   exports: true,
   shims: true,
+  format: ['cjs', 'es'],
   alias: {
     '@': './src',
     '~': '.',
