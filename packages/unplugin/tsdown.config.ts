@@ -7,6 +7,8 @@ export default defineConfig({
   exports: true,
   shims: true,
   format: ['cjs', 'es'],
+  target: ['node14'],
+  noExternal: ['unplugin'],
   alias: {
     '@': './src',
     '~': '.',
