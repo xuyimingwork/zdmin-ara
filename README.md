@@ -64,7 +64,7 @@ export default {
 
 ### 2. Download & Install Chrome Extension
 
-We use Chrome Extension to providing seamless process of getting open api docs.
+We use Chrome Extension for getting open api docs seamlessly.
 
 - 🚀 [Chrome Web Store](https://chromewebstore.google.com/detail/openapi-codegen/fjncpcopojccenmapbhicjcgeiabojli)
 
