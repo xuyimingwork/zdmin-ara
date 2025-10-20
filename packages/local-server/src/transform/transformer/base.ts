@@ -22,7 +22,9 @@ export const baseTransformer: PresetApiTransformer = ({ path, method, refs }) =>
       optional: true
     }],
     imports: [],
-    types: {},
+    types: {
+      return: `Promise<${refs.types.Response}>`
+    },
     debug: false
   }
 }
