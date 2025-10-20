@@ -28,22 +28,25 @@
     "dev:run": "tsdown src/run.ts -d dist-dev --watch ./src",
     "dev:lib": "tsdown --watch ./src",
     "dev": "run-p dev:*",
-    "build": "tsdown",
+    "#build": "tsdown not transform noExternal pkg correctly, rebuild to solve, see https://github.com/rolldown/tsdown/issues/547",
+    "build": "tsdown && tsdown dist/app.js --no-clean",
     "prepublishOnly": "pnpm build"
   },
   "dependencies": {
     "body-parser": "^2.2.0",
     "connect": "^3.7.0",
     "connect-rest": "^3.0.33",
+    "core-js": "^3.46.0",
     "cors": "^2.8.5",
     "get-port": "^7.1.0",
     "mkdirp": "^3.0.1",
     "openapi-typescript5": "npm:openapi-typescript@5",
     "openapi-typescript7": "npm:openapi-typescript@7",
-    "type-fest": "^5.0.1"
+    "type-fest": "^5.0.1",
+    "typescript": "~5.8.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
-    "tsdown": "^0.15.1"
+    "tsdown": "^0.15.7"
   }
 }

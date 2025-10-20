@@ -1,3 +1,4 @@
+import "core-js/stable"
 import connect from 'connect';
 import { createServer as createHTTPServer } from 'http';
 import cors from 'cors'

@@ -2,15 +2,14 @@
   "name": "webpack",
   "version": "0.0.0",
   "private": true,
-  "type": "module",
   "scripts": {
-    "dev": "webpack serve",
+    "dev": "webpack-dev-server",
     "build": "webpack"
   },
   "devDependencies": {
-    "webpack": "^5.0.0",
-    "webpack-cli": "^4.0.0",
-    "webpack-dev-server": "^4.0.0",
+    "webpack": "^4.0.0",
+    "webpack-cli": "^3.0.0",
+    "webpack-dev-server": "^3.0.0",
     "@zdmin/ara-unplugin": "workspace:*"
   }
 }
