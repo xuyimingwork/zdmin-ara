@@ -6,6 +6,7 @@
   ],
   "exclude": ["src/**/__tests__/*"],
   "compilerOptions": {
+    "resolveJsonModule": true,
     "noImplicitAny": false,
     "paths": {
       "@/*": ["./src/*"],

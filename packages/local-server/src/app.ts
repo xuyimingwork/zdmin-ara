@@ -44,7 +44,10 @@ function createRest(options: UserOptionsNormalized) {
       typeGettersModule: options.typeGettersModule
     })
       .then(({ files, statistic }) => createResponse({ statistic, files }))
-      .catch(err => createError(err.message));
+      .catch(err => {
+        console.error(err);
+        return createError(err.message )
+      });
   })
 
   // 获取项目信息

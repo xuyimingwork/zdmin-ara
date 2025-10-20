@@ -16,7 +16,10 @@ module.exports = {
   },
   plugins: [
     Ara({
-      doc: 'https://petstore.swagger.io/'
+      doc: 'https://petstore.swagger.io/',
+      transform({ base }) {
+        return { output: base.output.replace(/\.ts$/, '.js') }
+      }
     })
   ]
 };

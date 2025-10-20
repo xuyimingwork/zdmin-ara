@@ -1,9 +1,7 @@
 import type { ImportDataNormalized, ImportDataNormalizedType } from "@/types/import"
 import { groupBy } from "es-toolkit"
 import type { ImportDeclaration, JSDoc } from "typescript"
-import ts from "typescript"
-
-const factory = ts.factory
+import { factory } from "typescript"
 
 export function createImportDeclarations(imports?: ImportDataNormalized[]): (ImportDeclaration | JSDoc)[] {
   if (!Array.isArray(imports)) return []
@@ -14,7 +12,7 @@ export function createImportDeclarations(imports?: ImportDataNormalized[]): (Imp
   } = groupBy(imports, (_import) => _import.mode === 'type' && _import.jsdoc ? 'jsdoc' : 'normal')
 
   return [
-    ...normalImports.map(item => {
+    ...(Array.isArray(normalImports) ? normalImports : []).map(item => {
       if (item.mode === 'simple') return factory.createImportDeclaration(
         undefined,
         undefined,
