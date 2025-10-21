@@ -18,7 +18,7 @@ export type {
   OpenAPI3,
 }
 
-type HasRequestBody<paths, path extends string, method extends string> = Get<paths, `${path}.${method}`> extends { requestBody: any } ? true : false
+type HasRequestBody<paths, path extends string, method extends string> = Get<paths, `${path}.${method}.requestBody`> extends { content: any } ? true : false
 type HasResponseContent<paths, path extends string, method extends string> = Get<paths, `${path}.${method}.responses`>['200'] extends { content: any } ? true : false
 
 export type GetRequestParams<paths, path extends string, method extends string> = Get<paths, `${path}.${method}.parameters.path`>
