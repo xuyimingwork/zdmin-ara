@@ -6,18 +6,21 @@ import { GenResult } from "@/types/gen";
 
 export const DEFAULT_TYPE_FILE = 'openapi.d.ts'
 
+function getTypeContent({ openapi, banner }: { openapi: OpenAPI, banner?: string }): Promise<string> {
+  if (isOpenAPI2(openapi)) return v2OpenAPITS(openapi, { commentHeader: patchBanner('', banner) }).catch(() => '')
+  if (isOpenAPI3(openapi)) return v3OpenAPITS(openapi).then(ast => patchBanner(v3AstToString(ast), banner)).catch(() => '')
+  return Promise.resolve('')
+}
+
 export async function genType({ openapi, banner }: { openapi: OpenAPI, banner?: string }): Promise<GenResult> {
-  if (isOpenAPI2(openapi)) return {
-    files: [{
-      output: DEFAULT_TYPE_FILE,
-      content: await v2OpenAPITS(openapi, { commentHeader: patchBanner('', banner) })
-    }]
-  }
-  if (isOpenAPI3(openapi)) return {
-    files: [{
-      output: DEFAULT_TYPE_FILE,
-      content: patchBanner(v3AstToString(await v3OpenAPITS(openapi)), banner)
-    }]
-  }
-  return Promise.resolve({ files: [] })
+  return getTypeContent({ openapi, banner })
+    .then(content => {
+      if (!content) return { files: [] }
+      return {
+        files: [{
+          output: DEFAULT_TYPE_FILE,
+          content
+        }]
+      }
+    })
 }
