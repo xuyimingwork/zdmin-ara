@@ -25,7 +25,7 @@ export type GetRequestParams<paths, path extends string, method extends string> 
 export type GetRequestQuery<paths, path extends string, method extends string> = Get<paths, `${path}.${method}.parameters.query`>
 export type GetRequestBody<paths, path extends string, method extends string> = HasRequestBody<paths, path, method> extends true
   ? ValueOf<Get<paths, `${path}.${method}.requestBody.content`>>
-  : Get<paths, `${path}.${method}.parameters.body.body`>
+  : ValueOf<Get<paths, `${path}.${method}.parameters.body`>>
 export type GetResponse<paths, path extends string, method extends string> = HasResponseContent<paths, path, method> extends true
   ? ValueOf<Get<Get<paths, `${path}.${method}.responses`>['200'], 'content'>>
   : Get<Get<paths, `${path}.${method}.responses`>['200'], 'schema'>
@@ -41,5 +41,6 @@ type TypeKeys<O, VT> = keyof {
 // make unknown property optional
 export type GetRequestOptions<paths, path extends string, method extends string> = SetOptional<
   GetRequestOptionsRaw<paths, path, method>,
-  TypeKeys<GetRequestOptionsRaw<paths, path, method>, unknown>
+  TypeKeys<GetRequestOptionsRaw<paths, path, method>, unknown> | 
+  TypeKeys<GetRequestOptionsRaw<paths, path, method>, never>
 >
