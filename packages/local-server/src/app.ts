@@ -1,6 +1,6 @@
-import "core-js/stable"
+import "core-js/stable/index.js"
 import connect from 'connect';
-import { createServer as createHTTPServer } from 'http';
+import { createServer as createHTTPServer } from 'node:http';
 import cors from 'cors'
 import bodyParser from 'body-parser'
 import ConnectRest from 'connect-rest';
