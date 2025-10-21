@@ -11,11 +11,11 @@ const DEFAULT_OUT_DIR = 'openapi-codegen'
  * 4. doc.name 不存在，使用 outDir
  * 
  * @param doc 
- * @param outDir 
+ * @param outDir project output directory
  * @returns 
  */
 function normalizeDocOutDir(doc: Omit<UserDoc, 'url'>, outDir: string) {
-  if (doc.outDir) return resolve(outDir, doc.outDir)
+  if (typeof doc.outDir === 'string') return resolve(outDir, doc.outDir)
   if (doc.name) return resolve(outDir, doc.name)
   return outDir
 }
