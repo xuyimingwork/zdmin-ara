@@ -116,6 +116,7 @@ function genFileOfRequests({ item, pairTypeFile, banner }: {
     ...(pairTypeFile ? [{
       mode: 'type' as const,
       from: `./${basename(pairTypeFile.output, '.ts')}`,
+      // 超长 imports 可能导致 vscode 无法解析，考虑自动换行操作
       imports: pairTypeFile.types
         .filter(name => getRequestTypeInUseFromRequests(item.requests).includes(name))
         .map(name => ({ name }))
