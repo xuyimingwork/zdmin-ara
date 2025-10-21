@@ -1,10 +1,10 @@
 import { createFunctionDeclaration } from "@/transform/ast/function"
 import { normalizeImports } from "@/transform/gen-imports"
 import { print } from "@/transform/ast/printer"
-import { getRequestTypeName, getUtilTypeName, replaceRefRequestType, TypeRef, UTIL_TYPES } from "@/transform/type"
+import { getRequestTypeInUseFromCodes, getRequestTypeName, getUtilTypeName, normalizeRequestType, TypeRef, UTIL_TYPES } from "@/transform/type"
 import { getImportRelative, patchBanner } from "@/transform/utils"
 import { groupBy, mapValues } from "es-toolkit"
-import { each, fromPairs, isObject } from "es-toolkit/compat"
+import { each, fromPairs, isObject, values } from "es-toolkit/compat"
 import { basename } from "path"
 import { factory } from 'typescript'
 import { createTypeAliasDeclaration } from "@/transform/ast/type"
@@ -94,6 +94,18 @@ function genFileOfRequestTypes({
   }
 }
 
+function getRequestTypeInUseFromRequests(requests?: AstFileData['requests']): string[] {
+  if (!Array.isArray(requests)) return []
+  return requests.map(request => {
+    const parameters = normalizeArguments(request.name, request.parameters) || []
+    return getRequestTypeInUseFromCodes(request.name, [
+      request.code, 
+      ...values(request.types), 
+      ...parameters.filter(parameter => isObject(parameter) && parameter.type).map(parameter => (parameter as { type: string }).type)
+    ].filter(item => !!item))
+  }).flat()
+}
+
 function genFileOfRequests({ item, pairTypeFile, banner }: { 
   item: AstFileData 
   pairTypeFile?: FileData & { types: string[] }
@@ -104,13 +116,16 @@ function genFileOfRequests({ item, pairTypeFile, banner }: {
     ...(pairTypeFile ? [{
       mode: 'type' as const,
       from: `./${basename(pairTypeFile.output, '.ts')}`,
-      imports: pairTypeFile.types.map(name => ({ name }))
+      imports: pairTypeFile.types
+        .filter(name => getRequestTypeInUseFromRequests(item.requests).includes(name))
+        .map(name => ({ name }))
     }] : [])
   ].map(importNormalized => {
     if (importNormalized.mode !== 'type') return importNormalized
     if (item.output.endsWith('.js')) return { ...importNormalized, jsdoc: true }
     return importNormalized
   }))
+
   const functions = Array.isArray(item.requests) ? item.requests.map(request => {
     return [
       ...createFunctionDeclaration({
@@ -119,9 +134,9 @@ function genFileOfRequests({ item, pairTypeFile, banner }: {
           ...request, 
           output: item.output 
         },
-        code: replaceRefRequestType(request.name, request.code),
-        parameters: normalizeArguments(request.name, request.parameters),
-        types: normalizeTypes(request.name, request.types),
+        code: normalizeRequestType(request.name, request.code, !pairTypeFile),
+        parameters: normalizeArguments(request.name, request.parameters, !pairTypeFile),
+        types: normalizeTypes(request.name, request.types, !pairTypeFile),
         debug: request.debug
       }),
       factory.createIdentifier('\n')
@@ -138,16 +153,16 @@ function genFileOfRequests({ item, pairTypeFile, banner }: {
   }
 }
 
-function normalizeTypes(name: string, types?: { [key: string]: string }) {
+function normalizeTypes(name: string, types?: { [key: string]: string }, noRequestType?: boolean) {
   if (!types) return {}
-  return mapValues(types, code => replaceRefRequestType(name, code))
+  return mapValues(types, code => normalizeRequestType(name, code, noRequestType))
 }
 
-function normalizeArguments(name: string, parameters: ReturnType<ApiTransformer>['parameters']): ReturnType<ApiTransformer>['parameters'] {
+function normalizeArguments(name: string, parameters: ReturnType<ApiTransformer>['parameters'], noRequestType?: boolean): ReturnType<ApiTransformer>['parameters'] {
   if (!Array.isArray(parameters)) return []
   return parameters.map(item => {
     if (!isObject(item) || !item?.type) return item
-    return { ...item, type: replaceRefRequestType(name, item.type) }
+    return { ...item, type: normalizeRequestType(name, item.type, noRequestType) }
   })
 }
 
