@@ -82,4 +82,39 @@ Ara({
 
 Specify how api transform to code.
 
+```js
+Ara({
+  transform({ method, path }) {
+    return {
+      // config generated function name based on http method & path
+      name: method + path.substring(path.lastIndexOf('/') + 1)
+    }
+  }
+})
+```
+
 see `UserApiTransformer` in [option.d.ts](../local-server/src/types/option.d.ts)
+
+#### transform input
+
+| name    | description                 |
+| ------- | --------------------------- |
+| doc     | doc config for this api     |
+| method  | api http method             |
+| path    | api http path               |
+| openapi | api's openapi data          |
+| base    | api's base transform result |
+| refs    | some ref info of this api   |
+
+#### transform output
+
+| name       | description                                    |
+| ---------- | ---------------------------------------------- |
+| ignore     | ignore this api                                |
+| output     | file path of this api (relative to doc.outDir) |
+| name       | function name                                  |
+| parameters | function arguments data                        |
+| code       | function body                                  |
+| imports    | function dependencies                          |
+
+see `ApiTransformerReturn` in [api.d.ts](../local-server/src/types/api.d.ts)
