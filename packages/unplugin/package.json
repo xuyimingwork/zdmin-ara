@@ -29,7 +29,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/xuyimingwork/zdmin-ara.git"
+    "url": "git+https://github.com/zdminjs/ara.git"
   },
   "scripts": {
     "build": "tsdown",

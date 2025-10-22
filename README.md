@@ -1,4 +1,4 @@
-# @zdmin/ara [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/xuyimingwork/zdmin-ara)
+# @zdmin/ara [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/zdminjs/ara)
 
 **TS/JS Code Gen is Ready Now!**
 
