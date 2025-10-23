@@ -46,7 +46,6 @@
     "typescript": "~5.8.0"
   },
   "devDependencies": {
-    "@types/cors": "^2.8.19",
-    "tsdown": "^0.15.7"
+    "@types/cors": "^2.8.19"
   }
 }

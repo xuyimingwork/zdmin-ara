@@ -55,8 +55,5 @@
         "./*"
       ]
     }
-  },
-  "devDependencies": {
-    "tsdown": "^0.15.1"
   }
 }
