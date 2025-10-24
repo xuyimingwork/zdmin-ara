@@ -1,6 +1,7 @@
 import { useProjects } from "@/store/projects"
 import { request } from "@/utils/request"
 import { useIntervalFn } from "@vueuse/core"
+import { SERVER_BASE_PATH, SERVER_BASE_PORT } from "@zdmin/ara-shared"
 import { differenceWith, intersectionWith, uniq, uniqWith } from "es-toolkit"
 import { useAsyncData } from "vue-asyncx"
 
@@ -10,7 +11,6 @@ const update = (project: any) => {
   create(project)
 }
 
-const PORT = 9125
 const TIMEOUT = 1 * 1000
 
 // map server <=> data
@@ -25,7 +25,8 @@ function single(server: string, { silent = true } = {}) {
   if (Date.now() - info.timestamp < TIMEOUT) return info.promise
   info.timestamp = Date.now()
   info.promise = request({ 
-    url: `${server}/openapi-codegen/project`, 
+    baseURL: `${server}${SERVER_BASE_PATH}`,
+    url: `/project`, 
     method: 'get',
     ara: { silent }
   })
@@ -58,7 +59,7 @@ function multiple(servers: Iterable<string>, {
   })
 }
 
-function query(range = [PORT, PORT + 99]): Promise<any[]> {
+function query(range = [SERVER_BASE_PORT, SERVER_BASE_PORT + 99]): Promise<any[]> {
   const BATCH_COUNT = 5
   return new Promise((resolve) => {
     let current = range[0]

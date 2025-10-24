@@ -41,10 +41,11 @@
     "openapi",
     "codegen"
   ],
-  "author": "",
+  "author": "Xu Yiming",
   "license": "MIT",
   "dependencies": {
     "@zdmin/ara-local-server": "workspace:*",
+    "@zdmin/ara-shared": "workspace:*",
     "kolorist": "^1.8.0",
     "unplugin": "^2.3.10"
   },

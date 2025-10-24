@@ -13,10 +13,6 @@ export default createRouter({
       redirect: '/project',
     },
     {
-      path: '/network',
-      component: () => import('@/views/NetworkView.vue'),
-    },
-    {
       path: '/project',
       component: () => import('@/views/project/ProjectList.vue')
     },

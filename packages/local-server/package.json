@@ -44,6 +44,7 @@
     "openapi-typescript5": "npm:openapi-typescript@5",
     "openapi-typescript7": "npm:openapi-typescript@7",
     "type-fest": "^5.0.1",
-    "typescript": "~5.8.0"
+    "typescript": "~5.8.0",
+    "@zdmin/ara-shared": "workspace:*"
   }
 }

@@ -145,6 +145,9 @@ importers:
       '@vueuse/core':
         specifier: ^13.9.0
         version: 13.9.0(vue@3.5.18)
+      '@zdmin/ara-shared':
+        specifier: workspace:*
+        version: link:../shared
       '@zdmin/crab':
         specifier: ^1.2.1
         version: 1.2.1(@vueuse/core@13.9.0)(vue@3.5.18)
@@ -185,6 +188,9 @@ importers:
 
   packages/local-server:
     dependencies:
+      '@zdmin/ara-shared':
+        specifier: workspace:*
+        version: link:../shared
       body-parser:
         specifier: ^2.2.0
         version: 2.2.0
@@ -219,11 +225,16 @@ importers:
         specifier: ~5.8.0
         version: 5.8.3
 
+  packages/shared: {}
+
   packages/unplugin:
     dependencies:
       '@zdmin/ara-local-server':
         specifier: workspace:*
         version: link:../local-server
+      '@zdmin/ara-shared':
+        specifier: workspace:*
+        version: link:../shared
       kolorist:
         specifier: ^1.8.0
         version: 1.8.0

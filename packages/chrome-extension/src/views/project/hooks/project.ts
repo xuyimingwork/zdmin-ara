@@ -2,6 +2,7 @@ import { useProjects } from "@/store/projects"
 import { request } from "@/utils/request"
 import { useLocalServers, useServerConnected } from "@/views/project/hooks/servers"
 import { useAsync, useAsyncData } from "vue-asyncx"
+import { SERVER_BASE_PATH } from '@zdmin/ara-shared'
 
 export function useProject(path: MaybeRefOrGetter<string | undefined>) {
   const { projects } = useProjects()
@@ -33,8 +34,9 @@ export function useProjectCodeGen(path: MaybeRefOrGetter<string | undefined>) {
   function openapi(content: any, name?: string, preview?: boolean) {
     if (!connected.value) throw Error('服务未连接')
     return request({
+      baseURL: `${project.value?.server}${SERVER_BASE_PATH}`,
       method: 'post',
-      url: `${project.value?.server}/openapi-codegen/openapi`,
+      url: `/openapi`,
       data: {
         preview,
         data: content,

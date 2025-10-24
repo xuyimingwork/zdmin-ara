@@ -1,14 +1,11 @@
+import { fileURLToPath } from 'node:url'
 import { defineConfig } from 'tsdown'
 
 export default defineConfig({
-  entry: 'src/app.ts',
+  tsconfig: fileURLToPath(new URL('./tsconfig.json', import.meta.url)),
+  entry: ['src/index.ts'],
   exports: true,
   shims: true,
-  noExternal: [
-    'get-port', 
-    'openapi-typescript5',
-    'openapi-typescript7'
-  ],
   format: ['cjs', 'es'],
   target: ['node14', 'es6'],
   alias: {

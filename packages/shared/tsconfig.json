@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.node.json",
+  "include": [
+    "src/**/*",
+    "temp/**/*"
+  ],
+  "compilerOptions": {
+    "resolveJsonModule": true,
+    "noImplicitAny": false,
+    "paths": {
+      "@/*": ["./src/*"],
+      "~/*": ["./*"]
+    }
+  }
+}

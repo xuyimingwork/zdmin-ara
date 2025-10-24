@@ -12,9 +12,10 @@ import { outputOpenAPI, previewOpenAPI } from '@/api/openapi';
 import type { UserOptions, UserOptionsNormalized } from '@/types/option';
 import type * as net from 'node:net'
 import { Server } from 'node:http';
+import { SERVER_BASE_PATH, SERVER_BASE_PORT } from "@zdmin/ara-shared";
 
-const BASE_PORT = 9125
-const BASE_URL = '/openapi-codegen'
+const BASE_PORT = SERVER_BASE_PORT
+const BASE_URL = SERVER_BASE_PATH
 
 function createRest(options: UserOptionsNormalized) {
   const rest = ConnectRest.create({

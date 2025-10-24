@@ -1,6 +1,7 @@
 <script setup lang="ts">
   import { request } from '@/utils/request';
   import { MagicStick, Loading } from '@element-plus/icons-vue';
+  import { SERVER_BASE_PATH, SERVER_BASE_PORT } from '@zdmin/ara-shared';
   import { useAsyncData } from 'vue-asyncx';
 
   defineEmits<{
@@ -10,7 +11,7 @@
   const {
     servers,
     queryServersLoading
-  } = useAsyncData('servers', () => query([9125, 9125 + 99]), { initialData: [], immediate: true })
+  } = useAsyncData('servers', () => query([SERVER_BASE_PORT, SERVER_BASE_PORT + 99]), { initialData: [], immediate: true })
 
   // 自动发现
   function query(range = [1, 65535]): Promise<any[]> {
@@ -18,7 +19,8 @@
       const query = (port: number) => {
         const server = `http://localhost:${port}`
         return request({ 
-          url: `${server}/openapi-codegen/project`, 
+          baseURL: `${server}${SERVER_BASE_PATH}`,
+          url: `/project`, 
           method: 'get',
           ara: { silent: true }
         })
@@ -49,7 +51,8 @@
     if (!server.value) return
     const _server = server.value
     return request({ 
-      url: `${_server}/openapi-codegen/project`, 
+      baseURL: `${_server}${SERVER_BASE_PATH}`,
+      url: `/project`, 
       method: 'get',
       ara: { silent: true }
     })
