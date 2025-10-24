@@ -1,10 +1,14 @@
 # @zdmin/ara [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/zdminjs/ara)
 
-**TS/JS Code Gen is Ready Now!**
+**Generate Request Code from OpenAPI specs in seconds**
 
 ![TS/JS Code Gen](./docs/images/screenshot-generate-code.png)
 
-This project contains a set of tools for generating client api request code from OpenAPI specification.
+- Support **​​TypeScript/JavaScript** Code
+- **Type Safety​​** for **Both** TypeScript/JavaScript (by JSDoc)
+- Support Swagger 2.0 / OpenAPI 3.0 specs
+- UI & Preview with **Chrome Extension**
+- **​​Vite/Webpack** Support out of box (Compat with Vite 2.x/Webpack 3.x), Compat with **Node 14+**
 
 ## usage
 
@@ -64,7 +68,13 @@ export default {
 
 ### 2. Download & Install Chrome Extension
 
-We use Chrome Extension for getting open api docs seamlessly.
+<details>
+
+<summary>Why use Chrome Extension?</summary>
+
+Since openapi docs behind some auth in common, we use Chrome Extension for getting openapi docs data seamlessly.
+
+</details>
 
 - 🚀 [Chrome Web Store](https://chromewebstore.google.com/detail/openapi-codegen/fjncpcopojccenmapbhicjcgeiabojli)
 
