@@ -30,7 +30,8 @@
     "dev": "run-p dev:*",
     "#build": "tsdown not transform noExternal pkg correctly, rebuild to solve, see https://github.com/rolldown/tsdown/issues/547",
     "build": "tsdown && tsdown dist/app.js --no-clean",
-    "prepublishOnly": "pnpm build"
+    "prepublishOnly": "pnpm build",
+    "test": "vitest"
   },
   "dependencies": {
     "body-parser": "^2.2.0",
@@ -44,8 +45,5 @@
     "openapi-typescript7": "npm:openapi-typescript@7",
     "type-fest": "^5.0.1",
     "typescript": "~5.8.0"
-  },
-  "devDependencies": {
-    "@types/cors": "^2.8.19"
   }
 }

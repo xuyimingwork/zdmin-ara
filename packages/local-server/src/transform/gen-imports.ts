@@ -1,4 +1,4 @@
-import { ImportData, ImportDataDefault, ImportDataMix, ImportDataNormalized } from "@/types/import"
+import type { ImportData, ImportDataDefault, ImportDataMix, ImportDataNormalized } from "@/types/import"
 import { isObjectLike } from "es-toolkit/compat"
 
 export function normalizeImports(imports: ImportData[]): ImportDataNormalized[] {
