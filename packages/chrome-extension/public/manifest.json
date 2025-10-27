@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Ara - OpenAPI CodeGen",
-  "description": "Generate client code from OpenAPI docs",
+  "description": "Generate Request Code from OpenAPI specs",
   "version": "__MANIFEST_VERSION__",
   "icons": {
     "16": "icons/16.png",
