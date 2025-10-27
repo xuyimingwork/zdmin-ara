@@ -1,5 +1,7 @@
 # @zdmin/ara [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/zdminjs/ara)
 
+English | [简体中文](./docs/zh-cn/README.md)
+
 **Generate Request Code from OpenAPI specs in seconds**
 
 ![TS/JS Code Gen](./docs/images/screenshot-generate-code.png)
@@ -86,8 +88,9 @@ Since openapi docs behind some auth in common, we use Chrome Extension for getti
 
 ### 3. Preview & Generate
 
-- Visit doc page in Chrome then Open Chrome DevTools
-- Preview & Generate Code from OpenAPI CodeGen
+- Open Chrome DevTools
+- Visit OpenAPI doc page
+- Preview & Generate Code
 
 ![Preview & Generate Code in Chrome DevTools](./docs/images/screenshot-preview.png)
 
