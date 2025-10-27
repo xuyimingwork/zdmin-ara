@@ -4,11 +4,12 @@
 
 ![TS/JS Code Gen](./docs/images/screenshot-generate-code.png)
 
-- Support **​​TypeScript/JavaScript** Code
+- **​​TypeScript/JavaScript** Code Supported
 - **Type Safety​​** for **Both** TypeScript/JavaScript (by JSDoc)
-- Support Swagger 2.0 / OpenAPI 3.0 specs
-- UI & Preview with **Chrome Extension**
-- **​​Vite/Webpack** Support out of box (Compat with Vite 2.x/Webpack 3.x), Compat with **Node 14+**
+- **Swagger 2.0 / OpenAPI 3.0** specs Supported
+- **Chrome Extension** for UI & Preview
+- **​​Vite / Webpack** Supported (Compat with Vite 2.x/Webpack 3.x)
+- **Node 14+** Supported
 
 ## usage
 
