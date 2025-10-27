@@ -44,6 +44,7 @@ export default defineConfig({
 
 ```js
 import Ara from '@zdmin/ara-unplugin/webpack'
+// const Ara = require('@zdmin/ara-unplugin/webpack')
 
 export default {
   plugins: [
