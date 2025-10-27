@@ -3,6 +3,7 @@ import { useProjects } from '@/store/projects';
 import { useLocalServers } from '@/views/project/hooks/servers';
 import ProjectCreate from '@/views/project/ProjectCreate.vue';
 import ProjectListPure from '@/views/project/ProjectListPure.vue';
+import TourView from '@/views/tour/TourView.vue';
 import { Delete, InfoFilled, Operation, Plus, Refresh } from '@element-plus/icons-vue';
 import { CrabFlex } from '@zdmin/crab';
 import pkg from '~/package.json'
@@ -91,33 +92,34 @@ const { free: freeProjects, refresh, refreshLoading } = useLocalServers()
       </BaseBar>
     </template>
     <template #main>
-      <ProjectListPure 
-        key="used"
-        :active="active"
-        :projects="projects"
-        @click-item="project => {
-          $router.push({ 
-            name: 'project-detail', 
-            query: { path: project.path }
-          })
-        }"
-      />
-      <ProjectListPure 
-        key="free"
-        :active="active"
-        :projects="freeProjects" 
-        @click-item="project => {
-          create(project)
-          $router.push({ 
-            name: 'project-detail', 
-            query: { path: project.path }
-          })
-        }"
-      />
-      <ElEmpty
-        v-if="(!projects || !projects.length) && (!freeProjects || !freeProjects.length)"
-        description="未发现项目"
-      />
+      <template v-if="projects?.length || freeProjects?.length">
+        <ProjectListPure 
+          key="used"
+          :active="active"
+          :projects="projects"
+          @click-item="project => {
+            $router.push({ 
+              name: 'project-detail', 
+              query: { path: project.path }
+            })
+          }"
+        />
+        <ProjectListPure 
+          key="free"
+          :active="active"
+          :projects="freeProjects" 
+          @click-item="project => {
+            create(project)
+            $router.push({ 
+              name: 'project-detail', 
+              query: { path: project.path }
+            })
+          }"
+        />
+      </template>
+      <template v-else>
+        <TourView />
+      </template>
     </template>
   </CrabFlex>
 </template>

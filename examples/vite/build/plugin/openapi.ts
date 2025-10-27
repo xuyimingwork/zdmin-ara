@@ -71,7 +71,11 @@ function codeFactory({
   method = 'get', 
   baseURL = '' 
 } = {}) {
-  return `
+  /**
+   * You can use Comment tagged templates in vscode to highlight the code template
+   * @see https://marketplace.visualstudio.com/items?itemName=bierner.comment-tagged-templates
+   */
+  return /* js */ `
     const { params, query, ...rest } = options || {}
     return axios({
       ${baseURL ? `baseURL: ${baseURL}` : ''}

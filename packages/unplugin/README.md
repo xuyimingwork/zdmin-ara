@@ -117,4 +117,6 @@ see `UserApiTransformer` in [option.d.ts](../local-server/src/types/option.d.ts)
 | code       | function body                                  |
 | imports    | function dependencies                          |
 
-see `ApiTransformerReturn` in [api.d.ts](../local-server/src/types/api.d.ts)
+1. See `ApiTransformerReturn` in [api.d.ts](../local-server/src/types/api.d.ts)
+
+2. You can use [Comment tagged templates](https://marketplace.visualstudio.com/items?itemName=bierner.comment-tagged-templates) in vscode to highlight js/ts in code

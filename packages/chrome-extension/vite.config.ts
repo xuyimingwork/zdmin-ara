@@ -16,7 +16,8 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: fileURLToPath(new URL('./pages/devtools/openapi-codegen-main.html', import.meta.url)),
-        panel: fileURLToPath(new URL('./pages/devtools/openapi-codegen-panel.html', import.meta.url))
+        panel: fileURLToPath(new URL('./pages/devtools/openapi-codegen-panel.html', import.meta.url)),
+        popup: fileURLToPath(new URL('./pages/popups/openapi-codegen-popup.html', import.meta.url))
       }
     }
   },

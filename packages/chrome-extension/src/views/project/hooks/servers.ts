@@ -83,11 +83,14 @@ export function useLocalServers() {
   // 两个操作：1. 发现新的服务 2. 更新已发现服务的状态
 
   const { projects } = useProjects()
+
+  // 命名错误，此处应该是本地服务
   const {
     projects: _localServerProjects,
     queryProjects,
     queryProjectsLoading
   } = useAsyncData('projects', () => query(), { initialData: [], immediate: true })
+
   const localServerProjects = computed(() => uniqWith(_localServerProjects.value, (a, b) => a.path === b.path))
   const free = computed(() => differenceWith(localServerProjects.value, projects.value, (a, b) => a.path === b.path))
   const used = computed(() => intersectionWith(localServerProjects.value, projects.value, (a, b) => a.path === b.path))

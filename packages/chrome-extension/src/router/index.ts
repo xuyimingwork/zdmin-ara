@@ -24,6 +24,10 @@ export default createRouter({
         ...to.query 
       }),
       component: () => import('@/views/project/ProjectDetail.vue')
+    },
+    {
+      path: '/popup',
+      component: () => import('@/views/popup/PopupView.vue')
     }
   ]
 })
