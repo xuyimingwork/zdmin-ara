@@ -2,7 +2,7 @@
 
 简体中文 | [English](../../README.md)
 
-**请求代码秒级生成**
+**请求代码自动生成**
 
 ![TS/JS Code Gen](../images/screenshot-generate-code.png)
 
