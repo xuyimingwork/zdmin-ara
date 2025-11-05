@@ -78,7 +78,7 @@ function createFunctionJSDocComment(types: {
     getAstTypeNode(types?.return) ? factory.createJSDocReturnTag(undefined, factory.createJSDocTypeExpression(getAstTypeNode(types?.return)!)) : undefined,
   ].filter(item => !!item) : []
   const tags: JSDocTag[] = [
-    (openapi as any).deprecated ? factory.createJSDocDeprecatedTag(undefined) : undefined,
+    (openapi as any).deprecated ? factory.createJSDocUnknownTag(factory.createIdentifier('deprecated')) : undefined,
     openapi.summary ? factory.createJSDocUnknownTag(factory.createIdentifier('summary'), openapi.summary) : undefined,
     openapi.description ? factory.createJSDocUnknownTag(factory.createIdentifier('description'), openapi.description) : undefined,
     ...typeTags,
