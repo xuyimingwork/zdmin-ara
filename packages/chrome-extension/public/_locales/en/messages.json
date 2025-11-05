@@ -1,0 +1,19 @@
+{
+  "name": {
+    "message": "Ara - OpenAPI CodeGen",
+    "description": "extension name"
+  },
+  "description": {
+    "message": "Generate Request Code from OpenAPI specs",
+    "description": "extension description"
+  },
+  "tourLocalServersDetected": {
+    "message": "Local Servers is Detected, Open DevTools to Generate Code."
+  },
+  "tourLocalProjectsConfigured": {
+    "message": "Projects are Configured, Start Projects & Open DevTools to Generate Code."
+  },
+  "tourNoConfigDetected": {
+    "message": "No Config Detected, For Setup Projects, See:"
+  }
+}

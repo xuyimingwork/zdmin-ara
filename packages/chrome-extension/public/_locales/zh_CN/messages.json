@@ -1,0 +1,19 @@
+{
+  "name": {
+    "message": "Ara - OpenAPI 代码生成",
+    "description": "插件名"
+  },
+  "description": {
+    "message": "基于 OpenAPI 规范生成请求代码",
+    "description": "插件描述"
+  },
+  "tourLocalServersDetected": {
+    "message": "检测到本地服务，打开开发者工具开始生成代码吧"
+  },
+  "tourLocalProjectsConfigured": {
+    "message": "项目已配置，启动项目即可通过开发者工具生成代码"
+  },
+  "tourNoConfigDetected": {
+    "message": "未发现配置，要配置本地项目，请参考："
+  }
+}

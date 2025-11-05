@@ -1,5 +1,6 @@
 <script setup lang="ts">
   import { useProjects } from '@/store/projects';
+import { i18n } from '@/utils/i18n';
   import { useLocalServers } from '@/views/project/hooks/servers';
 
   const { servers } = useLocalServers()
@@ -10,19 +11,19 @@
 <template>
   <div class="tour">
     <div v-if="servers?.length">
-      Local Servers is Detected, Open DevTools to Generate Code.
+      {{ i18n('tourLocalServersDetected') }}
     </div>
     <div v-else-if="projects.length">
-      Projects are Configured, Start Projects & Open DevTools to Generate Code.
+      {{ i18n('tourLocalProjectsConfigured') }}
     </div>
     <div v-else>
-      No Config Detected, See <ElLink
+      {{ i18n('tourNoConfigDetected') }} <ElLink
         underline="always"
         href="https://github.com/zdminjs/ara"
         target="_blank"
       >
         zdminjs/ara
-      </ElLink> to Setup Local Projects.
+      </ElLink>
     </div>
   </div>
 </template>
