@@ -61,6 +61,10 @@ export function OpenAPI() {
           // if you want pet-v4 will generate by transformer above, use default to build transformer
           .build() 
         )
+        .when({ doc: 'apple', path: /^\/v1\/app/ }, ({ base, path, method }) => ({ 
+          output: base.output.replace('.ts', '.js'),
+          code: codeFactory({ path, method })
+        }))
         // all other doc will use this transform
         .default(({ path, method }) => ({ code: codeFactory({ path, method }) }))
     })

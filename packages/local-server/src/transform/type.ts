@@ -1,4 +1,4 @@
-import { upperFirst } from "es-toolkit"
+import { lowerFirst, upperFirst } from "es-toolkit"
 
 const TypeResponseRaw = 'Response'
 const TypeRequestOptionsRaw = 'RequestOptions'
@@ -26,6 +26,12 @@ export const TypeRef = {
 
 export function getRequestTypeName(name: string, type: UtilType) {
   return upperFirst(`${name}${type}`)
+}
+
+export function getRequestName(type: string): string | undefined {
+  const utilType = UTIL_TYPES.find(item => type.endsWith(item))
+  if (!utilType) return
+  return lowerFirst(type.substring(0, type.length - utilType.length))
 }
 
 export function getRequestTypeInUse(name: string, code: string): string[] {

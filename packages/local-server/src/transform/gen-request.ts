@@ -1,7 +1,7 @@
 import { createFunctionDeclaration } from "@/transform/ast/function"
 import { normalizeImports } from "@/transform/gen-imports"
 import { print } from "@/transform/ast/printer"
-import { getRequestTypeInUseFromCodes, getRequestTypeName, getUtilTypeName, normalizeRequestType, TypeRef, UTIL_TYPES } from "@/transform/type"
+import { getRequestName, getRequestTypeInUseFromCodes, getRequestTypeName, getUtilTypeName, normalizeRequestType, TypeRef, UTIL_TYPES } from "@/transform/type"
 import { getImportRelative, patchBanner } from "@/transform/utils"
 import { groupBy, mapValues, sortBy, uniqBy } from "es-toolkit"
 import { each, fromPairs, isObject, values } from "es-toolkit/compat"
@@ -11,7 +11,7 @@ import { createTypeAliasDeclaration } from "@/transform/ast/type"
 import { createImportDeclarations } from "@/transform/ast/import"
 import { OpenAPI } from "@/types/openapi"
 import { FileData } from "@/types/file"
-import { ImportDataNormalized } from "@/types/import"
+import { ImportDataNormalized, ImportDataNormalizedType } from "@/types/import"
 import { GenResult } from "@/types/gen"
 import { ApiBaseData, ApiTransformer } from "@/types/api"
 import { baseTransformer } from "@/transform/transformer/base"
@@ -94,7 +94,7 @@ function genFileOfRequestTypes({
   }
 }
 
-function getRequestTypeInUseFromRequests(requests?: AstFileData['requests']): string[] {
+function getRequestTypes(requests?: AstFileData['requests']): string[] {
   if (!Array.isArray(requests)) return []
   return requests.map(request => {
     const parameters = normalizeArguments(request.name, request.parameters) || []
@@ -106,6 +106,26 @@ function getRequestTypeInUseFromRequests(requests?: AstFileData['requests']): st
   }).flat()
 }
 
+function getPairTypeImportDeclarations(pairTypeFile?: FileData & { types: string[] }, requests?: AstFileData['requests']): ImportDataNormalizedType[] {
+  if (!pairTypeFile) return []
+  const types = pairTypeFile.types.filter(name => getRequestTypes(requests).includes(name)).sort()
+  if (!types.length) return []
+  const needBreakLine = types.length >= (UTIL_TYPES.length * 2)
+  const breadLineBefore = (item: string) => `\n  ${item}`
+  const breadLineAfter = (item: string) => `${item}\n`
+  return [{
+    mode: 'type',
+    from: `./${basename(pairTypeFile.output, '.ts')}`,
+    imports: types.map((type, i) => {
+      if (!needBreakLine) return { name: type }
+      const isLastType = i === (types.length - 1)
+      if (!types[i - 1] || getRequestName(type) !== getRequestName(types[i - 1])) return { name: breadLineBefore(isLastType ? breadLineAfter(type) : type) }
+      if (isLastType) return { name: breadLineAfter(type) }
+      return { name: type }
+    })
+  }]
+}
+
 function genFileOfRequests({ item, pairTypeFile, banner }: { 
   item: AstFileData 
   pairTypeFile?: FileData & { types: string[] }
@@ -113,14 +133,7 @@ function genFileOfRequests({ item, pairTypeFile, banner }: {
 }): FileData {
   const imports = createImportDeclarations([
     ...item.imports,
-    ...(pairTypeFile ? [{
-      mode: 'type' as const,
-      from: `./${basename(pairTypeFile.output, '.ts')}`,
-      // 超长 imports 可能导致 vscode 无法解析，考虑自动换行操作
-      imports: pairTypeFile.types
-        .filter(name => getRequestTypeInUseFromRequests(item.requests).includes(name))
-        .map(name => ({ name }))
-    }] : [])
+    ...getPairTypeImportDeclarations(pairTypeFile, item.requests)
   ].map(importNormalized => {
     if (importNormalized.mode !== 'type') return importNormalized
     if (item.output.endsWith('.js')) return { ...importNormalized, jsdoc: true }
@@ -171,21 +184,23 @@ function toAstFiles(requests: AstApiData[]): AstFileData[] {
   if (!Array.isArray(requests)) return []
   // 依据输出文件分组
   const groups = groupBy(requests, item => item.output)
+  // 当 api.js 与 api.ts 同时存在，保留 api.js
   const outputs = Object.keys(groups)
     .filter(output => {
       if (output.endsWith('.js')) return true
+      // ts 仅在没有对应 js 文件时保留
       if (output.endsWith('.ts')) return !(output.replace(/\.ts$/, '.js') in groups)
       return false
     })
-  // 当 api.js 与 api.ts 同时存在，保留 api.js
   const uniqGroups = fromPairs(outputs.map(output => {
     if (output.endsWith('.ts')) return [output, groups[output]]
     const tsOutput = output.replace(/\.js$/, '.ts')
     if (!(tsOutput in groups)) return [output, groups[output]]
+    // js/ts 都存在时，保留 js，ts 内请求合并到 js
     return [output, [...groups[tsOutput], ...groups[output]]]
   }))
   return Object.keys(uniqGroups).map(output => {
-    // 同文件函数去重
+    // 同文件同名函数去重（仅保留第一个）
     const requests = uniqBy(uniqGroups[output], item => item.name)
     const imports = normalizeImports(requests.map(item => Array.isArray(item.imports) ? item.imports : []).flat())
     return {
