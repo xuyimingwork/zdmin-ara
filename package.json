@@ -9,7 +9,7 @@
     "dev:chrome-extension": "pnpm --filter @zdmin/ara-chrome-extension dev",
     "dev:local-server": "pnpm --filter @zdmin/ara-local-server dev",
     "dev:unplugin": "pnpm --filter @zdmin/ara-unplugin dev",
-    "dev:local-server:start": "nodemon ./packages/local-server/dist-dev/run.js",
+    "dev:local-server:start": "nodemon -w ./packages/local-server/dist-dev/run.js ./packages/local-server/dist-dev/run.js",
     "dev": "run-p dev:**",
     "version": "node scripts/version.js"
   },

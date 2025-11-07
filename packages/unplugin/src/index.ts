@@ -1,6 +1,6 @@
 import type { UnpluginFactory, UnpluginInstance } from 'unplugin'
 import { createUnplugin } from 'unplugin'
-import { createDefaultBanner, createServer,  } from '@zdmin/ara-local-server'
+import { createDefaultBanner, createServer } from '@zdmin/ara-local-server'
 import type { UserOptions as AraLocalServerOptions } from '@zdmin/ara-local-server'
 import { SERVER_BASE_PATH } from '@zdmin/ara-shared'
 import { bold, cyan, yellow, green } from 'kolorist'

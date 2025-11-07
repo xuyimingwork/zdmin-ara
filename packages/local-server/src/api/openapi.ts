@@ -18,7 +18,13 @@ async function getFileDiff(file: FileData): Promise<'new' | 'update' | 'same' | 
   const existed = await exists(file.output)
   if (!existed) return 'new'
   return readFile(file.output, 'utf-8')
-      .then(res => res === file.content ? 'same' : 'update')
+      .then(content => {
+        if (content === file.content) return 'same'
+        // TODO: 忽略顶部 banner 进行比较
+        // - 需要考虑自定义 banner 场景
+        // - 设为可选项，允许忽略更新仅 banner 不同的场景，也允许强制更新
+        return 'update'
+      })
       .catch(e => 'unknown')
 }
 
@@ -72,7 +78,7 @@ export function outputOpenAPI({ openapi, doc, transform, banner, typeGettersModu
 }) {
   return previewOpenAPI({ openapi, doc, transform, banner, typeGettersModule })
     .then(({ files, statistic }) => {
-      return Promise.all(files.map(item => writep(item.output, item.content)))
+      return Promise.all(files.map(item => item.diff !== 'same' ? writep(item.output, item.content) : Promise.resolve()))
         .then(() => ({ files, statistic }))
     })
 }
