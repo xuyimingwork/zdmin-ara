@@ -122,6 +122,19 @@ const { free: freeProjects, refresh, refreshLoading } = useLocalServers()
         <TourView />
       </template>
     </template>
+    <template
+      v-if="projects?.length || freeProjects?.length"
+      #end
+    >
+      <BaseBar divider="top">
+        <ElButton
+          text
+          @click="$router.push('/network')"
+        >
+          网络
+        </ElButton>
+      </BaseBar>
+    </template>
   </CrabFlex>
 </template>
 

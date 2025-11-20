@@ -240,7 +240,7 @@ watch(() => props.doc.url, () => {
           :icon="Refresh"
           @click="reload(props.doc.url)"
         >
-          刷新页面
+          {{ i18n('browserTabRefresh') }}
         </ElButton>
       </ElEmpty>
     </template>
