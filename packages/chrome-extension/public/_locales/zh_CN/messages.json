@@ -15,5 +15,32 @@
   },
   "tourNoConfigDetected": {
     "message": "未发现配置，要配置本地项目，请参考："
+  },
+  "projectAdd": {
+    "message": "添加项目"
+  },
+  "projectDelete": {
+    "message": "删除项目"
+  },
+  "projectListRefresh": {
+    "message": "刷新项目列表"
+  },
+  "projectListDelete": {
+    "message": "删除全部项目"
+  },
+  "projectListPage": {
+    "message": "项目页"
+  },
+  "refresh": {
+    "message": "刷新"
+  },
+  "previewFailedPrefix": {
+    "message": "预览失败："
+  },
+  "unknownError": {
+    "message": "未知错误"
+  },
+  "close": {
+    "message": "关闭"
   }
 }

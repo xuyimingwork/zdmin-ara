@@ -8,6 +8,7 @@
   import { useProjects } from '@/store/projects';
   import { useLocalServers } from '@/views/project/hooks/servers';
   import ProjectListPure from '@/views/project/ProjectListPure.vue';
+import { i18n } from '@/utils/i18n';
 
   const props = defineProps<{
     path: string
@@ -45,7 +46,7 @@
             v-if="route.name === 'project-detail'"
             :icon="HomeFilled"
             circle
-            title="项目页"
+            :title="i18n('projectListPage')"
             size="large"
             text
             @click="$router.push('/project')"
@@ -54,7 +55,7 @@
             v-else
             :icon="Close"
             circle
-            title="关闭"
+            :title="i18n('close')"
             size="large"
             text
             @click="$emit('close')"
@@ -126,7 +127,7 @@
                     else $router.push('/project')
                   }"
                 >
-                  删除项目
+                  {{ i18n('projectDelete') }}
                 </ElDropdownItem>
               </ElDropdownMenu>
             </template>

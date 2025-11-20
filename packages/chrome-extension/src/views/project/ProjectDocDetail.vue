@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useNetwork } from '@/store/network';
 import { reload } from '@/utils/chrome';
+import { i18n } from '@/utils/i18n';
 import BaseCollapseItem from '@/views/project/components/BaseCollapseItem.vue';
 import BaseItem from '@/views/project/components/BaseItem.vue';
 import { useProjectCodeGen } from '@/views/project/hooks/project';
@@ -23,9 +24,7 @@ defineEmits<{
 }>()
 
 const { openapis, records } = useNetwork()
-// 最新的在第一个
 const requests = computed(() => reverse(openapis.value.filter(item => props.doc.url?.startsWith(item.url))))
-
 
 function getDefaultActive() {
   if (!Array.isArray(requests.value) || !requests.value.length) return
@@ -102,7 +101,7 @@ watch(() => props.doc.url, () => {
           <ElButton
             :icon="Close"
             circle
-            title="关闭"
+            :title="i18n('close')"
             size="large"
             text
             @click="$emit('close')"
@@ -200,7 +199,7 @@ watch(() => props.doc.url, () => {
         >
           <ElAlert
             v-loading="previewLoading"
-            :title="`预览失败：${queryPreviewResultError?.message || queryPreviewResultError || '未知错误'}`"
+            :title="`${i18n('previewFailedPrefix')}${queryPreviewResultError?.message || queryPreviewResultError || i18n('unknownError')}`"
             center
             type="error"
             :closable="false"

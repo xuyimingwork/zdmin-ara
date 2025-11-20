@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { useProjects } from '@/store/projects';
-import { i18n } from '@/utils/i18n';
+  import { i18n } from '@/utils/i18n';
   import { useLocalServers } from '@/views/project/hooks/servers';
 
   const { servers } = useLocalServers()

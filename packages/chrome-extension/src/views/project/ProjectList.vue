@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useProjects } from '@/store/projects';
+import { i18n } from '@/utils/i18n';
 import { useLocalServers } from '@/views/project/hooks/servers';
 import ProjectCreate from '@/views/project/ProjectCreate.vue';
 import ProjectListPure from '@/views/project/ProjectListPure.vue';
@@ -26,7 +27,7 @@ const { free: freeProjects, refresh, refreshLoading } = useLocalServers()
               <ElButton
                 :icon="Plus"
                 circle
-                title="添加项目"
+                :title="i18n('projectAdd')"
                 size="large"
                 text
                 type="primary"
@@ -45,7 +46,7 @@ const { free: freeProjects, refresh, refreshLoading } = useLocalServers()
           <ElButton
             :icon="Refresh"
             circle
-            title="刷新"
+            :title="i18n('projectListRefresh')"
             size="large"
             :loading="refreshLoading"
             text
@@ -78,7 +79,7 @@ const { free: freeProjects, refresh, refreshLoading } = useLocalServers()
                   data-ara-type="danger"
                   @click="() => clear()"
                 >
-                  删除全部项目
+                  {{ i18n('projectListDelete') }}
                 </ElDropdownItem>
                 <ElDropdownItem
                   :icon="InfoFilled"

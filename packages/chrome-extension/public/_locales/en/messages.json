@@ -15,5 +15,32 @@
   },
   "tourNoConfigDetected": {
     "message": "No Config Detected, For Setup Projects, See:"
+  },
+  "projectAdd": {
+    "message": "Add Project"
+  },
+  "projectDelete": {
+    "message": "Delete Project"
+  },
+  "projectListRefresh": {
+    "message": "Refresh Project List"
+  },
+  "projectListDelete": {
+    "message": "Delete All Projects"
+  },
+  "projectListPage": {
+    "message": "Project List"
+  },
+  "refresh": {
+    "message": "Refresh"
+  },
+  "previewFailedPrefix": {
+    "message": "Preview failed: "
+  },
+  "unknownError": {
+    "message": "unknown error"
+  },
+  "close": {
+    "message": "Close"
   }
 }
