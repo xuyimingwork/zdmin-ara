@@ -12,10 +12,10 @@
   },
   "author": "Xu Yiming",
   "files": [
-    "dist",
     "ara-chrome-extension.zip"
   ],
   "jsdelivr": "ara-chrome-extension.zip",
+  "unpkg": "ara-chrome-extension.zip",
   "scripts": {
     "dev:mock": "vite",
     "dev": "vite build --watch",
