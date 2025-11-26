@@ -7,19 +7,19 @@
     "dist"
   ],
   "main": "./dist/index.cjs",
-  "module": "./dist/index.js",
+  "module": "./dist/index.mjs",
   "types": "./dist/index.d.cts",
   "exports": {
     ".": {
-      "import": "./dist/index.js",
+      "import": "./dist/index.mjs",
       "require": "./dist/index.cjs"
     },
     "./vite": {
-      "import": "./dist/vite.js",
+      "import": "./dist/vite.mjs",
       "require": "./dist/vite.cjs"
     },
     "./webpack": {
-      "import": "./dist/webpack.js",
+      "import": "./dist/webpack.mjs",
       "require": "./dist/webpack.cjs"
     },
     "./package.json": "./package.json"

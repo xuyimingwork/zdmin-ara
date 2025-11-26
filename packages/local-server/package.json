@@ -15,11 +15,11 @@
     "dist"
   ],
   "main": "./dist/app.cjs",
-  "module": "./dist/app.js",
+  "module": "./dist/app.mjs",
   "types": "./dist/app.d.cts",
   "exports": {
     ".": {
-      "import": "./dist/app.js",
+      "import": "./dist/app.mjs",
       "require": "./dist/app.cjs"
     },
     "./package.json": "./package.json"
