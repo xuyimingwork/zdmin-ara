@@ -28,8 +28,7 @@
     "dev:run": "tsdown src/run.ts -d dist-dev --exports false --watch ./src",
     "dev:lib": "tsdown --watch ./src",
     "dev": "run-p dev:*",
-    "#build": "tsdown not transform noExternal pkg correctly, rebuild to solve, see https://github.com/rolldown/tsdown/issues/547",
-    "build": "tsdown && tsdown dist/app.js --no-clean",
+    "build": "tsdown",
     "prepublishOnly": "pnpm build",
     "test": "vitest"
   },
